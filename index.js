@@ -21,41 +21,22 @@ app.get("/", (req, res) => {
     res.send(`
     <html>
     <head>
-        <title>Lâm Đồng Bot</title>
+        <title>Bot Lâm Đồng</title>
         <style>
-            body{
-                background:#0f172a;
-                color:white;
-                font-family:Arial;
-                text-align:center;
-                padding-top:100px;
-            }
+            body{background:#0f172a;color:white;font-family:Arial;text-align:center;padding-top:100px;}
 
-            .card{
-                background:#1e293b;
-                width:500px;
-                margin:auto;
-                padding:30px;
-                border-radius:15px;
-            }
+            .card{background:#1e293b;width:500px;margin:auto;padding:30px;border-radius:15px;}
 
-            .status{
-                font-size:32px;
-                font-weight:bold;
-                margin:20px 0;
-            }
+            .status{font-size:32px;font-weight:bold;margin:20px 0;}
 
-            .info{
-                margin-top:10px;
-                font-size:18px;
-            }
+            .info{margin-top:10px;font-size:18px;}
         </style>
     </head>
     <body>
 
         <div class="card">
 
-            <h1>🤖 Lâm Đồng Bot</h1>
+            <h1>🤖 Bot Lâm Đồng 🤖</h1>
 
             <div class="status">
                 ${statusIcon} ${statusText}
