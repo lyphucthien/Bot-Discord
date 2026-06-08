@@ -12,7 +12,86 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.get("/", (req, res) => {
-    res.send("Bot Discord đang hoạt động!");
+
+    const online = client.isReady();
+
+    const statusIcon = online ? "🟢" : "🔴";
+    const statusText = online ? "ONLINE" : "OFFLINE";
+
+    res.send(`
+    <html>
+    <head>
+        <title>Lâm Đồng Bot</title>
+        <style>
+            body{
+                background:#0f172a;
+                color:white;
+                font-family:Arial;
+                text-align:center;
+                padding-top:100px;
+            }
+
+            .card{
+                background:#1e293b;
+                width:500px;
+                margin:auto;
+                padding:30px;
+                border-radius:15px;
+            }
+
+            .status{
+                font-size:32px;
+                font-weight:bold;
+                margin:20px 0;
+            }
+
+            .info{
+                margin-top:10px;
+                font-size:18px;
+            }
+        </style>
+    </head>
+    <body>
+
+        <div class="card">
+
+            <h1>🤖 Lâm Đồng Bot</h1>
+
+            <div class="status">
+                ${statusIcon} ${statusText}
+            </div>
+
+            <div class="info">
+                ⚡ Ping: ${online ? client.ws.ping + "ms" : "N/A"}
+            </div>
+
+            <div class="info">
+                🏠 Servers: ${online ? client.guilds.cache.size : 0}
+            </div>
+
+            <div class="info">
+                👥 Users: ${online ? client.users.cache.size : 0}
+            </div>
+
+            <div class="info">
+                🕒 Uptime: ${Math.floor(process.uptime() / 60)} phút
+            </div>
+
+        </div>
+
+    </body>
+    </html>
+    `);
+});
+
+app.get("/status", (req, res) => {
+    res.json({
+        online: true,
+        bot: client.user ? client.user.tag : "Đang khởi động...",
+        guilds: client.isReady() ? client.guilds.cache.size : 0,
+        users: client.isReady() ? client.users.cache.size : 0,
+        uptime: Math.floor(process.uptime())
+    });
 });
 
 app.listen(PORT, () => {
