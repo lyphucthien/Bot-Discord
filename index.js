@@ -6,6 +6,18 @@ const {
 
 const fs = require('fs');
 const config = require('./config.json');
+const express = require("express");
+const app = express();
+
+const PORT = process.env.PORT || 3000;
+
+app.get("/", (req, res) => {
+    res.send("Bot Discord đang hoạt động!");
+});
+
+app.listen(PORT, () => {
+    console.log(`🌐 Web server chạy ở cổng ${PORT}`);
+});
 
 const client = new Client({
     intents: [
