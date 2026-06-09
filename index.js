@@ -202,7 +202,7 @@ body{
 
         // chạy ngay + mỗi 1 giây
         updateDashboard();
-        setInterval(updateDashboard, 1500);
+        setInterval(updateDashboard, 1000);
         </script>
 
     </body>
