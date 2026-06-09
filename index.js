@@ -172,10 +172,10 @@ body{
 
             <div class="stat">
                 <span>🕒 Uptime</span>
-             <span>${Math.floor(process.uptime() / 60)} phút</span>
+             <span>${formatUptime()}</span>
             </div>
 
-            <hr style="border:none;height:1px;background:rgba(255,255,255,0.1);margin:20px 0;">
+            <hr style="border:none;height:1px;background:rgba(255, 255, 255, 0.13);margin:20px 0;">
             <div style="opacity:.7">
              💻 Created By Lý Phúc Thiện
             </div>
@@ -198,7 +198,7 @@ app.get("/status", (req, res) => {
     });
 });
 
-app.get("/ping", (req, res) => {
+app.get(".ping", (req, res) => {
     res.json({
         status: "ok",
         uptime: process.uptime(),
@@ -218,7 +218,7 @@ setInterval(async () => {
     } catch (err) {
         console.log("❌ Ping failed");
     }
-}, 5 * 60 * 1000);
+}, 4 * 60 * 1000);
 
 
 client.commands = new Collection();
