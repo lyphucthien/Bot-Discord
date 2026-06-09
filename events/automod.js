@@ -4,9 +4,9 @@ const spamTracker = new Map();
 module.exports = (client) => {
 
     const badWords = [
-        "địt", "dit", "đụ", "du", "cặc", "cak",
+        "địt", "dit", "đụ", "cặc", "cak",
         "cac", "lồn", "buồi", "buoi", "đéo", "deo", "dell", "đĩ", "đĩ chó",
-        "óc chó", "óc cặc", "thằng chó", "con chó", "súc vật",
+        "óc chó", "óc cặc", "óc cak", "thằng chó", "con chó", "súc vật",
         "rác", "mất dạy", "ngu như chó", "ngu như dog", "rác",
 
         "fuck", "fucking", "motherfucker", "mf", "bitch", "asshole", "dick",
