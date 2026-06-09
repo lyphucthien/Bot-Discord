@@ -50,7 +50,7 @@ body{
         #0f172a,
         #1e293b,
         #0f172a,
-        #ff5ce9
+        #2563eb
     );
 
     background-size:400% 400%;
