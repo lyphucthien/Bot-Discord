@@ -79,7 +79,7 @@ module.exports = {
             const id = interaction.customId;
 
             // JOIN
-            if (id === 'join') {
+            if (id === 'Tham Gia') {
 
                 if (users.has(interaction.user.id)) {
                     return interaction.reply({
