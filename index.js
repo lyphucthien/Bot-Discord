@@ -15,13 +15,14 @@ const client = new Client({
 const PORT = process.env.PORT || 3000;
 
 function formatUptime() {
-    const totalSeconds = Math.floor(process.uptime());
+    const total = Math.floor(process.uptime());
 
-    const days = Math.floor(totalSeconds / 86400);
-    const hours = Math.floor((totalSeconds % 86400) / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const days = Math.floor(total / 86400);
+    const hours = Math.floor((total % 86400) / 3600);
+    const minutes = Math.floor((total % 3600) / 60);
+    const seconds = total % 60;
 
-    return `${days} ngày ${hours} giờ ${minutes} phút`;
+    return `${days}d ${hours}h ${minutes}m ${seconds}s`;
 }
 
 app.get("/", (req, res) => {
@@ -213,7 +214,7 @@ const URL = "https://my-discord-bot-mfu0.onrender.com";
 
 setInterval(async () => {
     try {
-        await fetch(URL);
+        await fetch(`${URL}/ping`);
         console.log("🔄 Đã Gửi Tín Hiệu Giữ Kết Nối");
     } catch (err) {
         console.log("❌ Ping failed");
