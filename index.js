@@ -34,7 +34,7 @@ app.get("/", (req, res) => {
     res.send(`
     <html>
     <head>
-        <title>🤖 Bot Lâm Đồng Dashboard</title>
+        <title>🤖 Bot Dashboard</title>
         <meta http-equiv="refresh" content="30">
         <style>
 body{
@@ -152,12 +152,12 @@ body{
 
             <div class="stat">
              <span>🏠 Servers</span>
-              <span>${online ? client.guilds.cache.size : 0}</span>
+              <span>${online ? client.guilds.cache.size : ...}</span>
             </div>
 
             <div class="stat">
               <span>👥 Users</span>
-                 <span>${online ? client.users.cache.size : 0}</span>
+                 <span>${online ? client.users.cache.size : ...}</span>
             </div>
 
             <div class="stat">
