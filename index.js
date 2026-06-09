@@ -214,7 +214,7 @@ const URL = "https://my-discord-bot-mfu0.onrender.com";
 setInterval(async () => {
     try {
         await fetch(URL);
-        console.log("🔄 Keep-alive ping sent");
+        console.log("🔄 Đã Gửi Tín Hiệu Giữ Kết Nối");
     } catch (err) {
         console.log("❌ Ping failed");
     }
