@@ -20,8 +20,9 @@ function formatUptime() {
     const days = Math.floor(totalSeconds / 86400);
     const hours = Math.floor((totalSeconds % 86400) / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const secs = Math.floor(seconds % 60);
 
-    return `${days} ngày ${hours} giờ ${minutes} phút`;
+    return `${days} ngày ${hours} giờ ${minutes} phút ${secs} giây`;
 }
 
 app.get("/", (req, res) => {
