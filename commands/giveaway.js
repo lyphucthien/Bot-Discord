@@ -30,11 +30,11 @@ module.exports = {
             .setColor('Gold')
             .setDescription(
                 [
-                    `🏆 Prize: **${prize}**`,
-                    `⏳ Time Left: **${timeLeft}s**`,
-                    `👥 Entries: **${users.size}**`,
-                    `🏅 Winners: **${winnerCount}**`,
-                    `⏸ Status: ${paused ? 'Paused' : 'Running'}`
+                    `🏆 Phần Thưởng: **${prize}**`,
+                    `⏳ Thời Gian Còn Lại: **${timeLeft}s**`,
+                    `👥 Số Người Tham Gia: **${users.size}**`,
+                    `🏅 Số Người Thắng: **${winnerCount}**`,
+                    `⏸ Trạng Thái: ${paused ? 'Paused' : 'Running'}`
                 ].join('\n')
             );
 
@@ -172,7 +172,7 @@ module.exports = {
                 .setColor('Red')
                 .setDescription(
                     winnersCache.length > 0
-                        ? `🏆 Winners:\n${winnersCache.map(w => `• <@${w}>`).join('\n')}\n\n🎁 Prize: **${prize}**`
+                        ? `🏆 Người Chiến Thắng:\n${winnersCache.map(w => `• <@${w}>`).join('\n')}\n\n🎁 Phần Thưởng: **${prize}**`
                         : '❌ Không Có Người Tham Gia'
                 );
 
