@@ -4,13 +4,14 @@ module.exports = {
     execute(message) {
 
         message.channel.send(`
-📖 DANH SÁCH LỆNH
+📖 DANH SÁCH LỆNH:
 
-!help
-!clear <số>
-!kick @user
-!ban @user
-!warn @user
+.help
+.clear + Số
+.kick + @user
+.ban + @user
+.warn + @user
+.giveaway + Time + Tên Món Quà
         `);
 
     }
