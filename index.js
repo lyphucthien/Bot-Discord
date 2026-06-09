@@ -292,7 +292,7 @@ client.on('interactionCreate', async interaction => {
         await interaction.member.roles.add(role);
 
         await interaction.reply({
-            content: '✅ Xác Minh Thành Công',
+            content: '✅ Xác Minh Thành Công ^^',
             flags: 64
         });
     }
