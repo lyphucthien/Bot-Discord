@@ -11,7 +11,8 @@ module.exports = {
 .kick + @user
 .ban + @user
 .warn + @user
-.giveaway + Time + Tên Món Quà
+.giveaway + Time + Số Người Trúng + Món Quà
+.reroll
         `);
 
     }
