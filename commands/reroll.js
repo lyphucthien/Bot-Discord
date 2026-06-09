@@ -20,7 +20,7 @@ module.exports = {
             .setTitle('🔁 REROLL WINNER')
             .setColor('Blue')
             .setDescription(
-                `🏆 Người Chiến Thắng Mới: <@${newWinner}>\n🎁 Phần Thưởng: **${data.prize}**`
+                `🏆 New Winner: <@${newWinner}>\n🎁 Prize: **${data.prize}**`
             );
 
         return message.channel.send({ embeds: [embed] });
