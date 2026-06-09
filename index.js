@@ -14,14 +14,13 @@ const client = new Client({
 });
 const PORT = process.env.PORT || 3000;
 
-function formatUptime() {
-    const totalSeconds = Math.floor(process.uptime());
+function formatUptime(seconds) {
+    const days = Math.floor(seconds / 86400);
+    const hours = Math.floor((seconds % 86400) / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = Math.floor(seconds % 60);
 
-    const days = Math.floor(totalSeconds / 86400);
-    const hours = Math.floor((totalSeconds % 86400) / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-
-    return `${days} ngày ${hours} giờ ${minutes} phút`;
+    return `${days} ngày ${hours} giờ ${minutes} phút ${secs} giây`;
 }
 
 app.get("/", (req, res) => {
@@ -172,7 +171,7 @@ body{
 
             <div class="stat">
                 <span>🕒 Uptime</span>
-             <span>${formatUptime()}</span>
+             <span id="uptime">...</span>
             </div>
 
             <hr style="border:none;height:1px;background:rgba(255, 255, 255, 0.13);margin:20px 0;">
@@ -182,18 +181,19 @@ body{
             </div>
 
         </div>
+        
         <script>
         async function updateDashboard() {
             try {
                 const res = await fetch("/status");
                 const data = await res.json();
 
-                // 🔥 PING realtime
                 document.getElementById("ping").innerText =
-                    data.ping !== null ? data.ping + "ms" : "N/A";
+                    data.ping ? data.ping + "ms" : "N/A";
 
-                // 🕒 TIME realtime (server VN)
-                document.getElementById("time").innerText =data.time;
+                document.getElementById("time").innerText = data.time;
+
+                document.getElementById("uptime").innerText = formatUptime(data.uptime);
 
             } catch (err) {
                 console.log("Realtime update error:", err);
@@ -202,7 +202,7 @@ body{
 
         // chạy ngay + mỗi 1 giây
         updateDashboard();
-        setInterval(updateDashboard, 1000);
+        setInterval(updateDashboard, 2000);
         </script>
 
     </body>
@@ -216,9 +216,9 @@ app.get("/status", (req, res) => {
         bot: client.user ? client.user.tag : "Đang khởi động...",
         guilds: client.isReady() ? client.guilds.cache.size : 0,
         users: client.isReady() ? client.users.cache.size : 0,
-        uptime: Math.floor(process.uptime()),
+        uptime: process.uptime(),
         ping: client.isReady() ? client.ws.ping : null,
-        time: new Date().toLocaleString("vi-VN", {timeZone: "Asia/Ho_Chi_Minh"})
+        time: new Date().toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" })
     });
 });
 
