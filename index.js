@@ -167,7 +167,7 @@ body{
 
             <div class="stat">
               <span>📅 Time</span>
-               <span>${new Date().toLocaleString("vi-VN")}</span>
+               <span>${new Date().toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" })}</span>
             </div>
 
             <div class="stat">
