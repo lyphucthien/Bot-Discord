@@ -50,7 +50,7 @@ body{
         #0f172a,
         #1e293b,
         #0f172a,
-        #2563eb
+        #ff5ce9
     );
 
     background-size:400% 400%;
@@ -177,7 +177,7 @@ body{
 
             <hr style="border:none;height:1px;background:rgba(255,255,255,0.1);margin:20px 0;">
             <div style="opacity:.7">
-             🌐 Powered by Render
+             💻 Được Tạo Bởi Lý Phúc Thiện
             </div>
 
         </div>
