@@ -8,7 +8,7 @@ module.exports = {
         const data = message.client.lastGiveaway;
 
         if (!data || data.winnersCache.length === 0) {
-            return message.reply('❌ Không có giveaway để reroll!');
+            return message.reply('❌ Không Có Giveaway Để Reroll!');
         }
 
         const newWinner =
@@ -20,7 +20,7 @@ module.exports = {
             .setTitle('🔁 REROLL WINNER')
             .setColor('Blue')
             .setDescription(
-                `🏆 New Winner: <@${newWinner}>\n🎁 Prize: **${data.prize}**`
+                `🏆 Người Chiến Thắng Mới: <@${newWinner}>\n🎁 Phần Thưởng: **${data.prize}**`
             );
 
         return message.channel.send({ embeds: [embed] });
