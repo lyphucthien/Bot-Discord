@@ -152,12 +152,12 @@ body{
 
             <div class="stat">
              <span>🏠 Servers</span>
-              <span>${online ? client.guilds.cache.size : ...}</span>
+              <span>${online ? client.guilds.cache.size : 0}</span>
             </div>
 
             <div class="stat">
               <span>👥 Users</span>
-                 <span>${online ? client.users.cache.size : ...}</span>
+                 <span>${online ? client.users.cache.size : 0}</span>
             </div>
 
             <div class="stat">
