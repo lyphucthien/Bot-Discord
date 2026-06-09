@@ -147,7 +147,7 @@ body{
 
             <div class="stat">
               <span>⚡ Ping</span>
-              <span id="ping">...</span>
+              <span id="ping">Load...</span>
             </div>
 
             <div class="stat">
@@ -167,7 +167,7 @@ body{
 
             <div class="stat">
               <span>📅 Time</span>
-                <span id="time">...</span>
+                <span id="time">Load...</span>
             </div>
 
             <div class="stat">
