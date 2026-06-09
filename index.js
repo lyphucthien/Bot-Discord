@@ -198,7 +198,7 @@ app.get("/status", (req, res) => {
     });
 });
 
-app.get(".ping", (req, res) => {
+app.get("/ping", (req, res) => {
     res.json({
         status: "ok",
         uptime: process.uptime(),
