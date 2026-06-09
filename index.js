@@ -177,7 +177,7 @@ body{
 
             <hr style="border:none;height:1px;background:rgba(255,255,255,0.1);margin:20px 0;">
             <div style="opacity:.7">
-             💻 Được Tạo Bởi Lý Phúc Thiện
+             💻 Created By Lý Phúc Thiện
             </div>
 
         </div>
