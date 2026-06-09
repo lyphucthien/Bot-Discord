@@ -207,7 +207,7 @@ app.get("/ping", (req, res) => {
 });
 
 app.listen(PORT, "0.0.0.0", () => {
-    console.log(`🌐 Web server chạy ở cổng ${PORT}`);
+    console.log(`🌐 Web Server chạy ở cổng ${PORT}`);
 });
 const URL = "https://my-discord-bot-mfu0.onrender.com";
 
@@ -245,7 +245,7 @@ for (const file of commandFiles) {
 }
 
 client.once('clientReady', () => {
-    console.log(`✅ ${client.user.tag} đã online!`);
+    console.log(`✅ ${client.user.tag} Đã Online`);
 });
 
 client.on('messageCreate', async message => {
@@ -292,7 +292,7 @@ client.on('interactionCreate', async interaction => {
         await interaction.member.roles.add(role);
 
         await interaction.reply({
-            content: '✅ Xác minh thành công!',
+            content: '✅ Xác Minh Thành Công',
             flags: 64
         });
     }
