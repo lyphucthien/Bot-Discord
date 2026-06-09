@@ -46,18 +46,18 @@ module.exports = {
 
                 new ButtonBuilder()
                     .setCustomId('join')
-                    .setLabel('Join')
+                    .setLabel('Tham Gia')
                     .setEmoji('🎉')
                     .setStyle(ButtonStyle.Success),
 
                 new ButtonBuilder()
                     .setCustomId('pause')
-                    .setLabel('Pause')
+                    .setLabel('Tạm Dừng')
                     .setStyle(ButtonStyle.Secondary),
 
                 new ButtonBuilder()
                     .setCustomId('resume')
-                    .setLabel('Resume')
+                    .setLabel('Tiếp Tục')
                     .setStyle(ButtonStyle.Primary)
             );
 
@@ -79,7 +79,7 @@ module.exports = {
             const id = interaction.customId;
 
             // JOIN
-            if (id === 'Tham Gia') {
+            if (id === 'join') {
 
                 if (users.has(interaction.user.id)) {
                     return interaction.reply({
