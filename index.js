@@ -147,7 +147,7 @@ body{
 
             <div class="stat">
               <span>⚡ Ping</span>
-              <span>${online ? client.ws.ping + "ms" : "N/A"}</span>
+              <span id="ping">...</span>
             </div>
 
             <div class="stat">
@@ -167,7 +167,7 @@ body{
 
             <div class="stat">
               <span>📅 Time</span>
-               <span>${new Date().toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" })}</span>
+                <span id="time">...</span>
             </div>
 
             <div class="stat">
@@ -178,9 +178,32 @@ body{
             <hr style="border:none;height:1px;background:rgba(255, 255, 255, 0.13);margin:20px 0;">
             <div style="opacity:.7">
              💻 Created By Lý Phúc Thiện
+             
             </div>
 
         </div>
+        <script>
+        async function updateDashboard() {
+            try {
+                const res = await fetch("/status");
+                const data = await res.json();
+
+                // 🔥 PING realtime
+                document.getElementById("ping").innerText =
+                    data.ping !== null ? data.ping + "ms" : "N/A";
+
+                // 🕒 TIME realtime (server VN)
+                document.getElementById("time").innerText =data.time;
+
+            } catch (err) {
+                console.log("Realtime update error:", err);
+            }
+        }
+
+        // chạy ngay + mỗi 1 giây
+        updateDashboard();
+        setInterval(updateDashboard, 1000);
+        </script>
 
     </body>
     </html>
@@ -194,7 +217,8 @@ app.get("/status", (req, res) => {
         guilds: client.isReady() ? client.guilds.cache.size : 0,
         users: client.isReady() ? client.users.cache.size : 0,
         uptime: Math.floor(process.uptime()),
-        ping: client.isReady() ? client.ws.ping : null
+        ping: client.isReady() ? client.ws.ping : null,
+        time: new Date().toLocaleString("vi-VN", {timeZone: "Asia/Ho_Chi_Minh"})
     });
 });
 
