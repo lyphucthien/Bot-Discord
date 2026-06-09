@@ -1,10 +1,4 @@
-const {
-    EmbedBuilder,
-    ActionRowBuilder,
-    ButtonBuilder,
-    ButtonStyle,
-    ComponentType
-} = require('discord.js');
+const {EmbedBuilder,ActionRowBuilder,ButtonBuilder,ButtonStyle,ComponentType} = require('discord.js');
 
 module.exports = {
 
@@ -13,40 +7,67 @@ module.exports = {
     async execute(message, args) {
 
         const duration = parseInt(args[0]);
-        const prize = args.slice(1).join(' ');
+        const winnerCount = parseInt(args[1]) || 1;
+        const prize = args.slice(2).join(' ');
 
         if (!duration || !prize) {
-            return message.reply('Cách Dùng: .giveaway + time + quà');
+            return message.reply('Cách Dùng: .giveaway + Thời Gian + Người Chiến Thắng + Phần Thưởng');
         }
 
-        // Set lưu người tham gia
         const users = new Set();
 
         let timeLeft = duration;
+        let paused = false;
+        let pausedAt = 0;
 
-        const embed = new EmbedBuilder()
+        let winnersCache = [];
+
+        // ======================
+        // EMBED
+        // ======================
+        const buildEmbed = () => new EmbedBuilder()
             .setTitle('🎁 GIVEAWAY')
+            .setColor('Gold')
             .setDescription(
-                `🏆 Phần thưởng: **${prize}**\n⏳ Còn lại: **${timeLeft}s**`
-            )
-            .setColor('Gold');
+                [
+                    `🏆 Prize: **${prize}**`,
+                    `⏳ Time Left: **${timeLeft}s**`,
+                    `👥 Entries: **${users.size}**`,
+                    `🏅 Winners: **${winnerCount}**`,
+                    `⏸ Status: ${paused ? 'Paused' : 'Running'}`
+                ].join('\n')
+            );
 
+        // ======================
+        // BUTTONS
+        // ======================
         const row = new ActionRowBuilder()
             .addComponents(
+
                 new ButtonBuilder()
-                    .setCustomId('join_giveaway')
-                    .setLabel('Tham Gia')
+                    .setCustomId('join')
+                    .setLabel('Join')
                     .setEmoji('🎉')
-                    .setStyle(ButtonStyle.Success)
+                    .setStyle(ButtonStyle.Success),
+
+                new ButtonBuilder()
+                    .setCustomId('pause')
+                    .setLabel('Pause')
+                    .setStyle(ButtonStyle.Secondary),
+
+                new ButtonBuilder()
+                    .setCustomId('resume')
+                    .setLabel('Resume')
+                    .setStyle(ButtonStyle.Primary)
             );
 
         const msg = await message.channel.send({
-            embeds: [embed],
+            embeds: [buildEmbed()],
             components: [row]
         });
 
         // ======================
-        // BUTTON COLLECTOR
+        // COLLECTOR
         // ======================
         const collector = msg.createMessageComponentCollector({
             componentType: ComponentType.Button,
@@ -55,70 +76,104 @@ module.exports = {
 
         collector.on('collect', async (interaction) => {
 
-            if (interaction.customId !== 'join_giveaway') return;
+            const id = interaction.customId;
 
-            if (users.has(interaction.user.id)) {
+            // JOIN
+            if (id === 'join') {
+
+                if (users.has(interaction.user.id)) {
+                    return interaction.reply({
+                        content: '⚠️ Bạn đã tham gia rồi!',
+                        ephemeral: true
+                    });
+                }
+
+                users.add(interaction.user.id);
+
                 return interaction.reply({
-                    content: '⚠️ Bạn đã tham gia rồi!',
+                    content: '🎉 Bạn Đã Tham Gia!',
                     ephemeral: true
                 });
             }
 
-            users.add(interaction.user.id);
+            // PAUSE
+            if (id === 'pause') {
 
-            return interaction.reply({
-                content: '🎉 Bạn đã tham gia giveaway!',
-                ephemeral: true
-            });
+                if (!interaction.member.permissions.has('Administrator')) {
+                    return interaction.reply({ content: '❌ Không Có Người Tham Gia', ephemeral: true });
+                }
+
+                paused = true;
+                pausedAt = Date.now();
+
+                return interaction.reply({
+                    content: '⏸ Giveaway paused',
+                    ephemeral: true
+                });
+            }
+
+            // RESUME
+            if (id === 'resume') {
+
+                if (!interaction.member.permissions.has('Administrator')) {
+                    return interaction.reply({ content: '❌ Không Có Người Tham Gia', ephemeral: true });
+                }
+
+                paused = false;
+
+                return interaction.reply({
+                    content: '▶ Giveaway resumed',
+                    ephemeral: true
+                });
+            }
         });
 
         // ======================
-        // COUNTDOWN UPDATE
+        // COUNTDOWN
         // ======================
         const interval = setInterval(async () => {
 
-            timeLeft--;
+            if (!paused) timeLeft--;
 
             if (timeLeft <= 0) {
                 clearInterval(interval);
+                collector.stop();
                 return;
             }
 
-            const newEmbed = EmbedBuilder.from(embed)
-                .setDescription(
-                    `🏆 Phần thưởng: **${prize}**\n⏳ Còn lại: **${timeLeft}s**\n👥 Người tham gia: **${users.size}**`
-                );
-
-            await msg.edit({ embeds: [newEmbed] });
+            await msg.edit({ embeds: [buildEmbed()] });
 
         }, 1000);
 
         // ======================
         // END GIVEAWAY
         // ======================
-        setTimeout(async () => {
-
-            collector.stop();
+        collector.on('end', async () => {
 
             const participants = [...users];
 
-            let winner;
-
             if (participants.length === 0) {
-                winner = null;
+                winnersCache = [];
             } else {
-                winner = participants[
-                    Math.floor(Math.random() * participants.length)
-                ];
+
+                const pool = [...participants];
+
+                // shuffle
+                for (let i = pool.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [pool[i], pool[j]] = [pool[j], pool[i]];
+                }
+
+                winnersCache = pool.slice(0, Math.min(winnerCount, pool.length));
             }
 
             const endEmbed = new EmbedBuilder()
-                .setTitle('🎁 GIVEAWAY KẾT THÚC')
+                .setTitle('🎊 GIVEAWAY ENDED')
                 .setColor('Red')
                 .setDescription(
-                    winner
-                        ? `🏆 Người thắng: <@${winner}>\n🎁 Phần thưởng: **${prize}**`
-                        : '❌ Không có người tham gia!'
+                    winnersCache.length > 0
+                        ? `🏆 Winners:\n${winnersCache.map(w => `• <@${w}>`).join('\n')}\n\n🎁 Prize: **${prize}**`
+                        : '❌ Không Có Người Tham Gia'
                 );
 
             await msg.edit({
@@ -126,6 +181,12 @@ module.exports = {
                 components: []
             });
 
-        }, duration * 1000);
+            // attach for reroll
+            message.client.lastGiveaway = {
+                winnersCache,
+                prize,
+                channelId: message.channel.id
+            };
+        });
     }
 };
