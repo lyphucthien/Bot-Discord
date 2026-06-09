@@ -245,7 +245,7 @@ for (const file of commandFiles) {
 }
 
 client.once('clientReady', () => {
-    console.log(`✅ ${client.user.tag} đã online!`);
+    console.log(`✅ ${client.user} đã online!`);
 });
 
 client.on('messageCreate', async message => {
