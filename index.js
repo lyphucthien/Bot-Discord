@@ -14,13 +14,14 @@ const client = new Client({
 });
 const PORT = process.env.PORT || 3000;
 
-function formatUptime(seconds) {
-    const days = Math.floor(seconds / 86400);
-    const hours = Math.floor((seconds % 86400) / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    const secs = Math.floor(seconds % 60);
+function formatUptime() {
+    const totalSeconds = Math.floor(process.uptime());
 
-    return `${days} ngày ${hours} giờ ${minutes} phút ${secs} giây`;
+    const days = Math.floor(totalSeconds / 86400);
+    const hours = Math.floor((totalSeconds % 86400) / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+
+    return `${days} ngày ${hours} giờ ${minutes} phút`;
 }
 
 app.get("/", (req, res) => {
@@ -171,7 +172,7 @@ body{
 
             <div class="stat">
                 <span>🕒 Uptime</span>
-             <span id="uptime">...</span>
+             <span>${formatUptime()}</span>
             </div>
 
             <hr style="border:none;height:1px;background:rgba(255, 255, 255, 0.13);margin:20px 0;">
@@ -188,12 +189,12 @@ body{
                 const res = await fetch("/status");
                 const data = await res.json();
 
+                // 🔥 PING realtime
                 document.getElementById("ping").innerText =
-                    data.ping ? data.ping + "ms" : "N/A";
+                    data.ping !== null ? data.ping + "ms" : "N/A";
 
-                document.getElementById("time").innerText = data.time;
-
-                document.getElementById("uptime").innerText = formatUptime(data.uptime);
+                // 🕒 TIME realtime (server VN)
+                document.getElementById("time").innerText =data.time;
 
             } catch (err) {
                 console.log("Realtime update error:", err);
@@ -216,7 +217,7 @@ app.get("/status", (req, res) => {
         bot: client.user ? client.user.tag : "Đang khởi động...",
         guilds: client.isReady() ? client.guilds.cache.size : 0,
         users: client.isReady() ? client.users.cache.size : 0,
-        uptime: process.uptime(),
+        uptime: Math.floor(process.uptime()),
         ping: client.isReady() ? client.ws.ping : null,
         time: new Date().toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" })
     });
