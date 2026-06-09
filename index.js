@@ -284,7 +284,7 @@ client.on('interactionCreate', async interaction => {
 
         if (!role) {
             return interaction.reply({
-                content: '❌ Không tìm thấy role.',
+                content: '❌ Không Tìm Thấy Vai Trò',
                 flags: 64
             });
         }
