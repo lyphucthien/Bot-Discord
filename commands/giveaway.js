@@ -1,4 +1,4 @@
-const {EmbedBuilder,ActionRowBuilder,ButtonBuilder,ButtonStyle,ComponentType} = require('discord.js');
+const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType } = require('discord.js');
 
 module.exports = {
 
@@ -100,14 +100,14 @@ module.exports = {
             if (id === 'pause') {
 
                 if (!interaction.member.permissions.has('Administrator')) {
-                    return interaction.reply({ content: '❌ Không Có Người Tham Gia', ephemeral: true });
+                    return interaction.reply({ content: '❌ Không được phép', ephemeral: true });
                 }
 
                 paused = true;
                 pausedAt = Date.now();
 
                 return interaction.reply({
-                    content: '⏸ Giveaway paused',
+                    content: '⏸ Giveaway Tạm Dừng',
                     ephemeral: true
                 });
             }
@@ -116,13 +116,13 @@ module.exports = {
             if (id === 'resume') {
 
                 if (!interaction.member.permissions.has('Administrator')) {
-                    return interaction.reply({ content: '❌ Không Có Người Tham Gia', ephemeral: true });
+                    return interaction.reply({ content: '❌ Không Được Phép', ephemeral: true });
                 }
 
                 paused = false;
 
                 return interaction.reply({
-                    content: '▶ Giveaway resumed',
+                    content: '▶ Giveaway Tiếp Tục',
                     ephemeral: true
                 });
             }
