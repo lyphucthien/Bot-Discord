@@ -1,15 +1,28 @@
-const {
-    Client,
-    GatewayIntentBits,
-    Collection
-} = require('discord.js');
+const { Client, GatewayIntentBits, Collection } = require('discord.js');
 
 const fs = require('fs');
 const config = require('./config.json');
 const express = require("express");
 const app = express();
-
+const client = new Client({
+    intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.GuildMembers,
+        GatewayIntentBits.MessageContent
+    ]
+});
 const PORT = process.env.PORT || 3000;
+
+function formatUptime() {
+    const totalSeconds = Math.floor(process.uptime());
+
+    const days = Math.floor(totalSeconds / 86400);
+    const hours = Math.floor((totalSeconds % 86400) / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+
+    return `${days} ngày ${hours} giờ ${minutes} phút`;
+}
 
 app.get("/", (req, res) => {
 
@@ -21,41 +34,150 @@ app.get("/", (req, res) => {
     res.send(`
     <html>
     <head>
-        <title>Bot Lâm Đồng</title>
+        <title>🤖 Bot Lâm Đồng Dashboard</title>
+        <meta http-equiv="refresh" content="30">
         <style>
-            body{background:#0f172a;color:white;font-family:Arial;text-align:center;padding-top:100px;}
+body{
+    margin:0;
+    min-height:100vh;
 
-            .card{background:#1e293b;width:500px;margin:auto;padding:30px;border-radius:15px;}
+    display:flex;
+    justify-content:center;
+    align-items:center;
 
-            .status{font-size:32px;font-weight:bold;margin:20px 0;}
+    background:linear-gradient(
+        -45deg,
+        #0f172a,
+        #1e293b,
+        #0f172a,
+        #2563eb
+    );
 
-            .info{margin-top:10px;font-size:18px;}
+    background-size:400% 400%;
+    animation:gradient 15s ease infinite;
+
+    color:white;
+    font-family:Arial;
+}
+
+@keyframes gradient{
+    0%{background-position:0% 50%;}
+    50%{background-position:100% 50%;}
+    100%{background-position:0% 50%;}
+}
+
+.card{
+    width:90%;
+    max-width:600px;
+
+    background:rgba(255,255,255,0.08);
+
+    backdrop-filter:blur(15px);
+
+    border:1px solid rgba(255,255,255,0.15);
+
+    border-radius:20px;
+
+    padding:30px;
+
+    box-shadow:0 0 30px rgba(0,0,0,0.4);
+
+    transition:0.3s;
+}
+
+.card:hover{
+    transform:translateY(-5px);
+}
+
+.status{
+    font-size:30px;
+    font-weight:bold;
+    margin:20px 0;
+}
+
+.dot{
+    width:18px;
+    height:18px;
+    border-radius:50%;
+    display:inline-block;
+    margin-right:10px;
+}
+
+.online{
+    background:#22c55e;
+    box-shadow:
+        0 0 10px #22c55e,
+        0 0 20px #22c55e;
+}
+
+.offline{
+    background:#ef4444;
+    box-shadow:
+        0 0 10px #ef4444,
+        0 0 20px #ef4444;
+}
+
+.stat{
+    transition:0.2s;
+    cursor:pointer;
+    display:flex;
+    justify-content:space-between;
+
+    padding:12px;
+    margin:10px 0;
+
+    background:rgba(255,255,255,0.05);
+
+    border-radius:10px;
+}  
         </style>
     </head>
     <body>
 
         <div class="card">
 
-            <h1>🤖 Bot Lâm Đồng 🤖</h1>
+            <h1>
+                🤖 ${client.user ? client.user.username : "Bot Lâm Đồng"}
+            </h1>
 
             <div class="status">
-                ${statusIcon} ${statusText}
+               <span class="dot ${online ? "online" : "offline"}"></span>
+                 ${statusText}
             </div>
 
-            <div class="info">
-                ⚡ Ping: ${online ? client.ws.ping + "ms" : "N/A"}
+            <div class="stat">
+              <span>⚡ Ping</span>
+              <span>${online ? client.ws.ping + "ms" : "N/A"}</span>
             </div>
 
-            <div class="info">
-                🏠 Servers: ${online ? client.guilds.cache.size : 0}
+            <div class="stat">
+             <span>🏠 Servers</span>
+              <span>${online ? client.guilds.cache.size : 0}</span>
             </div>
 
-            <div class="info">
-                👥 Users: ${online ? client.users.cache.size : 0}
+            <div class="stat">
+              <span>👥 Users</span>
+                 <span>${online ? client.users.cache.size : 0}</span>
             </div>
 
-            <div class="info">
-                🕒 Uptime: ${Math.floor(process.uptime() / 60)} phút
+            <div class="stat">
+              <span>💾 RAM</span>
+               <span>${Math.round(process.memoryUsage().rss / 1024 / 1024)} MB</span>
+            </div>
+
+            <div class="stat">
+              <span>📅 Time</span>
+               <span>${new Date().toLocaleString("vi-VN")}</span>
+            </div>
+
+            <div class="stat">
+                <span>🕒 Uptime</span>
+             <span>${Math.floor(process.uptime() / 60)} phút</span>
+            </div>
+
+            <hr style="border:none;height:1px;background:rgba(255,255,255,0.1);margin:20px 0;">
+            <div style="opacity:.7">
+             🌐 Powered by Render
             </div>
 
         </div>
@@ -67,26 +189,37 @@ app.get("/", (req, res) => {
 
 app.get("/status", (req, res) => {
     res.json({
-        online: true,
+        online: client.isReady(),
         bot: client.user ? client.user.tag : "Đang khởi động...",
         guilds: client.isReady() ? client.guilds.cache.size : 0,
         users: client.isReady() ? client.users.cache.size : 0,
-        uptime: Math.floor(process.uptime())
+        uptime: Math.floor(process.uptime()),
+        ping: client.isReady() ? client.ws.ping : null
     });
 });
 
-app.listen(PORT, () => {
-    console.log(`🌐 Web server chạy ở cổng ${PORT}`);
+app.get("/ping", (req, res) => {
+    res.json({
+        status: "ok",
+        uptime: process.uptime(),
+        timestamp: Date.now()
+    });
 });
 
-const client = new Client({
-    intents: [
-        GatewayIntentBits.Guilds,
-        GatewayIntentBits.GuildMessages,
-        GatewayIntentBits.GuildMembers,
-        GatewayIntentBits.MessageContent
-    ]
+app.listen(PORT, "0.0.0.0", () => {
+    console.log(`🌐 Web server chạy ở cổng ${PORT}`);
 });
+const URL = "https://my-discord-bot-mfu0.onrender.com";
+
+setInterval(async () => {
+    try {
+        await fetch(URL);
+        console.log("🔄 Keep-alive ping sent");
+    } catch (err) {
+        console.log("❌ Ping failed");
+    }
+}, 5 * 60 * 1000);
+
 
 client.commands = new Collection();
 // Load commands và event
