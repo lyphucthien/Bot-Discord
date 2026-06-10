@@ -28,7 +28,7 @@ module.exports = (client) => {
                     `📜 Luật Server ➜ <#1503245852129493174>`,
                     `🎁 Giveaway ➜ <#1503608814606487552>`,
                     `💬 Kênh Chat ➜ #1503393797680398438>`,
-                    `🛒 Các Dịch Vụ ➜ Mục MARKET`,
+                    `🛒 Ticket Đặt Hàng ➜ <#1514124605936369717>`,
                     `IB Các Staff Trong Server Để Được Hỗ Trợ`
                 ].join('\n')
             )
