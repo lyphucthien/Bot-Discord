@@ -35,7 +35,7 @@ module.exports = {
                 { name: '⛔ DND', value: `${dnd}`, inline: true },
                 { name: '⚫ Offline', value: `${offline}`, inline: true },
             )
-            .setFooter({ text: 'Click buttons below for details' })
+            .setFooter({ text: 'Hãy Nhấp Vào Các Nút Bên Dưới Để Xem Chi Tiết' })
             .setTimestamp();
 
         const row = new ActionRowBuilder().addComponents(
