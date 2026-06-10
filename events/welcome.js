@@ -42,7 +42,7 @@ module.exports = (client) => {
                 'https://cdn.discordapp.com/attachments/1503393797680398438/1514157252754411661/Panda.png?ex=6a2a5854&is=6a2906d4&hm=0c62bada8cbc273af5ef22458cfeb89a9d1cb0dd021ec62f1155420b0492f7a0&'
             )
             .setFooter({
-                text: 'Tận hưởng những phút giây giải trí tại server nhé ❤️'
+                text: 'Tận Hưởng Phút Giây Giải Trí Tại Server Nhé ❤️'
             });
 
         await channel.send({
