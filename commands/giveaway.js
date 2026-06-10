@@ -315,7 +315,7 @@ module.exports = {
                                         '\n'
                                     )}\n\n🎁 Prize: **${prize}**`
 
-                                : '❌ Không có người tham gia'
+                                : '❌ Không Có Người Tham Gia'
 
                         );
 
