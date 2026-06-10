@@ -66,7 +66,7 @@ module.exports = {
                         `⏳ Time Left: **${timeLeft}s**`,
                         `👥 Entries: **${users.size}**`,
                         `🏅 Winners: **${winnerCount}**`,
-                        `⏸ Status: ${paused ? 'Paused' : 'Running'}`
+                        `⏸ Trạng Thái: ${paused ? 'Tạm Dừng' : 'Tiếp Tục'}`
                     ].join('\n')
                 );
 
