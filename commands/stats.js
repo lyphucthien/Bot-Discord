@@ -38,23 +38,6 @@ module.exports = {
             .setFooter({ text: 'Click buttons below for details' })
             .setTimestamp();
 
-        const row = new ActionRowBuilder().addComponents(
-            new ButtonBuilder()
-                .setCustomId('online_list')
-                .setLabel('🟢 Online Members')
-                .setStyle(ButtonStyle.Success),
-
-            new ButtonBuilder()
-                .setCustomId('all_list')
-                .setLabel('👥 All Members')
-                .setStyle(ButtonStyle.Primary),
-
-            new ButtonBuilder()
-                .setCustomId('bot_list')
-                .setLabel('🤖 Bots')
-                .setStyle(ButtonStyle.Secondary),
-        );
-
         await interaction.reply({
             embeds: [embed],
             components: [row]
