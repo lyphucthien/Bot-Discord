@@ -22,8 +22,8 @@ module.exports = (client) => {
             )
             .setDescription(
                 [
-                    `Hi ${member} !!`,
-                    ``,
+                    `Hi ${member}, Vui Lòng Xác Minh Người Chơi Tại <#1503613577536475176> !!`,
+
                     `📌 **Các lưu ý của server**`,
                     `📜 Luật Server ➜ <#1503245852129493174>`,
                     `🎁 Giveaway ➜ <#1503608814606487552>`,
