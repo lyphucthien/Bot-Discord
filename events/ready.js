@@ -3,5 +3,12 @@ module.exports = (client) => {
 
         console.log(`✅ ${client.user.tag} Đã Online`);
 
+        const commands = await client.application.commands.fetch();
+
+        console.log(
+            "Slash Commands:",
+            commands.map(cmd => cmd.name)
+        );
+
     });
 };
