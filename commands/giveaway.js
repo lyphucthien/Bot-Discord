@@ -100,7 +100,7 @@ module.exports = {
 
         await interaction.reply({
             content: '✅ Giveaway đã được tạo.',
-            ephemeral: true
+            flags: 64
         });
 
         const msg =
@@ -139,7 +139,7 @@ module.exports = {
                         return buttonInteraction.reply({
                             content:
                                 '⚠️ Bạn đã tham gia rồi!',
-                            ephemeral: true
+                            flags: 64
                         });
 
                     }
@@ -151,7 +151,7 @@ module.exports = {
                     return buttonInteraction.reply({
                         content:
                             '🎉 Bạn đã tham gia Giveaway!',
-                        ephemeral: true
+                        flags: 64
                     });
 
                 }
@@ -167,7 +167,7 @@ module.exports = {
                         return buttonInteraction.reply({
                             content:
                                 '❌ Không được phép',
-                            ephemeral: true
+                            flags: 64
                         });
 
                     }
@@ -177,7 +177,7 @@ module.exports = {
                     return buttonInteraction.reply({
                         content:
                             '⏸ Giveaway đã tạm dừng',
-                        ephemeral: true
+                        flags: 64
                     });
 
                 }
@@ -193,7 +193,7 @@ module.exports = {
                         return buttonInteraction.reply({
                             content:
                                 '❌ Không được phép',
-                            ephemeral: true
+                            flags: 64
                         });
 
                     }
@@ -203,7 +203,7 @@ module.exports = {
                     return buttonInteraction.reply({
                         content:
                             '▶ Giveaway tiếp tục',
-                        ephemeral: true
+                        flags: 64
                     });
 
                 }
