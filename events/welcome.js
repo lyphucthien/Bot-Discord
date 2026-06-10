@@ -18,7 +18,7 @@ module.exports = (client) => {
                 iconURL: member.user.displayAvatarURL({ dynamic: true })
             })
             .setTitle(
-                `🎉 Chào Mừng Bạn Đến Với ${member.guild.name}`
+                `🎉 Chào Mừng Bạn Đến Với **${member.guild.name}**`
             )
             .setDescription(
                 [
@@ -27,7 +27,7 @@ module.exports = (client) => {
                     `📌 **Các lưu ý của server**`,
                     `📜 Luật Server ➜ <#1503245852129493174>`,
                     `🎁 Giveaway ➜ <#1503608814606487552>`,
-                    `💬 Kênh Chat ➜ #1503393797680398438>`,
+                    `💬 Kênh Chat ➜ <#1503393797680398438>`,
                     `🛒 Ticket Đặt Hàng ➜ <#1514124605936369717>`,
                     `IB Các Staff Trong Server Để Được Hỗ Trợ`
                 ].join('\n')
