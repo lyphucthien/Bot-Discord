@@ -1,10 +1,8 @@
 module.exports = (client) => {
+    client.once('clientReady', async () => {
 
-    client.once('clientReady', () => {
+        console.log(`✅ ${client.user.tag} Đã Online`);
 
-        console.log(
-            `✅ ${client.user.tag} Đã Online`
-        );
         const commands = await client.application.commands.fetch();
 
         console.log(
