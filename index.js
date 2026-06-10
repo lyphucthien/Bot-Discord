@@ -268,8 +268,4 @@ for (const file of commandFiles) {
     client.commands.set(command.data.name, command);
 }
 
-client.once('clientReady', () => {
-    console.log(`✅ ${client.user.tag} Đã Online`);
-});
-
 client.login(process.env.TOKEN);
