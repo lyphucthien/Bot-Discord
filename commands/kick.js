@@ -36,7 +36,7 @@ module.exports = {
         await member.kick();
 
         await interaction.reply(
-            `👢 ${user.tag} đã bị kick`
+            `${user.tag} đã bị kick`
         );
     }
 };
