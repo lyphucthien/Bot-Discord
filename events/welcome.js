@@ -12,7 +12,7 @@ module.exports = (client) => {
         if (!channel) return;
 
         const embed = new EmbedBuilder()
-            .setColor('#5865F2')
+            .setColor('#ff84f9')
             .setAuthor({
                 name: member.user.username,
                 iconURL: member.user.displayAvatarURL({ dynamic: true })
