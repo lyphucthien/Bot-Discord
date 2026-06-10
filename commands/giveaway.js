@@ -150,7 +150,7 @@ module.exports = {
 
                     return buttonInteraction.reply({
                         content:
-                            '🎉 Bạn đã tham gia Giveaway!',
+                            '🎉 Bạn đã tham gia!',
                         flags: 64
                     });
 
@@ -176,7 +176,7 @@ module.exports = {
 
                     return buttonInteraction.reply({
                         content:
-                            '⏸ Giveaway đã tạm dừng',
+                            '⏸ Đã Tạm Dừng',
                         flags: 64
                     });
 
@@ -202,7 +202,7 @@ module.exports = {
 
                     return buttonInteraction.reply({
                         content:
-                            '▶ Giveaway tiếp tục',
+                            '▶ Tiếp Tục',
                         flags: 64
                     });
 
