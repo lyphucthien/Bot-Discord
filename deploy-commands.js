@@ -25,7 +25,7 @@ for (const file of commandFiles) {
     } catch (err) {
 
         console.log(
-            `❌ Lỗi file ${file}`
+            `❌ Lỗi File ${file}`
         );
 
         console.error(err);
