@@ -1,8 +1,8 @@
 const { REST, Routes } = require('discord.js');
-console.log(process.env.TOKEN);
 const fs = require('fs');
-
+const config = require('./config.json');
 const commands = [];
+console.log(process.env.TOKEN);
 
 const commandFiles = fs
     .readdirSync('./commands')
@@ -10,14 +10,27 @@ const commandFiles = fs
 
 for (const file of commandFiles) {
 
-    const command =
-        require(`./commands/${file}`);
+    try {
 
-    if (!command.data) continue;
+        const command = require(`./commands/${file}`);
 
-    commands.push(
-        command.data.toJSON()
-    );
+        console.log(`✅ ${file} -> ${command.data?.name}`);
+
+        if (!command.data) continue;
+
+        commands.push(
+            command.data.toJSON()
+        );
+
+    } catch (err) {
+
+        console.log(
+            `❌ Lỗi file ${file}`
+        );
+
+        console.error(err);
+
+    }
 
 }
 
