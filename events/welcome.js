@@ -5,9 +5,7 @@ module.exports = (client) => {
 
     client.on('guildMemberAdd', async member => {
 
-        const channel = member.guild.channels.cache.get(
-            config.welcomeChannel
-        );
+        const channel = member.guild.channels.cache.get(config.welcomeChannel);
 
         if (!channel) return;
 
@@ -39,7 +37,7 @@ module.exports = (client) => {
                 })
             )
             .setImage(
-                'https://cdn.discordapp.com/attachments/1503393797680398438/1514157252754411661/Panda.png?ex=6a2a5854&is=6a2906d4&hm=0c62bada8cbc273af5ef22458cfeb89a9d1cb0dd021ec62f1155420b0492f7a0&'
+                'https://cdn.discordapp.com/attachments/1503393797680398438/1514157252754411661/Panda.png?ex=6a2ba9d4&is=6a2a5854&hm=6a1a613a415595cfae62394675b2dfca949b27e0b23d8c2f455da0331bd564b3&'
             )
             .setFooter({
                 text: 'Tận Hưởng Phút Giây Giải Trí Tại Server Nhé ❤️'
