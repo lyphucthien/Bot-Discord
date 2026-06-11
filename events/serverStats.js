@@ -20,10 +20,26 @@ module.exports = (client) => {
                 owner?.presence?.status
             );
 
-            const ownerStatus =
-                owner?.presence?.status === 'online'
-                    ? '🟢 Owner: Online'
-                    : '🔴 Owner: Offline';
+            const status = owner?.presence?.status;
+
+            let ownerStatus;
+
+            switch (status) {
+                case 'online':
+                    ownerStatus = '🟢 Owner: Online';
+                    break;
+
+                case 'idle':
+                    ownerStatus = '🌙 Owner: Idle';
+                    break;
+
+                case 'dnd':
+                    ownerStatus = '⛔ Owner: DND';
+                    break;
+
+                default:
+                    ownerStatus = '🔴 Owner: Offline';
+            }
 
             const statsChannels = {
                 owner: '1514454494119858206',
