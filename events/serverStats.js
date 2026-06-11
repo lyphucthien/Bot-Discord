@@ -20,7 +20,7 @@ module.exports = (client) => {
                     : '🔴 Owner: Offline';
 
             const statsChannels = {
-                owner: 'OWNER_CHANNEL_ID',
+                owner: '1514454494119858206',
                 members: '1514454436905353326',
                 boosters: '1514454605998592110'
             };
@@ -48,7 +48,7 @@ module.exports = (client) => {
         }
     }
 
-    client.on('ready', () => {
+    client.on('clientReady', () => {
         const guild = client.guilds.cache.first();
 
         updateStats(guild);
