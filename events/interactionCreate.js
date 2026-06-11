@@ -47,18 +47,42 @@ module.exports = (client) => {
                         flags: 64
                     });
                 }
-
+                
+                // ========================
                 // ===== CLOSE TICKET =====
+                // ========================
                 if (interaction.customId === 'close_ticket') {
 
                     await interaction.reply({
-                        content: '🔒 Ticket sẽ đóng sau 3 giây...',
+                        content: '🔒 Bắt đầu đóng ticket...',
                         flags: 64
                     });
 
-                    setTimeout(() => {
-                        interaction.channel.delete().catch(() => { });
-                    }, 3000);
+                    let msg = await interaction.fetchReply();
+
+                    let time = 3;
+
+                    const interval = setInterval(async () => {
+
+                        if (time > 0) {
+                            await interaction.editReply({
+                                content: `🔒 Ticket sẽ đóng sau **${time}...**`
+                            });
+                        } else {
+                            await interaction.editReply({
+                                content: `🔒 Đang đóng ticket...`
+                            });
+
+                            clearInterval(interval);
+
+                            setTimeout(() => {
+                                interaction.channel.delete().catch(() => { });
+                            }, 1000);
+                        }
+
+                        time--;
+
+                    }, 1000);
                 }
             }
 
