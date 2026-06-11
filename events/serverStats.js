@@ -58,19 +58,24 @@ module.exports = (client) => {
             for (const [id, name] of updates) {
                 const channel = guild.channels.cache.get(id);
 
-                if (
-                    channel &&
-                    channel.type === ChannelType.GuildVoice &&
-                    channel.name !== name
-                ) {
-                    await channel.setName(name);
+                console.log(
+                    "Channel:",
+                    channel?.name,
+                    "=>",
+                    name,
+                    "Type:",
+                    channel?.type
+                );
+
+                if (channel && channel.name !== name) {
+                    try {
+                        await channel.setName(name);
+                        console.log("✅ Updated:", name);
+                    } catch (err) {
+                        console.error("❌ setName Error:", err);
+                    }
                 }
             }
-
-        } catch (err) {
-            console.error(err);
-        }
-    }
 
     client.on('clientReady', () => {
         const guild = client.guilds.cache.first();
