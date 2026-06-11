@@ -58,8 +58,6 @@ module.exports = (client) => {
                         flags: 64
                     });
 
-                    let msg = await interaction.fetchReply();
-
                     let time = 3;
 
                     const interval = setInterval(async () => {
@@ -81,7 +79,6 @@ module.exports = (client) => {
                         }
 
                         time--;
-
                     }, 1000);
                 }
             }
@@ -95,8 +92,9 @@ module.exports = (client) => {
 
                     const type = interaction.values[0];
 
+                    // ⚡ FIX CHECK CHANNEL ĐÚNG
                     const existing = interaction.guild.channels.cache.find(
-                        c => c.name === `ticket-${interaction.user.id}`
+                        c => c.name.includes(interaction.user.id)
                     );
 
                     if (existing) {
@@ -105,6 +103,9 @@ module.exports = (client) => {
                             flags: 64
                         });
                     }
+
+                    // ⚡ FIX LAG / TIMEOUT → deferReply
+                    await interaction.deferReply({ flags: 64 });
 
                     const channel = await interaction.guild.channels.create({
                         name: `ticket-${type}-${interaction.user.id}`,
@@ -122,20 +123,14 @@ module.exports = (client) => {
                                     PermissionsBitField.Flags.ReadMessageHistory,
                                 ],
                             },
-                            ...(config.staffRoles || []).map(roleId => {
-                                const role = interaction.guild.roles.cache.get(roleId);
-
-                                if (!role) return null;
-
-                                return {
-                                    id: role.id,
-                                    allow: [
-                                        PermissionsBitField.Flags.ViewChannel,
-                                        PermissionsBitField.Flags.SendMessages,
-                                        PermissionsBitField.Flags.ReadMessageHistory,
-                                    ],
-                                };
-                            }).filter(Boolean)
+                            ...(config.staffRoles || []).map(roleId => ({
+                                id: roleId,
+                                allow: [
+                                    PermissionsBitField.Flags.ViewChannel,
+                                    PermissionsBitField.Flags.SendMessages,
+                                    PermissionsBitField.Flags.ReadMessageHistory,
+                                ],
+                            }))
                         ]
                     });
 
@@ -180,8 +175,12 @@ module.exports = (client) => {
                         embeds: [embed],
                         components: [row],
                         allowed_mentions: {
-                            roles: [config.staffRole]
+                            roles: [config.ticketPingRole] // ⚡ FIX ĐÚNG ROLE
                         }
+                    });
+
+                    return interaction.editReply({
+                        content: `✅ Đã tạo ticket: ${channel}`
                     });
                 }
             }
