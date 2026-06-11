@@ -122,15 +122,21 @@ module.exports = (client) => {
                                     PermissionsBitField.Flags.ReadMessageHistory,
                                 ],
                             },
-                            {
-                                id: config.staffRole,
-                                allow: [
-                                    PermissionsBitField.Flags.ViewChannel,
-                                    PermissionsBitField.Flags.SendMessages,
-                                    PermissionsBitField.Flags.ReadMessageHistory,
-                                ],
-                            },
-                        ],
+                            ...(config.staffRoles || []).map(roleId => {
+                                const role = interaction.guild.roles.cache.get(roleId);
+
+                                if (!role) return null;
+
+                                return {
+                                    id: role.id,
+                                    allow: [
+                                        PermissionsBitField.Flags.ViewChannel,
+                                        PermissionsBitField.Flags.SendMessages,
+                                        PermissionsBitField.Flags.ReadMessageHistory,
+                                    ],
+                                };
+                            }).filter(Boolean)
+                        ]
                     });
 
                     let title = '';
