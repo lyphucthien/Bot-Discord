@@ -11,8 +11,16 @@ module.exports = (client) => {
             // Owner server
             let owner = guild.members.cache.get(guild.ownerId);
 
+            console.log(
+                "Owner cached:",
+                guild.members.cache.has(guild.ownerId)
+            );
+
             if (!owner) {
+                console.log("⚠️ Owner chưa cache, đang fetch...");
                 owner = await guild.members.fetch(guild.ownerId);
+            } else {
+                console.log("✅ Owner đã cache");
             }
 
             console.log(
@@ -79,7 +87,7 @@ module.exports = (client) => {
 
         setInterval(() => {
             updateStats(guild);
-        }, 3 * 60 * 1000);
+        }, 60 * 1000);
     });
 
     client.on('guildMemberAdd', member => updateStats(member.guild));
