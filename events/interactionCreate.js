@@ -47,7 +47,7 @@ module.exports = (client) => {
                         flags: 64
                     });
                 }
-                
+
                 // ========================
                 // ===== CLOSE TICKET =====
                 // ========================
@@ -122,6 +122,14 @@ module.exports = (client) => {
                                     PermissionsBitField.Flags.ReadMessageHistory,
                                 ],
                             },
+                            {
+                                id: config.staffRole,
+                                allow: [
+                                    PermissionsBitField.Flags.ViewChannel,
+                                    PermissionsBitField.Flags.SendMessages,
+                                    PermissionsBitField.Flags.ReadMessageHistory,
+                                ],
+                            },
                         ],
                     });
 
@@ -162,6 +170,7 @@ module.exports = (client) => {
                     };
 
                     await channel.send({
+                        content: `<@&${config.staffRole}> 🚨 Có ticket mới được tạo!`,
                         embeds: [embed],
                         components: [row]
                     });
