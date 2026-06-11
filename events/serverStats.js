@@ -15,13 +15,6 @@ module.exports = (client) => {
                 owner = await guild.members.fetch(guild.ownerId);
             }
 
-            console.log(
-                "Owner:",
-                owner?.user.tag,
-                "Status:",
-                owner?.presence?.status
-            );
-
             const status = owner?.presence?.status;
 
             let ownerStatus;
