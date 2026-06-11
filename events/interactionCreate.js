@@ -176,17 +176,12 @@ module.exports = (client) => {
                     };
 
                     await channel.send({
-                        content: `<@&${config.staffRole}> 🚨 Có ticket mới được tạo!`,
-                        allowedMentions: {
-                            roles: [config.staffRole]
-                        },
+                        content: `<@&${config.ticketPingRole}> 🚨 Có ticket mới được tạo!`,
                         embeds: [embed],
-                        components: [row]
-                    });
-
-                    return interaction.reply({
-                        content: `✅ Đã tạo ticket: ${channel}`,
-                        flags: 64
+                        components: [row],
+                        allowed_mentions: {
+                            roles: [config.staffRole]
+                        }
                     });
                 }
             }
