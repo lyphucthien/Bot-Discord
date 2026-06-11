@@ -31,7 +31,7 @@ module.exports = {
         }
 
         const embed = new EmbedBuilder()
-            .setColor('Blue')
+            .setColor('Green')
             .setTitle(`📊 Level của ${interaction.user.username}`)
             .addFields(
                 {
