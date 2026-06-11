@@ -51,8 +51,8 @@ module.exports = (client) => {
 
             const updates = [
                 [statsChannels.owner, ownerStatus],
-                [statsChannels.members, `👥 Members: ${totalMembers}`],
-                [statsChannels.boosters, `🚀 Boosters: ${boosts}`]
+                [statsChannels.members, `👥 Members • ${totalMembers}`],
+                [statsChannels.boosters, `🚀 Boosters • ${boosts}`]
             ];
 
             for (const [id, name] of updates) {
