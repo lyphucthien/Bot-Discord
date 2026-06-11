@@ -171,11 +171,11 @@ module.exports = (client) => {
                     };
 
                     await channel.send({
-                        content: `<@&${config.ticketPingRole}> 🚨 Có ticket mới được tạo!`,
+                        content: `<@&${config.staffRole}> 🚨 Có ticket mới được tạo!`,
                         embeds: [embed],
                         components: [row],
                         allowed_mentions: {
-                            roles: [config.ticketPingRole] // ⚡ FIX ĐÚNG ROLE
+                            roles: [config.staffRole] // ⚡ FIX ĐÚNG ROLE
                         }
                     });
 
