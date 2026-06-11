@@ -51,7 +51,7 @@ module.exports = {
 
         if (!member) {
             return interaction.reply({
-                content: '❌ Không Tìm Thấy User!',
+                content: '❌ Không Tìm Thấy Người Dùng!',
                 flags: 64
             });
         }
@@ -59,7 +59,7 @@ module.exports = {
         const duration = parseDuration(durationStr);
         if (!duration) {
             return interaction.reply({
-                content: '❌ Sai định dạng! Ví dụ: 10m, 1h, 1d',
+                content: '❌ Sai Định Dạng! Ví dụ: 10m, 1h, 1d',
                 flags: 64
             });
         }
@@ -68,12 +68,12 @@ module.exports = {
             await member.timeout(duration, reason);
 
             return interaction.reply({
-                content: `🔇 Đã mute **${member.user.tag}** Trong **${durationStr}**\n📝 Lý Do: ${reason}`
+                content: `🔇 Đã Hạn Chế **${member.user.tag}** Trong **${durationStr}**\n📝 Lý Do: ${reason}`
             });
         } catch (err) {
             console.error(err);
             return interaction.reply({
-                content: '❌ Không Thể Mute Người Chơi Này!',
+                content: '❌ Không Thể Hạn Chế Người Này!',
                 flags: 64
             });
         }
