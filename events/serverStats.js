@@ -11,8 +11,6 @@ module.exports = (client) => {
             const boosts = guild.premiumSubscriptionCount || 0;
 
             // Owner server
-            const owner = await guild.fetchOwner();
-
             const owner = guild.members.cache.get(guild.ownerId);
 
             console.log(
