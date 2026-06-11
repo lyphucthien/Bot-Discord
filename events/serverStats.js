@@ -87,7 +87,7 @@ module.exports = (client) => {
 
         setInterval(() => {
             updateStats(guild);
-        }, 60 * 1000);
+        }, 33 * 1000);
     });
 
     client.on('guildMemberAdd', member => updateStats(member.guild));
