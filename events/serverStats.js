@@ -26,19 +26,19 @@ module.exports = (client) => {
 
             switch (status) {
                 case 'online':
-                    ownerStatus = '🟢 Owner: Online';
+                    ownerStatus = '🟢 Owner • Online';
                     break;
 
                 case 'idle':
-                    ownerStatus = '🌙 Owner: Idle';
+                    ownerStatus = '🌙 Owner • Idle';
                     break;
 
                 case 'dnd':
-                    ownerStatus = '⛔ Owner: DND';
+                    ownerStatus = '⛔ Owner • DND';
                     break;
 
                 default:
-                    ownerStatus = '🔴 Owner: Offline';
+                    ownerStatus = '🔴 Owner • Offline';
             }
 
             const statsChannels = {
