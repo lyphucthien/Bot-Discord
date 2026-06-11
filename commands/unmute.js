@@ -3,7 +3,7 @@ const { SlashCommandBuilder, PermissionsBitField } = require('discord.js');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('unmute')
-        .setDescription('Gỡ mute (timeout)')
+        .setDescription('Gỡ Hạn Chế (timeout)')
         .addUserOption(option =>
             option.setName('user')
                 .setDescription('Người cần unmute')
