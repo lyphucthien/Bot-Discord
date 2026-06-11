@@ -3,7 +3,7 @@ const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, Butt
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('stats')
-        .setDescription('📊 Thông Số Server (Thành Viên, Bot, Người Dùng Online, Idle, DND, Offline)'),
+        .setDescription('Thông Số Server (Thành Viên, Bot, Người Dùng Online, Idle, DND, Offline)'),
 
     async execute(interaction) {
         const guild = interaction.guild;
