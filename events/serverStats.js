@@ -9,7 +9,11 @@ module.exports = (client) => {
             const boosts = guild.premiumSubscriptionCount || 0;
 
             // Owner server
-            const owner = guild.members.cache.get(guild.ownerId);
+            let owner = guild.members.cache.get(guild.ownerId);
+
+            if (!owner) {
+                owner = await guild.members.fetch(guild.ownerId);
+            }
 
             console.log(
                 "Owner:",
