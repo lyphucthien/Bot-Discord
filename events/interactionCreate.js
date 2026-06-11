@@ -177,6 +177,9 @@ module.exports = (client) => {
 
                     await channel.send({
                         content: `<@&${config.staffRole}> 🚨 Có ticket mới được tạo!`,
+                        allowedMentions: {
+                            roles: [config.staffRole]
+                        },
                         embeds: [embed],
                         components: [row]
                     });
