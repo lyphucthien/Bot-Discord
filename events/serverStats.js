@@ -13,9 +13,17 @@ module.exports = (client) => {
             // Owner server
             const owner = await guild.fetchOwner();
 
+            const owner = guild.members.cache.get(guild.ownerId);
+
+            console.log(
+                "Owner:",
+                owner?.user.tag,
+                "Status:",
+                owner?.presence?.status
+            );
+
             const ownerStatus =
-                owner.presence?.status &&
-                    owner.presence.status !== 'offline'
+                owner?.presence?.status === 'online'
                     ? '🟢 Owner: Online'
                     : '🔴 Owner: Offline';
 
