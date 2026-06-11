@@ -1,90 +1,169 @@
 const config = require('../config.json');
 
+const {
+    ChannelType,
+    PermissionsBitField,
+    EmbedBuilder
+} = require('discord.js');
+
 module.exports = (client) => {
 
     client.on('interactionCreate', async interaction => {
 
         try {
 
+            // ======================
+            // SLASH COMMANDS
+            // ======================
             if (interaction.isChatInputCommand()) {
 
-                const command = client.commands.get(
-                    interaction.commandName
-                );
-
+                const command = client.commands.get(interaction.commandName);
                 if (!command) return;
 
-                await command.execute(interaction);
-
+                await command.execute(interaction, client);
             }
 
             // ======================
-            // VERIFY BUTTON
+            // BUTTONS + MENU
             // ======================
-
             if (interaction.isButton()) {
 
-                if (
-                    interaction.customId ===
-                    'verify'
-                ) {
+                // ===== VERIFY BUTTON =====
+                if (interaction.customId === 'verify') {
 
-                    const role =
-                        interaction.guild.roles.cache.get(
-                            config.verifyRole
-                        );
+                    const role = interaction.guild.roles.cache.get(config.verifyRole);
 
                     if (!role) {
-
                         return interaction.reply({
-                            content:
-                                '❌ Không tìm thấy role',
-                            ephemeral: true
+                            content: '❌ Không tìm thấy role',
+                            flags: 64
                         });
-
                     }
 
-                    await interaction.member.roles.add(
-                        role
-                    );
+                    await interaction.member.roles.add(role);
 
-                    await interaction.reply({
-                        content:
-                            '✅ Xác minh thành công',
-                        ephemeral: true
+                    return interaction.reply({
+                        content: '✅ Xác minh thành công',
+                        flags: 64
                     });
-
                 }
 
+                // ===== CLOSE TICKET =====
+                if (interaction.customId === 'close_ticket') {
+
+                    await interaction.reply({
+                        content: '🔒 Ticket sẽ đóng sau 3 giây...',
+                        flags: 64
+                    });
+
+                    setTimeout(() => {
+                        interaction.channel.delete().catch(() => { });
+                    }, 3000);
+                }
+            }
+
+            // ======================
+            // TICKET MENU (SELECT)
+            // ======================
+            if (interaction.isStringSelectMenu()) {
+
+                if (interaction.customId === 'ticket_menu') {
+
+                    const type = interaction.values[0];
+
+                    const existing = interaction.guild.channels.cache.find(
+                        c => c.name === `ticket-${interaction.user.id}`
+                    );
+
+                    if (existing) {
+                        return interaction.reply({
+                            content: '❌ Bạn đã có ticket rồi!',
+                            flags: 64
+                        });
+                    }
+
+                    const channel = await interaction.guild.channels.create({
+                        name: `ticket-${type}-${interaction.user.id}`,
+                        type: ChannelType.GuildText,
+                        permissionOverwrites: [
+                            {
+                                id: interaction.guild.id,
+                                deny: [PermissionsBitField.Flags.ViewChannel],
+                            },
+                            {
+                                id: interaction.user.id,
+                                allow: [
+                                    PermissionsBitField.Flags.ViewChannel,
+                                    PermissionsBitField.Flags.SendMessages,
+                                    PermissionsBitField.Flags.ReadMessageHistory,
+                                ],
+                            },
+                        ],
+                    });
+
+                    let title = '';
+                    let color = '';
+
+                    if (type === 'support') {
+                        title = '🛠️ Support Ticket';
+                        color = 'Blue';
+                    }
+
+                    if (type === 'report') {
+                        title = '🚨 Report Ticket';
+                        color = 'Red';
+                    }
+
+                    if (type === 'order') {
+                        title = '🛒 Order Ticket';
+                        color = 'Green';
+                    }
+
+                    const embed = new EmbedBuilder()
+                        .setTitle(title)
+                        .setDescription('Staff sẽ hỗ trợ bạn sớm nhất.\nBấm nút 🔒 để đóng ticket.')
+                        .setColor(color);
+
+                    const row = {
+                        type: 1,
+                        components: [
+                            {
+                                type: 2,
+                                style: 4,
+                                label: 'Đóng Ticket',
+                                custom_id: 'close_ticket',
+                                emoji: '🔒'
+                            }
+                        ]
+                    };
+
+                    await channel.send({
+                        embeds: [embed],
+                        components: [row]
+                    });
+
+                    return interaction.reply({
+                        content: `✅ Đã tạo ticket: ${channel}`,
+                        flags: 64
+                    });
+                }
             }
 
         } catch (err) {
-
             console.error(err);
 
-            if (
-                interaction.deferred ||
-                interaction.replied
-            ) {
-
-                await interaction.followUp({
-                    content:
-                        '❌ Đã xảy ra lỗi.',
-                    ephemeral: true
+            if (interaction.replied || interaction.deferred) {
+                return interaction.followUp({
+                    content: '❌ Đã xảy ra lỗi.',
+                    flags: 64
                 });
-
-            } else {
-
-                await interaction.reply({
-                    content:
-                        '❌ Đã xảy ra lỗi.',
-                    ephemeral: true
-                });
-
             }
 
+            return interaction.reply({
+                content: '❌ Đã xảy ra lỗi.',
+                flags: 64
+            });
         }
-
     });
 
 };
