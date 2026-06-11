@@ -5,8 +5,6 @@ module.exports = (client) => {
     async function updateStats(guild) {
         try {
 
-            await guild.members.fetch();
-
             const totalMembers = guild.memberCount;
             const boosts = guild.premiumSubscriptionCount || 0;
 
