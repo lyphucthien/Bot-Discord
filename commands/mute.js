@@ -20,20 +20,20 @@ function parseDuration(str) {
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('mute')
-        .setDescription('Mute (timeout) một thành viên')
+        .setDescription('Hạn Chế Một Người Chơi')
         .addUserOption(option =>
             option.setName('user')
-                .setDescription('Người cần mute')
+                .setDescription('Người Cần Hạn Chế')
                 .setRequired(true)
         )
         .addStringOption(option =>
             option.setName('duration')
-                .setDescription('Thời gian (vd: 10m, 1h, 1d)')
+                .setDescription('Thời Gian (vd: 10m, 1h, 1d)')
                 .setRequired(true)
         )
         .addStringOption(option =>
             option.setName('reason')
-                .setDescription('Lý do mute')
+                .setDescription('Lý Do')
                 .setRequired(false)
         ),
 
@@ -51,7 +51,7 @@ module.exports = {
 
         if (!member) {
             return interaction.reply({
-                content: '❌ Không tìm thấy user!',
+                content: '❌ Không Tìm Thấy User!',
                 flags: 64
             });
         }
