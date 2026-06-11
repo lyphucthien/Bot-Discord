@@ -20,7 +20,7 @@ function parseDuration(str) {
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('mute')
-        .setDescription('Hạn Chế Một Người Chơi')
+        .setDescription('Hạn Chế (Timeout) Một Người Chơi')
         .addUserOption(option =>
             option.setName('user')
                 .setDescription('Người Cần Hạn Chế')
