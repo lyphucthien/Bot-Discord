@@ -1,12 +1,14 @@
-const helperRoles = Array.isArray(config.Helper)
-    ? config.Helper
-    : [config.Helper];
+const config = require('../config.json');
 const fs = require('fs');
 const path = require('path');
 
 const levelFile = path.join(__dirname, '../data/levels.json');
 const ticketStatus = require('../utils/ticketStatus');
 const cooldowns = new Map();
+
+const helperRoles = Array.isArray(config.Helper)
+    ? config.Helper
+    : [config.Helper];
 
 module.exports = (client) => {
 
@@ -23,7 +25,6 @@ module.exports = (client) => {
 
         if (!cooldowns.has(key)) {
             cooldowns.set(key, Date.now());
-
             setTimeout(() => cooldowns.delete(key), 3000);
 
             let levels = {};
@@ -33,16 +34,12 @@ module.exports = (client) => {
                     const data = fs.readFileSync(levelFile, 'utf8');
                     levels = data ? JSON.parse(data) : {};
                 } catch (err) {
-                    console.error("Lỗi Đọc levels.json:", err);
-                    levels = {};
+                    console.error(err);
                 }
             }
 
             if (!levels[userId]) {
-                levels[userId] = {
-                    xp: 0,
-                    level: 1
-                };
+                levels[userId] = { xp: 0, level: 1 };
             }
 
             const gainedXP = Math.floor(Math.random() * 15) + 5;
@@ -55,7 +52,7 @@ module.exports = (client) => {
                 levels[userId].level++;
 
                 message.channel.send(
-                    `🎉 ${message.author} đã lên **Level ${levels[userId].level}**!`
+                    `🎉 ${message.author} lên **Level ${levels[userId].level}**!`
                 );
             }
 
@@ -69,7 +66,7 @@ module.exports = (client) => {
         if (!data) return;
 
         const isStaff = message.member?.roles?.cache?.some(r =>
-            (require('../config.json').staffRoles || []).includes(r.id)
+            helperRoles.includes(r.id)
         );
 
         if (!isStaff) return;
@@ -84,14 +81,12 @@ module.exports = (client) => {
         if (!botMsg) return;
 
         const { EmbedBuilder } = require('discord.js');
-
         const oldEmbed = botMsg.embeds[0];
 
+        const desc = oldEmbed.description || '';
+
         const embed = EmbedBuilder.from(oldEmbed)
-            .setDescription(
-                oldEmbed.description +
-                `\n\nTrạng thái: **Ticket đang được xử lý** 🟢`
-            );
+            .setDescription(desc + `\n\nTrạng thái: **Ticket Đang Được Xử Lý** 🟢`);
 
         botMsg.edit({ embeds: [embed] }).catch(() => { });
     });
