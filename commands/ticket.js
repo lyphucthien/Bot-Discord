@@ -8,7 +8,7 @@ module.exports = {
     async execute(interaction) {
 
         const embed = new EmbedBuilder()
-            .setTitle('🎫 Ticket System')
+            .setTitle('🎫 Hệ Thống Ticket')
             .setDescription(
                 `📌 Chọn loại ticket bạn muốn tạo:\n\n` +
                 `🛠️ Support:\n` +
