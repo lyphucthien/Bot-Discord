@@ -141,7 +141,7 @@ module.exports = {
                     await member.roles.remove(role);
 
                     embed
-                        .setTitle('🗑️ Role Đã Tắt')
+                        .setTitle('❌ Role Đã Tắt')
                         .setDescription(
                             `👤 Thành viên: ${member}\n` +
                             `🎭 Role: ${role}`
