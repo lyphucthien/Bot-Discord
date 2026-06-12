@@ -174,7 +174,7 @@ module.exports = (client) => {
                     };
 
                     await channel.send({
-                        content: `🚨 <@&${config.Helper}> Có ticket mới được tạo!`,
+                        content: `🚨 <@&${config.Helper}> Có Ticket Mới Được Tạo!`,
                         embeds: [embed],
                         components: [row],
                         allowed_mentions: {
