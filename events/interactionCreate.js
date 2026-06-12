@@ -1,5 +1,6 @@
 const config = require('../config.json');
 const ticketStatus = require('../utils/ticketStatus');
+const doneCooldown = new Map();
 const { ChannelType, PermissionsBitField, EmbedBuilder } = require('discord.js');
 
 module.exports = (client) => {
@@ -31,7 +32,10 @@ module.exports = (client) => {
                 const role = interaction.guild.roles.cache.get(config.verifyRole);
 
                 if (!role) {
-                    return interaction.reply({ content: '❌ Không tìm thấy role', flags: 64 });
+                    return interaction.reply({
+                        content: '❌ Không tìm thấy role',
+                        flags: 64
+                    });
                 }
 
                 await interaction.member.roles.add(role);
@@ -42,22 +46,51 @@ module.exports = (client) => {
                 });
             }
 
-            // CLOSE TICKET
+            // ĐÓNG TICKET
             if (interaction.customId === 'close_ticket') {
 
                 const channelId = interaction.channel.id;
+                const data = ticketStatus.get(channelId);
+
+                if (!data || data.status === 'closed') {
+                    return interaction.reply({
+                        content: '⚠️ Ticket đã Được Đóng Rồi!',
+                        flags: 64
+                    });
+                }
 
                 ticketStatus.set(channelId, { status: 'closed' });
 
+                let time = 3;
+
                 await interaction.reply({
-                    content: '🔴 Ticket đang được đóng...',
+                    content: `⏳ Ticket Sẽ Đóng Sau **${time}...**`,
+                    fetchReply: true,
                     flags: 64
                 });
 
-                setTimeout(() => {
-                    interaction.channel.delete().catch(() => { });
-                    ticketStatus.delete(channelId);
-                }, 3000);
+                const interval = setInterval(async () => {
+
+                    time--;
+
+                    if (time > 0) {
+                        await interaction.editReply({
+                            content: `⏳ Ticket Sẽ Đóng Sau **${time}...**`
+                        });
+                    } else {
+                        await interaction.editReply({
+                            content: `🔴 Đang Đóng...`
+                        });
+
+                        clearInterval(interval);
+
+                        setTimeout(() => {
+                            ticketStatus.delete(channelId);
+                            interaction.channel.delete().catch(() => { });
+                        }, 1000);
+                    }
+
+                }, 1000);
             }
 
             // RESOLVE TICKET
@@ -101,10 +134,15 @@ module.exports = (client) => {
                 );
 
                 if (existing) {
-                    return interaction.reply({ content: '❌ Bạn đã có ticket rồi!', flags: 64 });
+                    return interaction.reply({
+                        content: '❌ Bạn Đã Có Ticket Rồi!',
+                        flags: 64
+                    });
                 }
 
-                await interaction.deferReply({ flags: 64 });
+                await interaction.deferReply({
+                    flags: 64
+                });
 
                 const channel = await interaction.guild.channels.create({
                     name: `ticket-${type}-${interaction.user.id}`,
@@ -160,18 +198,11 @@ module.exports = (client) => {
                             custom_id: 'close_ticket',
                             emoji: '🔒'
                         },
-                        {
-                            type: 2,
-                            style: 3,
-                            label: 'Đã xử lý',
-                            custom_id: 'resolve_ticket',
-                            emoji: '✅'
-                        }
                     ]
                 };
 
                 await channel.send({
-                    content: `🚨 <@&${(config.staffRoles || []).join(' ')}> Có ticket mới`,
+                    content: `🚨 ${(config.Helper || []).map(id => `<@&${id}>`).join(' ')} Có Ticket Mới`,
                     embeds: [embed],
                     components: [row]
                 });
@@ -185,10 +216,16 @@ module.exports = (client) => {
             console.error(err);
 
             if (interaction.replied || interaction.deferred) {
-                return interaction.followUp({ content: '❌ Lỗi', flags: 64 });
+                return interaction.followUp({
+                    content: '❌ Lỗi',
+                    flags: 64
+                });
             }
 
-            return interaction.reply({ content: '❌ Lỗi', flags: 64 });
+            return interaction.reply({
+                content: '❌ Lỗi',
+                flags: 64
+            });
         }
     });
 
@@ -198,31 +235,88 @@ module.exports = (client) => {
     client.on('messageCreate', async (message) => {
 
         if (message.author.bot) return;
+        if (!message.guild) return;
 
         const data = ticketStatus.get(message.channel.id);
         if (!data) return;
 
+        content: `🚨 ${(config.Helper || []).map(id => `<@&${id}>`).join(' ')} Có Ticket Mới`
+
         const isStaff = message.member?.roles?.cache?.some(r =>
-            (config.staffRoles || []).includes(r.id)
+            staffRoles.includes(r.id)
         );
 
         if (!isStaff) return;
-        if (data.staffReplied) return;
 
-        data.staffReplied = true;
-        data.status = 'processing';
+        //đóng bằng .done
+        if (message.content.toLowerCase() === '.done') {
 
-        const messages = await message.channel.messages.fetch({ limit: 20 });
-        const botMsg = messages.find(m => m.author.bot && m.embeds.length > 0);
+            const channelId = message.channel.id;
 
-        if (!botMsg) return;
+            if (!data || data.status === 'closed') return;
 
-        const embed = EmbedBuilder.from(botMsg.embeds[0])
-            .setDescription(
-                botMsg.embeds[0].description +
-                `\n📊 Trạng thái: 🟢 Đang Xử Lý`
-            );
+            if (data.status === 'resolved') {
+                return message.reply('⚠️ Ticket Này Đã Được Xử Lý!');
+            }
 
-        botMsg.edit({ embeds: [embed] }).catch(() => { });
+            // ANTI SPAM
+            const staffId = message.author.id;
+            const now = Date.now();
+
+            if (doneCooldown.has(staffId)) {
+                const expire = doneCooldown.get(staffId);
+                if (now < expire) {
+                    return message.reply('⚠️ Vui Lòng Không Spam `.done`!');
+                }
+            }
+
+            doneCooldown.set(staffId, now + 5000);
+
+            data.status = 'resolved';
+            data.staffReplied = true;
+
+            await message.reply('✅ Ticket **Đã Được Xử Lý**, Đang Đóng...');
+
+            const messages = await message.channel.messages.fetch({ limit: 20 });
+            const botMsg = messages.find(m => m.author.bot && m.embeds.length > 0);
+
+            if (botMsg) {
+                const embed = EmbedBuilder.from(botMsg.embeds[0])
+                    .setDescription(
+                        botMsg.embeds[0].description +
+                        `\n📊 Trạng thái: 🔴 Đã Xử Lý`
+                    );
+
+                await botMsg.edit({ embeds: [embed] }).catch(() => { });
+            }
+
+            // COUNTDOWN CLOSE
+            let time = 3;
+
+            const msgClose = await message.channel.send({
+                content: `⏳ Đóng Sau **${time}...**`
+            }).catch(() => null);
+
+            if (!msgClose) return;
+
+            const interval = setInterval(async () => {
+
+                time--;
+
+                if (time > 0) {
+                    await msgClose.edit(`⏳ Đóng Sau **${time}...**`);
+                } else {
+                    await msgClose.edit(`🔴 Đang Đóng...`);
+
+                    clearInterval(interval);
+
+                    setTimeout(() => {
+                        ticketStatus.delete(channelId);
+                        message.channel.delete().catch(() => { });
+                    }, 1000);
+                }
+
+            }, 1000);
+        }
     });
 };
