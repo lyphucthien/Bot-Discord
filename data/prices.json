@@ -1,0 +1,44 @@
+{
+    "fruits": [
+        {
+            "name": "Fruit 1",
+            "price": "10.000đ"
+        },
+        {
+            "name": "Fruit 2",
+            "price": "25.000đ"
+        },
+        {
+            "name": "Fruit 3",
+            "price": "50.000đ"
+        }
+    ],
+    "gamepass": [
+        {
+            "name": "Gamepass 1",
+            "price": "20.000đ"
+        },
+        {
+            "name": "Gamepass 2",
+            "price": "45.000đ"
+        },
+        {
+            "name": "Gamepass 3",
+            "price": "80.000đ"
+        }
+    ],
+    "account": [
+        {
+            "name": "Account 1",
+            "price": "15.000đ"
+        },
+        {
+            "name": "Account 2",
+            "price": "35.000đ"
+        },
+        {
+            "name": "Account 3",
+            "price": "70.000đ"
+        }
+    ]
+}
