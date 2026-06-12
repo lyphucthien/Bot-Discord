@@ -3,10 +3,22 @@ const path = require('path');
 
 const levelFile = path.join(__dirname, '../data/levels.json');
 
+const cooldowns = new Map();
+
 module.exports = (client) => {
+
     client.on('messageCreate', async (message) => {
+
         if (message.author.bot) return;
         if (!message.guild) return;
+
+        const userId = message.author.id;
+        const key = `${message.guild.id}-${userId}`;
+
+        if (cooldowns.has(key)) return;
+
+        cooldowns.set(key, true);
+        setTimeout(() => cooldowns.delete(key), 5000);
 
         let levels = {};
 
@@ -19,8 +31,6 @@ module.exports = (client) => {
                 levels = {};
             }
         }
-
-        const userId = message.author.id;
 
         if (!levels[userId]) {
             levels[userId] = {
