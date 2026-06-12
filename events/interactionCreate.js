@@ -54,7 +54,7 @@ module.exports = (client) => {
 
                 if (!data || data.status === 'closed') {
                     return interaction.reply({
-                        content: '⚠️ Ticket đã Được Đóng Rồi!',
+                        content: '⚠️ Ticket Này Đã Được Đóng!',
                         flags: 64
                     });
                 }
@@ -86,7 +86,7 @@ module.exports = (client) => {
 
                         setTimeout(() => {
                             ticketStatus.delete(channelId);
-                            interaction.channel.delete().catch(() => { });
+                            await interaction.channel.delete().catch(() => { });
                         }, 1000);
                     }
 
@@ -160,14 +160,14 @@ module.exports = (client) => {
                                 PermissionsBitField.Flags.ReadMessageHistory,
                             ],
                         },
-                        ...(config.Helper || []).map(roleId => ({
-                            id: roleId,
+                        ...(config.Helper ? [{
+                            id: config.Helper,
                             allow: [
                                 PermissionsBitField.Flags.ViewChannel,
                                 PermissionsBitField.Flags.SendMessages,
                                 PermissionsBitField.Flags.ReadMessageHistory,
                             ],
-                        }))
+                        }] : [])
                     ]
                 });
 
@@ -202,7 +202,6 @@ module.exports = (client) => {
                 };
 
                 await channel.send({
-                    content: `🚨 ${(config.Helper || []).map(id => `<@&${id}>`).join(' ')} Có Ticket Mới`,
                     embeds: [embed],
                     components: [row]
                 });
@@ -240,10 +239,10 @@ module.exports = (client) => {
         const data = ticketStatus.get(message.channel.id);
         if (!data) return;
 
-        content: `🚨 ${(config.Helper || []).map(id => `<@&${id}>`).join(' ')} Có Ticket Mới`
+        content: `🚨 <@&${config.Helper}> Có Ticket Mới`
 
         const isStaff = message.member?.roles?.cache?.some(r =>
-            staffRoles.includes(r.id)
+            helperRoles.includes(r.id)
         );
 
         if (!isStaff) return;
@@ -310,9 +309,9 @@ module.exports = (client) => {
 
                     clearInterval(interval);
 
-                    setTimeout(() => {
+                    setTimeout(async () => {
                         ticketStatus.delete(channelId);
-                        message.channel.delete().catch(() => { });
+                        await interaction.channel.delete().catch(() => { });
                     }, 1000);
                 }
 
