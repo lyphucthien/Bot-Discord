@@ -262,7 +262,7 @@ module.exports = {
             ctx.font = '18px Sans';
 
             ctx.fillText(
-                '👑 OWNER',
+                'OWNER',
                 badgeX + 12,
                 115
             );
@@ -287,7 +287,7 @@ module.exports = {
             ctx.fillStyle = '#FFFFFF';
 
             ctx.fillText(
-                '🛡️ ADMIN',
+                'ADMIN',
                 badgeX + 12,
                 115
             );
@@ -312,7 +312,7 @@ module.exports = {
             ctx.fillStyle = '#FFFFFF';
 
             ctx.fillText(
-                '🎫 HELPER',
+                'HELPER',
                 badgeX + 10,
                 115
             );
@@ -338,7 +338,7 @@ module.exports = {
             ctx.font = '18px Sans';
 
             ctx.fillText(
-                '💎 VIP',
+                'VIP',
                 badgeX + 22,
                 115
             );
@@ -363,7 +363,7 @@ module.exports = {
             ctx.fillStyle = '#000000';
 
             ctx.fillText(
-                '💜 Người Đẹp Zai',
+                'Người Đzai',
                 badgeX + 12,
                 115
             );
