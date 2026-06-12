@@ -1,20 +1,6 @@
-const cooldowns = new Set();
-const fs = require('fs');
-const path = require('path');
-
-const levelFile = path.join(
-    __dirname,
-    '../data/levels.json'
-);
-
-function xpFor(level) {
-    if (level <= 0) return 0;
-    return level * level * 100;
-}
-
 module.exports = (client) => {
 
-    client.on('messageCreate'), async (message) => {
+    client.on('messageCreate', async (message) => {
 
         if (message.author.bot) return;
         if (!message.guild) return;
@@ -31,7 +17,6 @@ module.exports = (client) => {
 
         const xp = Math.floor(Math.random() * 11) + 10;
 
-        // add xp database
         let levels = {};
 
         if (fs.existsSync(levelFile)) {
@@ -62,5 +47,7 @@ module.exports = (client) => {
             levelFile,
             JSON.stringify(levels, null, 4)
         );
-    }
+
+    });
+
 };
