@@ -1,16 +1,40 @@
 {
     "fruits": [
         {
-            "name": "Fruit 1",
+            "name": "T-rex / Venom",
             "price": "10.000đ"
         },
         {
-            "name": "Fruit 2",
-            "price": "25.000đ"
+            "name": "Dough",
+            "price": "15.000đ"
         },
         {
-            "name": "Fruit 3",
-            "price": "50.000đ"
+            "name": "Gas",
+            "price": "18.000đ"
+        },
+        {
+            "name": "Lightning",
+            "price": "20.000đ"
+        },
+        {
+            "name": "Control",
+            "price": "30.000đ"
+        },
+        {
+            "name": "Tiger / Yeti",
+            "price": "35.000đ"
+        },
+                {
+            "name": "Kitsune",
+            "price": "75.000đ"
+        },
+        {
+            "name": "Dragon East",
+            "price": "420.000đ"
+        },
+        {
+            "name": "Dragon West",
+            "price": "450.000đ"
         }
     ],
     "gamepass": [
