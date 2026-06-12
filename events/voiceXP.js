@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-
+const cooldowns = new Map();
 const levelFile = path.join(
     __dirname,
     '../data/levels.json'
