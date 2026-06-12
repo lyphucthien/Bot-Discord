@@ -1,8 +1,7 @@
 const config = require('../config.json');
-
+const ticketStatus = require('../utils/ticketStatus');
 const { ChannelType, PermissionsBitField, EmbedBuilder } = require('discord.js');
 
-const ticketStatus = new Map();
 
 module.exports = (client) => {
 
@@ -186,13 +185,10 @@ module.exports = (client) => {
                         content: `✅ Đã tạo ticket: ${channel}`
                     });
                 }
-            }
 
-            // ======================
-            // RESOLVE BUTTON
-            // ======================
-            if (interaction.isButton()) {
-
+                // ======================
+                // RESOLVE BUTTON
+                // ======================
                 if (interaction.customId === 'resolve_ticket') {
 
                     const channelId = interaction.channel.id;
