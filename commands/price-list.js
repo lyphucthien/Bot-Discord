@@ -1,10 +1,4 @@
-const {
-    SlashCommandBuilder,
-    EmbedBuilder,
-    ActionRowBuilder,
-    ButtonBuilder,
-    ButtonStyle
-} = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 
 const fs = require('fs');
 const path = require('path');
@@ -12,7 +6,7 @@ const path = require('path');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('price-list')
-        .setDescription('Hiển thị bảng giá từ file JSON'),
+        .setDescription('Hiển Thị Bảng Giá'),
 
     async execute(interaction) {
 
@@ -39,32 +33,32 @@ module.exports = {
         }
 
         const embeds = {
-            fruits: buildEmbed('fruits', '🍎 BẢNG GIÁ FRUITS', 'Green'),
+            fruits: buildEmbed('fruits', '🍎 BẢNG GIÁ TRÁI', 'Green'),
             gamepass: buildEmbed('gamepass', '🎮 BẢNG GIÁ GAMEPASS', 'Blue'),
-            account: buildEmbed('account', '👤 BẢNG GIÁ ACCOUNT', 'Gold')
+            account: buildEmbed('account', '👤 BẢNG GIÁ ACC GAME', 'Gold')
         };
 
         const row = new ActionRowBuilder().addComponents(
             new ButtonBuilder()
                 .setCustomId('fruits')
-                .setLabel('🍎 Giá Trái')
+                .setLabel('🍎 Trái')
                 .setStyle(ButtonStyle.Success),
 
             new ButtonBuilder()
                 .setCustomId('gamepass')
-                .setLabel('🎮 Giá Gamepass')
+                .setLabel('🎮 Gamepass')
                 .setStyle(ButtonStyle.Primary),
 
             new ButtonBuilder()
                 .setCustomId('account')
-                .setLabel('👤 Giá Acc')
+                .setLabel('👤 Acc')
                 .setStyle(ButtonStyle.Secondary),
         );
 
         const msg = await interaction.reply({
             embeds: [embeds.fruits],
             components: [row],
-            fetchReply: true
+            withResponse: true
         });
 
         const collector = msg.createMessageComponentCollector({
