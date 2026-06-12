@@ -392,14 +392,14 @@ module.exports = {
         ctx.font = '28px Arial';
 
         ctx.fillText(
-            `Level: ${data.level}`,
+            `Level: **${data.level}**`,
             260,
             165
         );
 
         // Role
         ctx.fillText(
-            `Vai Trò: ${topRole}`,
+            `Vai Trò: **${topRole}**`,
             260,
             205
         );
