@@ -198,11 +198,11 @@ module.exports = {
         // =====================
         let x = 260;
 
-        if (isOwner) drawBadge(ctx, 'OWNER', x, 105, '#f1c40f'), x += 95;
-        if (isAdmin) drawBadge(ctx, 'ADMIN', x, 105, '#e74c3c'), x += 95;
-        if (isHelper) drawBadge(ctx, 'HELP', x, 105, '#3498db'), x += 95;
-        if (isVIP) drawBadge(ctx, 'VIP', x, 105, '#9b59b6'), x += 95;
-        if (isBooster) drawBadge(ctx, 'BOOST', x, 105, '#ff73fa');
+        if (isOwner) drawBadge(ctx, 'OWNER', x, 105, '#ffd700'), x += 95;
+        if (isAdmin) drawBadge(ctx, 'ADMIN', x, 105, '#ff1744'), x += 95;
+        if (isHelper) drawBadge(ctx, 'HELP', x, 105, '#2979ff'), x += 95;
+        if (isVIP) drawBadge(ctx, 'VIP', x, 105, '#d500f9'), x += 95;
+        if (isBooster) drawBadge(ctx, 'BOOST', x, 105, '#fa80f6');
 
         // =====================
         // INFO TEXT
