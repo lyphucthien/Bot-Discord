@@ -2,13 +2,32 @@ const config = require('../config.json');
 const fs = require('fs');
 const path = require('path');
 
-const levelFile = path.join(__dirname, '../data/levels.json');
 const ticketStatus = require('../utils/ticketStatus');
 const cooldowns = new Map();
 
+const levelFile = path.join(__dirname, '../data/levels.json');
+
+// ======================
+// LOAD CACHE 1 LẦN (FIX LAG)
+// ======================
+let levels = {};
+
+if (fs.existsSync(levelFile)) {
+    try {
+        levels = JSON.parse(fs.readFileSync(levelFile, 'utf8')) || {};
+    } catch (err) {
+        console.error('Load level file error:', err);
+    }
+}
+
+// ======================
+// HELPER ROLES SAFE
+// ======================
 const helperRoles = Array.isArray(config.Helper)
     ? config.Helper
-    : [config.Helper];
+    : config.Helper
+        ? [config.Helper]
+        : [];
 
 module.exports = (client) => {
 
@@ -18,7 +37,7 @@ module.exports = (client) => {
         if (!message.guild) return;
 
         // ======================
-        // XP SYSTEM
+        // XP SYSTEM (FIXED)
         // ======================
         const userId = message.author.id;
         const key = `${message.guild.id}-${userId}`;
@@ -27,36 +46,35 @@ module.exports = (client) => {
             cooldowns.set(key, Date.now());
             setTimeout(() => cooldowns.delete(key), 3000);
 
-            let levels = {};
-
-            if (fs.existsSync(levelFile)) {
-                try {
-                    const data = fs.readFileSync(levelFile, 'utf8');
-                    levels = data ? JSON.parse(data) : {};
-                } catch (err) {
-                    console.error(err);
-                }
-            }
-
-            if (!levels[userId]) {
-                levels[userId] = { xp: 0, level: 1 };
+            if (!levels[key]) {
+                levels[key] = { xp: 0, level: 1 };
             }
 
             const gainedXP = Math.floor(Math.random() * 15) + 5;
-            levels[userId].xp += gainedXP;
+            levels[key].xp += gainedXP;
 
-            const neededXP = levels[userId].level * 100;
+            const neededXP = levels[key].level * 100;
 
-            if (levels[userId].xp >= neededXP) {
-                levels[userId].xp -= neededXP;
-                levels[userId].level++;
+            if (levels[key].xp >= neededXP) {
+                levels[key].xp -= neededXP;
+                levels[key].level++;
 
                 message.channel.send(
-                    `🎉 ${message.author} lên **Level ${levels[userId].level}**!`
+                    `🎉 ${message.author} Lên **Level ${levels[key].level}**!`
                 );
             }
 
-            fs.writeFileSync(levelFile, JSON.stringify(levels, null, 2));
+            // ======================
+            // SAFE WRITE FILE
+            // ======================
+            try {
+                fs.writeFileSync(
+                    levelFile,
+                    JSON.stringify(levels, null, 2)
+                );
+            } catch (err) {
+                console.error('Write level file error:', err);
+            }
         }
 
         // ======================
@@ -75,8 +93,14 @@ module.exports = (client) => {
         data.staffReplied = true;
         data.status = 'processing';
 
+        ticketStatus.set(message.channel.id, data);
+
         const messages = await message.channel.messages.fetch({ limit: 10 });
-        const botMsg = messages.find(m => m.author.bot && m.embeds.length > 0);
+        if (!messages) return;
+
+        const botMsg = messages.find(
+            m => m.author.bot && m.embeds.length > 0
+        );
 
         if (!botMsg) return;
 
@@ -86,8 +110,10 @@ module.exports = (client) => {
         const desc = oldEmbed.description || '';
 
         const embed = EmbedBuilder.from(oldEmbed)
-            .setDescription(desc + `\n\nTrạng thái: **Ticket Đang Được Xử Lý** 🟢`);
+            .setDescription(
+                `${desc}\n\n🟢 Ticket Đang Được Xử Lý`
+            );
 
-        botMsg.edit({ embeds: [embed] }).catch(() => { });
+        await botMsg.edit({ embeds: [embed] }).catch(() => { });
     });
 };
