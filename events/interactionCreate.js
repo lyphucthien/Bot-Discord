@@ -49,6 +49,101 @@ module.exports = (client) => {
                 }
 
                 // ========================
+                // ===== SHOP BUTTON =====
+                // ========================
+                if (interaction.customId === 'create_ticket_shop') {
+
+                    const existing = interaction.guild.channels.cache.find(
+                        c => c.name.includes(interaction.user.id)
+                    );
+
+                    if (existing) {
+                        return interaction.reply({
+                            content: '❌ Bạn đã có ticket rồi!',
+                            flags: 64
+                        });
+                    }
+
+                    await interaction.deferReply({ flags: 64 });
+
+                    const channel = await interaction.guild.channels.create({
+                        name: `shop-${interaction.user.id}`,
+                        type: ChannelType.GuildText,
+                        permissionOverwrites: [
+                            {
+                                id: interaction.guild.id,
+                                deny: [PermissionsBitField.Flags.ViewChannel],
+                            },
+                            {
+                                id: interaction.user.id,
+                                allow: [
+                                    PermissionsBitField.Flags.ViewChannel,
+                                    PermissionsBitField.Flags.SendMessages,
+                                    PermissionsBitField.Flags.ReadMessageHistory,
+                                ],
+                            },
+                            ...(config.staffRoles || []).map(roleId => ({
+                                id: roleId,
+                                allow: [
+                                    PermissionsBitField.Flags.ViewChannel,
+                                    PermissionsBitField.Flags.SendMessages,
+                                    PermissionsBitField.Flags.ReadMessageHistory,
+                                ],
+                            }))
+                        ]
+                    });
+
+                    const embed = new EmbedBuilder()
+                        .setTitle('🛒 Order Ticket')
+                        .setDescription(
+                            'Cảm ơn bạn đã đặt hàng!\n\n' +
+                            '📝 Hãy mô tả sản phẩm bạn muốn mua.\n' +
+                            '💰 Staff sẽ báo giá và xử lý sớm nhất.'
+                        )
+                        .setColor('Green');
+
+                    const row = {
+                        type: 1,
+                        components: [
+                            {
+                                type: 2,
+                                style: 4,
+                                label: 'Đóng Ticket',
+                                custom_id: 'close_ticket',
+                                emoji: '🔒'
+                            }
+                        ]
+                    };
+
+                    await channel.send({
+                        content: `🛒 <@${interaction.user.id}> ticket của bạn đã được tạo!`,
+                        embeds: [embed],
+                        components: [row]
+                    });
+
+                    return interaction.editReply({
+                        content: `✅ Đã tạo shop ticket: ${channel}`
+                    });
+                }
+
+
+                // ========================
+                // ===== SHOP INFO =====
+                // ========================
+                if (interaction.customId === 'shop_info') {
+
+                    return interaction.reply({
+                        content:
+                            `📌 **Hướng dẫn mua hàng:**\n` +
+                            `1. Nhấn "Đặt hàng"\n` +
+                            `2. Mô tả sản phẩm\n` +
+                            `3. Staff báo giá\n` +
+                            `4. Thanh toán & nhận hàng\n\n` +
+                            `⏱ Thời gian xử lý: 1–30 phút`,
+                        flags: 64
+                    });
+                }
+                // ========================
                 // ===== CLOSE TICKET =====
                 // ========================
                 if (interaction.customId === 'close_ticket') {
