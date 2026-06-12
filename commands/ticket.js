@@ -36,8 +36,9 @@ module.exports = {
                 }
             );
 
-        const row = new ActionRowBuilder().addComponents(
-            menu,
+        const menuRow = new ActionRowBuilder().addComponents(menu);
+
+        const buttonRow = new ActionRowBuilder().addComponents(
             new ButtonBuilder()
                 .setCustomId('ticket_info')
                 .setLabel('ℹ️ Info')
