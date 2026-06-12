@@ -57,7 +57,7 @@ module.exports = (client) => {
                     });
 
                     await interaction.reply({
-                        content: '🔴 Ticket Đã Được Được Xử Lý Xong...',
+                        content: 'Ticket Đã Được Được Xử Lý Xong...',
                         flags: 64
                     });
 
@@ -145,7 +145,7 @@ module.exports = (client) => {
                     const embed = new EmbedBuilder()
                         .setTitle(title)
                         .setDescription(
-                            `Staff sẽ hỗ trợ bạn sớm nhất.\n` +
+                            `Staff Sẽ Hỗ Trợ Bạn Sớm Nhất.\n` +
                             `Bấm nút 🔒 để đóng ticket.\n\n` +
                             `⏱ Thời gian tạo: <t:${Math.floor(createdAt / 1000)}:F>\n` +
                             `📊 Trạng thái: 🟡 Chờ Staff Phản Hồi`
@@ -182,7 +182,7 @@ module.exports = (client) => {
                     });
 
                     return interaction.editReply({
-                        content: `✅ Đã tạo ticket: ${channel}`
+                        content: `✅ Đã Tạo Ticket: ${channel}`
                     });
                 }
 
