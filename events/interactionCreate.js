@@ -200,15 +200,35 @@ module.exports = (client) => {
 
                     if (data) data.status = 'resolved';
 
+                    let time = 3;
+
                     await interaction.reply({
-                        content: '🔴 Ticket Đã Xử Lý Xong, Đang Đóng...',
+                        content: `Ticket Sẽ Đóng Sau **${time}...**`,
                         flags: 64
                     });
 
-                    setTimeout(() => {
-                        interaction.channel.delete().catch(() => { });
-                        ticketStatus.delete(channelId);
-                    }, 3000);
+                    const interval = setInterval(async () => {
+
+                        time--;
+
+                        if (time > 0) {
+                            await interaction.editReply({
+                                content: `Ticket Sẽ Đóng Sau **${time}...**`
+                            });
+                        } else {
+                            await interaction.editReply({
+                                content: `Đang Đóng Ticket...`
+                            });
+
+                            clearInterval(interval);
+
+                            setTimeout(() => {
+                                interaction.channel.delete().catch(() => { });
+                                ticketStatus.delete(channelId);
+                            }, 1000);
+                        }
+
+                    }, 1000);
                 }
             }
 
