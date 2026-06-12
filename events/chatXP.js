@@ -12,11 +12,9 @@ function xpFor(level) {
     return level * level * 100;
 }
 
-module.exports = {
+module.exports = (client) => {
 
-    name: 'messageCreate',
-
-    async execute(message) {
+    client.on('messageCreate'), async (message) => {
 
         if (message.author.bot) return;
         if (!message.guild) return;
