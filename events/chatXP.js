@@ -1,3 +1,4 @@
+const cooldowns = new Map();
 module.exports = (client) => {
 
     client.on('messageCreate', async (message) => {
