@@ -1,3 +1,6 @@
+const helperRoles = Array.isArray(config.Helper)
+    ? config.Helper
+    : [config.Helper];
 const fs = require('fs');
 const path = require('path');
 
