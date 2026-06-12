@@ -2,6 +2,8 @@ const config = require('../config.json');
 
 const { ChannelType, PermissionsBitField, EmbedBuilder } = require('discord.js');
 
+const ticketStatus = new Map();
+
 module.exports = (client) => {
 
     client.on('interactionCreate', async interaction => {
@@ -45,42 +47,29 @@ module.exports = (client) => {
                 }
 
                 // ========================
-                // ===== CLOSE TICKET =====
+                // CLOSE TICKET
                 // ========================
                 if (interaction.customId === 'close_ticket') {
 
+                    const channelId = interaction.channel.id;
+
+                    ticketStatus.set(channelId, {
+                        status: 'closed'
+                    });
+
                     await interaction.reply({
-                        content: '🔒 Bắt đầu đóng ticket...',
+                        content: '🔴 Ticket Đã Được Được Xử Lý Xong...',
                         flags: 64
                     });
 
-                    let time = 3;
-
-                    const interval = setInterval(async () => {
-
-                        if (time > 0) {
-                            await interaction.editReply({
-                                content: `🔒 Ticket sẽ đóng sau **${time}...**`
-                            });
-                        } else {
-                            await interaction.editReply({
-                                content: `🔒 Đang đóng ticket...`
-                            });
-
-                            clearInterval(interval);
-
-                            setTimeout(() => {
-                                interaction.channel.delete().catch(() => { });
-                            }, 1000);
-                        }
-
-                        time--;
-                    }, 1000);
+                    setTimeout(() => {
+                        interaction.channel.delete().catch(() => { });
+                    }, 3000);
                 }
             }
 
             // ======================
-            // TICKET MENU (SELECT)
+            // TICKET MENU
             // ======================
             if (interaction.isStringSelectMenu()) {
 
@@ -146,9 +135,22 @@ module.exports = (client) => {
                         color = 'Green';
                     }
 
+                    const createdAt = Date.now();
+
+                    ticketStatus.set(channel.id, {
+                        status: 'waiting',
+                        staffReplied: false,
+                        createdAt
+                    });
+
                     const embed = new EmbedBuilder()
                         .setTitle(title)
-                        .setDescription('Staff sẽ hỗ trợ bạn sớm nhất.\nBấm nút 🔒 để đóng ticket.')
+                        .setDescription(
+                            `Staff sẽ hỗ trợ bạn sớm nhất.\n` +
+                            `Bấm nút 🔒 để đóng ticket.\n\n` +
+                            `⏱ Thời gian tạo: <t:${Math.floor(createdAt / 1000)}:F>\n` +
+                            `📊 Trạng thái: 🟡 Chờ Staff Phản Hồi`
+                        )
                         .setColor(color);
 
                     const row = {
@@ -160,6 +162,13 @@ module.exports = (client) => {
                                 label: 'Đóng Ticket',
                                 custom_id: 'close_ticket',
                                 emoji: '🔒'
+                            },
+                            {
+                                type: 2,
+                                style: 3,
+                                label: 'Đã xử lý',
+                                custom_id: 'resolve_ticket',
+                                emoji: '✅'
                             }
                         ]
                     };
@@ -176,6 +185,30 @@ module.exports = (client) => {
                     return interaction.editReply({
                         content: `✅ Đã tạo ticket: ${channel}`
                     });
+                }
+            }
+
+            // ======================
+            // RESOLVE BUTTON
+            // ======================
+            if (interaction.isButton()) {
+
+                if (interaction.customId === 'resolve_ticket') {
+
+                    const channelId = interaction.channel.id;
+                    const data = ticketStatus.get(channelId);
+
+                    if (data) data.status = 'resolved';
+
+                    await interaction.reply({
+                        content: '🔴 Ticket Đã Xử Lý Xong, Đang Đóng...',
+                        flags: 64
+                    });
+
+                    setTimeout(() => {
+                        interaction.channel.delete().catch(() => { });
+                        ticketStatus.delete(channelId);
+                    }, 3000);
                 }
             }
 
@@ -196,4 +229,37 @@ module.exports = (client) => {
         }
     });
 
+    // ======================
+    // STAFF MESSAGE TRACKING
+    // ======================
+    client.on('messageCreate', async (message) => {
+
+        if (message.author.bot) return;
+
+        const data = ticketStatus.get(message.channel.id);
+        if (!data) return;
+
+        const isStaff = message.member?.roles?.cache?.some(r =>
+            config.staffRoles.includes(r.id)
+        );
+
+        if (!isStaff) return;
+        if (data.staffReplied) return;
+
+        data.staffReplied = true;
+        data.status = 'processing';
+
+        const messages = await message.channel.messages.fetch({ limit: 10 });
+        const botMsg = messages.find(m => m.author.bot && m.embeds.length > 0);
+
+        if (!botMsg) return;
+
+        const embed = EmbedBuilder.from(botMsg.embeds[0])
+            .setDescription(
+                botMsg.embeds[0].description +
+                `\n📊 Trạng thái: 🟢 Ticket Đang Được Xử Lý`
+            );
+
+        botMsg.edit({ embeds: [embed] });
+    });
 };
