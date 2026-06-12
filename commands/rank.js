@@ -233,7 +233,7 @@ module.exports = {
 
         // Username
         ctx.fillStyle = '#FFFFFF';
-        ctx.font = 'bold 38px Sans';
+        ctx.font = 'bold 38px Arial';
 
         ctx.fillText(
             target.username,
@@ -259,7 +259,7 @@ module.exports = {
             ctx.fill();
 
             ctx.fillStyle = '#FFFFFF';
-            ctx.font = '18px Sans';
+            ctx.font = '18px Arial';
 
             ctx.fillText(
                 'OWNER',
@@ -335,7 +335,7 @@ module.exports = {
             ctx.fill();
 
             ctx.fillStyle = '#000000';
-            ctx.font = '18px Sans';
+            ctx.font = '18px Arial';
 
             ctx.fillText(
                 'VIP',
@@ -371,7 +371,7 @@ module.exports = {
 
         // Rank
         ctx.fillStyle = '#FFFFFF';
-        ctx.font = 'bold 32px Sans';
+        ctx.font = 'bold 32px Arial';
 
         ctx.fillText(
             `TOP ${rank}`,
@@ -379,7 +379,7 @@ module.exports = {
             75
         );
 
-        ctx.font = '18px Sans';
+        ctx.font = '18px Arial';
 
         ctx.fillText(
             `${totalMembers} Members`,
@@ -389,7 +389,7 @@ module.exports = {
 
         // Level
         ctx.fillStyle = '#FFFFFF';
-        ctx.font = '28px Sans';
+        ctx.font = '28px Arial';
 
         ctx.fillText(
             `Level: ${data.level}`,
@@ -439,7 +439,7 @@ module.exports = {
 
         // XP Progress Text
         ctx.fillStyle = '#FFFFFF';
-        ctx.font = '20px Sans';
+        ctx.font = '20px Arial';
 
         ctx.fillText(
             `${data.xp - currentXP} / ${nextXP - currentXP} XP`,
