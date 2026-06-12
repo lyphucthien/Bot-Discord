@@ -246,7 +246,7 @@ module.exports = {
 
         if (isOwner) {
 
-            ctx.fillStyle = '#E74C3C';
+            ctx.fillStyle = '#ffd700';
 
             ctx.beginPath();
             ctx.roundRect(
@@ -262,7 +262,7 @@ module.exports = {
             ctx.font = '18px Sans';
 
             ctx.fillText(
-                'OWNER',
+                '👑 OWNER',
                 badgeX + 12,
                 115
             );
@@ -272,7 +272,7 @@ module.exports = {
 
         if (isAdmin) {
 
-            ctx.fillStyle = '#3498DB';
+            ctx.fillStyle = '#ff1744';
 
             ctx.beginPath();
             ctx.roundRect(
@@ -287,7 +287,7 @@ module.exports = {
             ctx.fillStyle = '#FFFFFF';
 
             ctx.fillText(
-                'ADMIN',
+                '🛡️ ADMIN',
                 badgeX + 12,
                 115
             );
@@ -297,7 +297,7 @@ module.exports = {
 
         if (isHelper) {
 
-            ctx.fillStyle = '#2ECC71';
+            ctx.fillStyle = '#2979ff';
 
             ctx.beginPath();
             ctx.roundRect(
@@ -312,7 +312,7 @@ module.exports = {
             ctx.fillStyle = '#FFFFFF';
 
             ctx.fillText(
-                'HELPER',
+                '🎫 HELPER',
                 badgeX + 10,
                 115
             );
@@ -322,7 +322,7 @@ module.exports = {
 
         if (isVIP) {
 
-            ctx.fillStyle = '#FFD700';
+            ctx.fillStyle = '#d500f9';
 
             ctx.beginPath();
             ctx.roundRect(
@@ -338,7 +338,7 @@ module.exports = {
             ctx.font = '18px Sans';
 
             ctx.fillText(
-                'VIP',
+                '💎 VIP',
                 badgeX + 22,
                 115
             );
@@ -348,7 +348,7 @@ module.exports = {
 
         if (isBooster) {
 
-            ctx.fillStyle = '#FF73FA';
+            ctx.fillStyle = '#fda8fa';
 
             ctx.beginPath();
             ctx.roundRect(
@@ -363,7 +363,7 @@ module.exports = {
             ctx.fillStyle = '#000000';
 
             ctx.fillText(
-                'BOOSTER',
+                '💜 Người Đẹp Zai',
                 badgeX + 12,
                 115
             );
