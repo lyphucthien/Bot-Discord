@@ -83,36 +83,35 @@ module.exports = (client) => {
         const data = ticketStatus.get(message.channel.id);
         if (!data) return;
 
+        // chỉ staff mới được xử lý
         const isStaff = message.member?.roles?.cache?.some(r =>
             helperRoles.includes(r.id)
         );
 
         if (!isStaff) return;
-        if (data.staffReplied) return;
 
-        data.staffReplied = true;
+        // chỉ khi ticket đang waiting mới chuyển trạng thái
+        if (data.status !== 'waiting') return;
+
         data.status = 'processing';
+        data.staffReplied = true;
 
         ticketStatus.set(message.channel.id, data);
 
-        const messages = await message.channel.messages.fetch({ limit: 10 });
-        if (!messages) return;
+        // dùng messageId thay vì fetch random
+        if (!data.messageId) return;
 
-        const botMsg = messages.find(
-            m => m.author.bot && m.embeds.length > 0
-        );
+        const botMsg = await message.channel.messages.fetch(data.messageId).catch(() => null);
+        if (!botMsg?.embeds?.length) return;
 
-        if (!botMsg) return;
-
-        const { EmbedBuilder } = require('discord.js');
         const oldEmbed = botMsg.embeds[0];
 
-        const desc = oldEmbed.description || '';
-
-        const embed = EmbedBuilder.from(oldEmbed)
-            .setDescription(
-                `${desc}\n\n🟢 Ticket Đang Được Xử Lý`
-            );
+        const embed = EmbedBuilder.from(oldEmbed).setDescription(
+            oldEmbed.description.replace(
+                /📊 Trạng thái: .*/,
+                `📊 Trạng thái: 🟢 Ticket Đang Được Xử Lý`
+            )
+        );
 
         await botMsg.edit({ embeds: [embed] }).catch(() => { });
     });
