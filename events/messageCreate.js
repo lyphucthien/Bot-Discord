@@ -11,7 +11,13 @@ module.exports = (client) => {
         let levels = {};
 
         if (fs.existsSync(levelFile)) {
-            levels = JSON.parse(fs.readFileSync(levelFile, 'utf8'));
+            try {
+                const data = fs.readFileSync(levelFile, 'utf8');
+                levels = data ? JSON.parse(data) : {};
+            } catch (err) {
+                console.error("Lỗi đọc levels.json:", err);
+                levels = {};
+            }
         }
 
         const userId = message.author.id;
