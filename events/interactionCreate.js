@@ -1,7 +1,19 @@
 const config = require('../config.json');
 const ticketStatus = require('../utils/ticketStatus');
 const doneCooldown = new Map();
-const { ChannelType, PermissionsBitField, EmbedBuilder } = require('discord.js');
+
+const {
+    ChannelType,
+    PermissionsBitField,
+    EmbedBuilder
+} = require('discord.js');
+
+// helper roles fix an toàn
+const helperRoles = Array.isArray(config.Helper)
+    ? config.Helper
+    : config.Helper
+        ? [config.Helper]
+        : [];
 
 module.exports = (client) => {
 
@@ -24,9 +36,11 @@ module.exports = (client) => {
             // ======================
             // BUTTONS
             // ======================
-            if (!interaction.isButton()) return;
+            if (!interaction.isButton() && !interaction.isStringSelectMenu()) return;
 
-            // VERIFY
+            // ======================
+            // VERIFY BUTTON
+            // ======================
             if (interaction.customId === 'verify') {
 
                 const role = interaction.guild.roles.cache.get(config.verifyRole);
@@ -41,12 +55,14 @@ module.exports = (client) => {
                 await interaction.member.roles.add(role);
 
                 return interaction.reply({
-                    content: '✅ Xác minh thành công',
+                    content: '✅ Xác Minh Thành Công',
                     flags: 64
                 });
             }
 
-            // ĐÓNG TICKET
+            // ======================
+            // CLOSE TICKET
+            // ======================
             if (interaction.customId === 'close_ticket') {
 
                 const channelId = interaction.channel.id;
@@ -59,13 +75,12 @@ module.exports = (client) => {
                     });
                 }
 
-                ticketStatus.set(channelId, { status: 'closed' });
+                ticketStatus.set(channelId, { ...data, status: 'closed' });
 
                 let time = 3;
 
                 await interaction.reply({
                     content: `⏳ Ticket Sẽ Đóng Sau **${time}...**`,
-                    fetchReply: true,
                     flags: 64
                 });
 
@@ -84,7 +99,7 @@ module.exports = (client) => {
 
                         clearInterval(interval);
 
-                        setTimeout(() => {
+                        setTimeout(async () => {
                             ticketStatus.delete(channelId);
                             await interaction.channel.delete().catch(() => { });
                         }, 1000);
@@ -93,13 +108,18 @@ module.exports = (client) => {
                 }, 1000);
             }
 
+            // ======================
             // RESOLVE TICKET
+            // ======================
             if (interaction.customId === 'resolve_ticket') {
 
                 const channelId = interaction.channel.id;
                 const data = ticketStatus.get(channelId);
 
-                if (data) data.status = 'resolved';
+                if (data) {
+                    data.status = 'resolved';
+                    ticketStatus.set(channelId, data);
+                }
 
                 const messages = await interaction.channel.messages.fetch({ limit: 20 });
                 const botMsg = messages.find(m => m.author.bot && m.embeds.length > 0);
@@ -123,9 +143,7 @@ module.exports = (client) => {
             // ======================
             // TICKET MENU
             // ======================
-            if (interaction.isStringSelectMenu()) {
-
-                if (interaction.customId !== 'ticket_menu') return;
+            if (interaction.isStringSelectMenu() && interaction.customId === 'ticket_menu') {
 
                 const type = interaction.values[0];
 
@@ -140,9 +158,7 @@ module.exports = (client) => {
                     });
                 }
 
-                await interaction.deferReply({
-                    flags: 64
-                });
+                await interaction.deferReply({ flags: 64 });
 
                 const channel = await interaction.guild.channels.create({
                     name: `ticket-${type}-${interaction.user.id}`,
@@ -160,14 +176,14 @@ module.exports = (client) => {
                                 PermissionsBitField.Flags.ReadMessageHistory,
                             ],
                         },
-                        ...(config.Helper ? [{
-                            id: config.Helper,
+                        ...helperRoles.map(r => ({
+                            id: r,
                             allow: [
                                 PermissionsBitField.Flags.ViewChannel,
                                 PermissionsBitField.Flags.SendMessages,
                                 PermissionsBitField.Flags.ReadMessageHistory,
                             ],
-                        }] : [])
+                        }))
                     ]
                 });
 
@@ -197,7 +213,7 @@ module.exports = (client) => {
                             label: 'Đóng Ticket',
                             custom_id: 'close_ticket',
                             emoji: '🔒'
-                        },
+                        }
                     ]
                 };
 
@@ -207,7 +223,7 @@ module.exports = (client) => {
                 });
 
                 return interaction.editReply({
-                    content: `✅ Đã Tạo Ticket: ${channel}`
+                    content: `✅ Đã tạo ticket: ${channel}`
                 });
             }
 
@@ -216,20 +232,20 @@ module.exports = (client) => {
 
             if (interaction.replied || interaction.deferred) {
                 return interaction.followUp({
-                    content: '❌ Lỗi',
+                    content: '❌ Lỗi hệ thống',
                     flags: 64
                 });
             }
 
             return interaction.reply({
-                content: '❌ Lỗi',
+                content: '❌ Lỗi hệ thống',
                 flags: 64
             });
         }
     });
 
     // ======================
-    // STAFF MESSAGE TRACKING
+    // MESSAGE TRACKING
     // ======================
     client.on('messageCreate', async (message) => {
 
@@ -239,26 +255,26 @@ module.exports = (client) => {
         const data = ticketStatus.get(message.channel.id);
         if (!data) return;
 
-        content: `🚨 <@&${config.Helper}> Có Ticket Mới`
-
         const isStaff = message.member?.roles?.cache?.some(r =>
             helperRoles.includes(r.id)
         );
 
         if (!isStaff) return;
 
-        //đóng bằng .done
+        // ======================
+        // DONE COMMAND
+        // ======================
         if (message.content.toLowerCase() === '.done') {
 
             const channelId = message.channel.id;
 
-            if (!data || data.status === 'closed') return;
+            if (data.status === 'closed') return;
 
             if (data.status === 'resolved') {
                 return message.reply('⚠️ Ticket Này Đã Được Xử Lý!');
             }
 
-            // ANTI SPAM
+            // anti spam
             const staffId = message.author.id;
             const now = Date.now();
 
@@ -273,6 +289,7 @@ module.exports = (client) => {
 
             data.status = 'resolved';
             data.staffReplied = true;
+            ticketStatus.set(channelId, data);
 
             await message.reply('✅ Ticket **Đã Được Xử Lý**, Đang Đóng...');
 
@@ -283,13 +300,12 @@ module.exports = (client) => {
                 const embed = EmbedBuilder.from(botMsg.embeds[0])
                     .setDescription(
                         botMsg.embeds[0].description +
-                        `\n📊 Trạng thái: 🔴 Đã Xử Lý`
+                        `\n📊 Trạng thái: 🔴 Đã xử lý`
                     );
 
                 await botMsg.edit({ embeds: [embed] }).catch(() => { });
             }
 
-            // COUNTDOWN CLOSE
             let time = 3;
 
             const msgClose = await message.channel.send({
@@ -311,7 +327,7 @@ module.exports = (client) => {
 
                     setTimeout(async () => {
                         ticketStatus.delete(channelId);
-                        await interaction.channel.delete().catch(() => { });
+                        await message.channel.delete().catch(() => { });
                     }, 1000);
                 }
 
