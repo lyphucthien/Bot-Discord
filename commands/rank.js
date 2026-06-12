@@ -3,6 +3,7 @@ const { createCanvas, loadImage } = require('canvas');
 const fs = require('fs');
 const path = require('path');
 
+
 // =====================
 // CONFIG
 // =====================
@@ -15,6 +16,7 @@ const ROLE_IDS = {
     VIP: '1503594778342850692'
 };
 
+
 // =====================
 // XP FUNCTION
 // =====================
@@ -22,6 +24,7 @@ function xpFor(level) {
     if (level <= 0) return 0;
     return level * level * 100;
 }
+
 
 // =====================
 // BADGE DRAW FUNCTION
@@ -38,6 +41,7 @@ function drawBadge(ctx, text, x, y, color) {
     ctx.fillText(text, x + 10, y + 17);
 }
 
+
 // =====================
 // LOAD LEVEL DATA
 // =====================
@@ -45,6 +49,7 @@ function loadLevels() {
     if (!fs.existsSync(levelFile)) return {};
     return JSON.parse(fs.readFileSync(levelFile, 'utf8'));
 }
+
 
 // =====================
 // MAIN COMMAND
@@ -70,6 +75,7 @@ module.exports = {
 
         const userId = target.id;
 
+
         // =====================
         // LOAD LEVELS
         // =====================
@@ -81,6 +87,7 @@ module.exports = {
 
         const data = levels[userId];
 
+
         // =====================
         // RANK CALC
         // =====================
@@ -91,6 +98,7 @@ module.exports = {
             leaderboard.findIndex(([id]) => id === userId) + 1;
 
         const totalMembers = interaction.guild.memberCount;
+
 
         // =====================
         // MEMBER DATA
@@ -107,6 +115,7 @@ module.exports = {
 
         const status = member.presence?.status || 'offline';
 
+
         // =====================
         // XP PROGRESS
         // =====================
@@ -121,11 +130,13 @@ module.exports = {
             )
         );
 
+
         // =====================
         // CANVAS SETUP
         // =====================
         const canvas = createCanvas(1000, 320);
         const ctx = canvas.getContext('2d');
+
 
         // =====================
         // BACKGROUND
@@ -137,6 +148,7 @@ module.exports = {
         ctx.fillStyle = bg;
         ctx.fillRect(0, 0, 1000, 320);
 
+
         // =====================
         // CARD
         // =====================
@@ -144,6 +156,7 @@ module.exports = {
         ctx.beginPath();
         ctx.roundRect(20, 20, 960, 280, 20);
         ctx.fill();
+
 
         // =====================
         // AVATAR
@@ -171,6 +184,7 @@ module.exports = {
 
         ctx.shadowBlur = 0;
 
+
         // =====================
         // STATUS DOT
         // =====================
@@ -186,6 +200,7 @@ module.exports = {
         ctx.arc(205, 210, 10, 0, Math.PI * 2);
         ctx.fill();
 
+
         // =====================
         // USERNAME
         // =====================
@@ -193,16 +208,18 @@ module.exports = {
         ctx.font = 'bold 36px Arial';
         ctx.fillText(target.username, 260, 85);
 
+
         // =====================
         // BADGES
         // =====================
         let x = 260;
 
-        if (isOwner) drawBadge(ctx, 'OWNER', x, 105, '#ffd700'), x += 95;
-        if (isAdmin) drawBadge(ctx, 'ADMIN', x, 105, '#ff1744'), x += 95;
-        if (isHelper) drawBadge(ctx, 'HELP', x, 105, '#2979ff'), x += 95;
-        if (isVIP) drawBadge(ctx, 'VIP', x, 105, '#d500f9'), x += 95;
-        if (isBooster) drawBadge(ctx, 'BOOST', x, 105, '#fa80f6');
+        if (isOwner) drawBadge(ctx, 'OWNER', x, 105, '#f1c40f'), x += 95;
+        if (isAdmin) drawBadge(ctx, 'ADMIN', x, 105, '#e74c3c'), x += 95;
+        if (isHelper) drawBadge(ctx, 'HELP', x, 105, '#3498db'), x += 95;
+        if (isVIP) drawBadge(ctx, 'VIP', x, 105, '#9b59b6'), x += 95;
+        if (isBooster) drawBadge(ctx, 'BOOST', x, 105, '#ff73fa');
+
 
         // =====================
         // INFO TEXT
@@ -218,6 +235,7 @@ module.exports = {
         ctx.fillText(`Level: ${data.level}`, 260, 170);
         ctx.fillText(`Role: ${member.roles.highest.name}`, 260, 205);
         ctx.fillText(`XP: ${data.xp}`, 260, 240);
+
 
         // =====================
         // PROGRESS BAR
@@ -236,6 +254,7 @@ module.exports = {
         ctx.roundRect(260, 260, 650 * progress, 22, 12);
         ctx.fill();
 
+
         // =====================
         // XP TEXT
         // =====================
@@ -247,6 +266,7 @@ module.exports = {
             260,
             305
         );
+
 
         // =====================
         // SEND IMAGE
