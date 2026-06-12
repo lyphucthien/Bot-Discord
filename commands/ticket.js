@@ -13,16 +13,16 @@ module.exports = {
                 `📌 Chọn loại ticket bạn muốn tạo:\n\n` +
                 `🛠️ Support:\n` +
                 `→ Hỗ Trợ Kỹ Thuật\n` +
-                `→ Lỗi Bot / Hệ Thống\n` +
-
+                `→ Lỗi Bot / Hệ Thống\n\n` +
+                
                 `🚨 Report:\n` +
                 `→ Báo Cáo Người Chơi Phạm Luật\n` +
-                `→ Spam / Scam / Lừa Đảo (Kể Cả Link)\n` +
-
+                `→ Spam / Scam / Lừa Đảo (Kể Cả Link)\n\n` +
+                
                 `🛒 Order:\n` +
                 `→ Hỗ Trợ Đặt / Thanh Toán / Kiểm Tra Đơn Hàng\n` +
-                `→ Lỗi Giao Dịch / Thắc Mắc Về Sản Phẩm\n` +
-
+                `→ Lỗi Giao Dịch / Thắc Mắc Về Sản Phẩm\n\n` +
+                
                 `⏱ Thời Gian Staff Phản Hồi: 1-60 Phút\n` +
                 `📦 Version: v1.0 (Test)`,
             )
