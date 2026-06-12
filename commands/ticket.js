@@ -14,7 +14,7 @@ module.exports = {
                 `🛠️ Support → Hỗ Trợ\n` +
                 `🚨 Report → Báo Cáo Người Dùng / Lỗi\n` +
                 `🛒 Order → Đặt Hàng / Mua Dịch Vụ\n\n` +
-                `⏱ Thời Gian Staff Phản Hồi: 1–30 Phút\n` +
+                `⏱ Thời Gian Staff Phản Hồi: 1m–1h\n` +
                 `📦 Version: v1.0 (Test)`,
             )
             .setColor('Blue');
