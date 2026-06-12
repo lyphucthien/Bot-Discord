@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, StringSelectMenuBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, StringSelectMenuBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -24,19 +24,25 @@ module.exports = {
                 },
                 {
                     label: 'Report',
-                    description: 'Báo cáo người dùng / lỗi',
+                    description: 'Báo Cáo Người Dùng / Lỗi',
                     value: 'report',
                     emoji: '🚨'
                 },
                 {
                     label: 'Order',
-                    description: 'Đặt hàng / mua dịch vụ',
+                    description: 'Đặt Hàng / Mua Dịch Vụ',
                     value: 'order',
                     emoji: '🛒'
                 }
             );
 
-        const row = new ActionRowBuilder().addComponents(menu);
+        const row = new ActionRowBuilder().addComponents(
+            menu,
+            new ButtonBuilder()
+                .setCustomId('ticket_info')
+                .setLabel('ℹ️ Info')
+                .setStyle(ButtonStyle.Secondary)
+        );
 
         await interaction.reply({
             embeds: [embed],
