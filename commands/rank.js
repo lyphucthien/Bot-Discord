@@ -399,7 +399,7 @@ module.exports = {
 
         // Role
         ctx.fillText(
-            `${topRole}`,
+            `Vai Trò: ${topRole}`,
             260,
             205
         );
