@@ -87,7 +87,7 @@ module.exports = {
         const msg = await interaction.reply({
             embeds: [pages[page]],
             components: [row],
-            fetchReply: true
+            withResponse: true
         });
 
         const collector = msg.createMessageComponentCollector({
