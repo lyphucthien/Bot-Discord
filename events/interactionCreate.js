@@ -39,7 +39,7 @@ module.exports = (client) => {
 
                 if (!role) {
                     return interaction.reply({
-                        content: '❌ Không tìm thấy role',
+                        content: '❌ Không Tìm Thấy Role',
                         flags: 64
                     });
                 }
@@ -188,6 +188,13 @@ module.exports = (client) => {
                     ]
                 });
 
+                await channel.send({
+                    content: `🚨 <@&${config.Helper}> Có Ticket Mới Được Tạo`,
+                    allowedMentions: {
+                        roles: [config.Helper]
+                    }
+                });
+
                 const createdAt = Date.now();
 
                 const embed = new EmbedBuilder()
@@ -212,7 +219,6 @@ module.exports = (client) => {
                     ]
                 };
 
-                // ✅ FIX: lưu messageId
                 const ticketMsg = await channel.send({
                     embeds: [embed],
                     components: [row]
@@ -264,11 +270,38 @@ module.exports = (client) => {
 
         if (!isStaff) return;
 
+        /* ======================
+           🟢 STAFF NHẮN → PROCESSING
+        ====================== */
+        if (data.status === 'waiting') {
+
+            data.status = 'processing';
+            data.staffReplied = true;
+
+            ticketStatus.set(message.channel.id, data);
+
+            if (data.messageId) {
+                const botMsg = await message.channel.messages.fetch(data.messageId).catch(() => null);
+
+                if (botMsg?.embeds?.length) {
+                    const old = botMsg.embeds[0];
+
+                    const embed = EmbedBuilder.from(old).setDescription(
+                        old.description.replace(
+                            /📊 Trạng thái: .*/,
+                            `📊 Trạng thái: 🟢 Ticket Đang Được Xử Lý`
+                        )
+                    );
+
+                    await botMsg.edit({ embeds: [embed] }).catch(() => { });
+                }
+            }
+        }
+
+        /* ======================
+           🔴 .done → RESOLVED
+        ====================== */
         if (message.content.toLowerCase() === '.done') {
-
-            const channelId = message.channel.id;
-
-            if (data.status === 'closed') return;
 
             if (data.status === 'resolved') {
                 return message.reply('⚠️ Ticket Này Đã Được Xử Lý!');
@@ -287,12 +320,10 @@ module.exports = (client) => {
             doneCooldown.set(staffId, now + 5000);
 
             data.status = 'resolved';
-            data.staffReplied = true;
-            ticketStatus.set(channelId, data);
+            ticketStatus.set(message.channel.id, data);
 
             await message.reply('✅ Ticket **Đã Được Xử Lý**, Đang Đóng...');
 
-            // FIX: update embed bằng messageId
             if (data.messageId) {
                 const botMsg = await message.channel.messages.fetch(data.messageId).catch(() => null);
 
@@ -300,7 +331,10 @@ module.exports = (client) => {
                     const old = botMsg.embeds[0];
 
                     const embed = EmbedBuilder.from(old).setDescription(
-                        `${old.description}\n📊 Trạng thái: 🔴 Đã xử lý`
+                        old.description.replace(
+                            /📊 Trạng thái: .*/,
+                            `📊 Trạng thái: 🔴 Đã Xử Lý`
+                        )
                     );
 
                     await botMsg.edit({ embeds: [embed] }).catch(() => { });
@@ -327,7 +361,7 @@ module.exports = (client) => {
                     clearInterval(interval);
 
                     setTimeout(async () => {
-                        ticketStatus.delete(channelId);
+                        ticketStatus.delete(message.channel.id);
                         await message.channel.delete().catch(() => { });
                     }, 1000);
                 }
