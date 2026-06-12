@@ -178,18 +178,6 @@ module.exports = (client) => {
                     });
                 }
             }
-            if (interaction.customId === 'ticket_info') {
-
-                return interaction.reply({
-                    content:
-                        `📌 **TICKET SYSTEM**\n\n` +
-                        `🛠️ Support → Hỗ trợ\n` +
-                        `🚨 Report → Báo cáo lỗi\n` +
-                        `🛒 Order → Đặt hàng\n\n` +
-                        `⏱ Thời gian phản hồi: 1–30 phút`,
-                    flags: 64
-                });
-            }
 
         } catch (err) {
             console.error(err);
