@@ -1,265 +1,445 @@
 const { SlashCommandBuilder, AttachmentBuilder } = require('discord.js');
+
 const { createCanvas, loadImage } = require('canvas');
+
 const fs = require('fs');
 const path = require('path');
 
+const levelFile = path.join(
+    __dirname,
+    '../data/levels.json'
+);
 
-// =====================
-// CONFIG
-// =====================
-const levelFile = path.join(__dirname, '../data/levels.json');
-
-const ROLE_IDS = {
-    OWNER: '1503389451420696606',
-    ADMIN: '1503597027735638188',
-    HELPER: '1503601043722993816',
-    VIP: '1503594778342850692'
-};
-
-
-// =====================
-// XP FUNCTION
-// =====================
 function xpFor(level) {
     if (level <= 0) return 0;
     return level * level * 100;
 }
 
-
-// =====================
-// BADGE DRAW FUNCTION
-// =====================
-function drawBadge(ctx, text, x, y, color) {
-    ctx.fillStyle = color;
-
-    ctx.beginPath();
-    ctx.roundRect(x, y, 85, 24, 10);
-    ctx.fill();
-
-    ctx.fillStyle = '#fff';
-    ctx.font = 'bold 13px Arial';
-    ctx.fillText(text, x + 10, y + 17);
-}
-
-
-// =====================
-// LOAD LEVEL DATA
-// =====================
-function loadLevels() {
-    if (!fs.existsSync(levelFile)) return {};
-    return JSON.parse(fs.readFileSync(levelFile, 'utf8'));
-}
-
-
-// =====================
-// MAIN COMMAND
-// =====================
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('rank')
         .setDescription('Xem Thẻ Rank')
         .addUserOption(option =>
-            option.setName('user')
-                .setDescription('Người muốn xem rank')
+            option
+                .setName('user')
+                .setDescription('Người Mùng Muốn Xem Rank')
         ),
-
 
     async execute(interaction) {
 
-        // =====================
-        // GET USER
-        // =====================
+        let levels = {};
+
+        if (fs.existsSync(levelFile)) {
+            levels = JSON.parse(
+                fs.readFileSync(levelFile, 'utf8')
+            );
+        }
+
         const target =
             interaction.options.getUser('user') ||
             interaction.user;
 
         const userId = target.id;
 
-
-        // =====================
-        // LOAD LEVELS
-        // =====================
-        const levels = loadLevels();
-
         if (!levels[userId]) {
-            levels[userId] = { xp: 0, level: 1 };
+            levels[userId] = {
+                xp: 0,
+                level: 1
+            };
         }
 
         const data = levels[userId];
 
-
-        // =====================
-        // RANK CALC
-        // =====================
+        // Rank
         const leaderboard = Object.entries(levels)
             .sort((a, b) => b[1].xp - a[1].xp);
 
         const rank =
-            leaderboard.findIndex(([id]) => id === userId) + 1;
+            leaderboard.findIndex(
+                ([id]) => id === userId
+            ) + 1;
 
-        const totalMembers = interaction.guild.memberCount;
+        const totalMembers =
+            interaction.guild.memberCount;
 
+        // Member Info
+        const member = await interaction.guild.members.fetch(
+            target.id
+        );
 
-        // =====================
-        // MEMBER DATA
-        // =====================
-        const member = await interaction.guild.members.fetch(userId);
+        const topRole =
+            member.roles.highest.name;
+        const OWNER_ROLE_ID =
+            '1503389451420696606';
 
-        const isOwner = member.roles.cache.has(ROLE_IDS.OWNER);
-        const isAdmin = member.roles.cache.has(ROLE_IDS.ADMIN);
-        const isHelper = member.roles.cache.has(ROLE_IDS.HELPER);
-        const isVIP = member.roles.cache.has(ROLE_IDS.VIP);
+        const ADMIN_ROLE_ID =
+            '1503597027735638188';
 
-        const boosterRole = interaction.guild.roles.premiumSubscriberRole;
-        const isBooster = boosterRole && member.roles.cache.has(boosterRole.id);
+        const HELPER_ROLE_ID =
+            '1503601043722993816';
 
-        const status = member.presence?.status || 'offline';
+        const boosterRole =
+            interaction.guild.roles.premiumSubscriberRole;
 
+        const VIP_ROLE_ID =
+            '1503594778342850692';
 
-        // =====================
-        // XP PROGRESS
-        // =====================
-        const currentXP = xpFor(data.level - 1);
-        const nextXP = xpFor(data.level + 1);
+        const isOwner =
+            member.roles.cache.has(
+                OWNER_ROLE_ID
+            );
+
+        const isAdmin =
+            member.roles.cache.has(
+                ADMIN_ROLE_ID
+            );
+
+        const isHelper =
+            member.roles.cache.has(
+                HELPER_ROLE_ID
+            );
+
+        const isVIP =
+            member.roles.cache.has(
+                VIP_ROLE_ID
+            );
+
+        const isBooster =
+            boosterRole &&
+            member.roles.cache.has(
+                boosterRole.id
+            );
+
+        const status =
+            member.presence?.status ||
+            'offline';
+
+        // XP
+        const currentXP =
+            xpFor(data.level - 1);
+
+        const nextXP =
+            xpFor(data.level + 1);
 
         const progress = Math.max(
             0,
             Math.min(
                 1,
-                (data.xp - currentXP) / (nextXP - currentXP || 1)
+                (data.xp - currentXP) /
+                (nextXP - currentXP)
             )
         );
 
+        // Canvas
+        const canvas =
+            createCanvas(1000, 320);
 
-        // =====================
-        // CANVAS SETUP
-        // =====================
-        const canvas = createCanvas(1000, 320);
-        const ctx = canvas.getContext('2d');
+        const ctx =
+            canvas.getContext('2d');
 
-
-        // =====================
-        // BACKGROUND
-        // =====================
-        const bg = ctx.createLinearGradient(0, 0, 1000, 320);
-        bg.addColorStop(0, '#1e1f22');
-        bg.addColorStop(1, '#2b2d31');
-
-        ctx.fillStyle = bg;
-        ctx.fillRect(0, 0, 1000, 320);
-
-
-        // =====================
-        // CARD
-        // =====================
-        ctx.fillStyle = '#313338';
-        ctx.beginPath();
-        ctx.roundRect(20, 20, 960, 280, 20);
-        ctx.fill();
-
-
-        // =====================
-        // AVATAR
-        // =====================
-        const avatar = await loadImage(
-            target.displayAvatarURL({ extension: 'png', size: 512 })
+        // Background
+        ctx.fillStyle = '#23272A';
+        ctx.fillRect(
+            0,
+            0,
+            canvas.width,
+            canvas.height
         );
 
-        ctx.save();
+        // Card
+        ctx.fillStyle = '#2C2F33';
+
         ctx.beginPath();
-        ctx.arc(140, 150, 80, 0, Math.PI * 2);
-        ctx.clip();
-        ctx.drawImage(avatar, 60, 70, 160, 160);
-        ctx.restore();
+        ctx.roundRect(
+            20,
+            20,
+            960,
+            280,
+            25
+        );
+        ctx.fill();
 
+        // Avatar
+        const avatar =
+            await loadImage(
+                target.displayAvatarURL({
+                    extension: 'png',
+                    size: 512
+                })
+            );
 
-        // avatar glow
+        // Glow Avatar
         ctx.shadowColor = '#5865F2';
-        ctx.shadowBlur = 20;
+        ctx.shadowBlur = 35;
 
         ctx.beginPath();
-        ctx.arc(140, 150, 82, 0, Math.PI * 2);
-        ctx.strokeStyle = '#5865F2';
-        ctx.stroke();
+        ctx.arc(
+            140,
+            150,
+            85,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fillStyle = '#5865F2';
+        ctx.fill();
 
         ctx.shadowBlur = 0;
 
+        ctx.save();
 
-        // =====================
-        // STATUS DOT
-        // =====================
-        const colors = {
-            online: '#43b581',
-            idle: '#faa61a',
-            dnd: '#f04747',
-            offline: '#747f8d'
+        ctx.beginPath();
+        ctx.arc(
+            140,
+            150,
+            80,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.closePath();
+        ctx.clip();
+
+        ctx.drawImage(
+            avatar,
+            60,
+            70,
+            160,
+            160
+        );
+
+        ctx.restore();
+
+        // Status Dot
+        const statusColors = {
+            online: '#43B581',
+            idle: '#FAA61A',
+            dnd: '#F04747',
+            offline: '#747F8D'
         };
 
-        ctx.fillStyle = colors[status];
+        ctx.fillStyle =
+            statusColors[status];
+
         ctx.beginPath();
-        ctx.arc(205, 210, 10, 0, Math.PI * 2);
+        ctx.arc(
+            205,
+            210,
+            18,
+            0,
+            Math.PI * 2
+        );
         ctx.fill();
 
+        // Username
+        ctx.fillStyle = '#FFFFFF';
+        ctx.font = 'bold 38px Arial';
 
-        // =====================
-        // USERNAME
-        // =====================
-        ctx.fillStyle = '#fff';
-        ctx.font = 'bold 36px Arial';
-        ctx.fillText(target.username, 260, 85);
+        ctx.fillText(
+            target.username,
+            260,
+            80
+        );
 
+        // Badges
+        let badgeX = 260;
 
-        // =====================
-        // BADGES
-        // =====================
-        let x = 260;
+        if (isOwner) {
 
-        if (isOwner) drawBadge(ctx, 'OWNER', x, 105, '#f1c40f'), x += 95;
-        if (isAdmin) drawBadge(ctx, 'ADMIN', x, 105, '#e74c3c'), x += 95;
-        if (isHelper) drawBadge(ctx, 'HELP', x, 105, '#3498db'), x += 95;
-        if (isVIP) drawBadge(ctx, 'VIP', x, 105, '#9b59b6'), x += 95;
-        if (isBooster) drawBadge(ctx, 'BOOST', x, 105, '#ff73fa');
+            ctx.fillStyle = '#ffd700';
 
+            ctx.beginPath();
+            ctx.roundRect(
+                badgeX,
+                95,
+                100,
+                28,
+                8
+            );
+            ctx.fill();
 
-        // =====================
-        // INFO TEXT
-        // =====================
-        ctx.fillStyle = '#fff';
+            ctx.fillStyle = '#FFFFFF';
+            ctx.font = '18px Arial';
+
+            ctx.fillText(
+                'OWNER',
+                badgeX + 12,
+                115
+            );
+
+            badgeX += 120;
+        }
+
+        if (isAdmin) {
+
+            ctx.fillStyle = '#ff1744';
+
+            ctx.beginPath();
+            ctx.roundRect(
+                badgeX,
+                95,
+                100,
+                28,
+                8
+            );
+            ctx.fill();
+
+            ctx.fillStyle = '#FFFFFF';
+
+            ctx.fillText(
+                'ADMIN',
+                badgeX + 12,
+                115
+            );
+
+            badgeX += 120;
+        }
+
+        if (isHelper) {
+
+            ctx.fillStyle = '#2979ff';
+
+            ctx.beginPath();
+            ctx.roundRect(
+                badgeX,
+                95,
+                110,
+                28,
+                8
+            );
+            ctx.fill();
+
+            ctx.fillStyle = '#FFFFFF';
+
+            ctx.fillText(
+                'HELPER',
+                badgeX + 10,
+                115
+            );
+
+            badgeX += 130;
+        }
+
+        if (isVIP) {
+
+            ctx.fillStyle = '#d500f9';
+
+            ctx.beginPath();
+            ctx.roundRect(
+                badgeX,
+                95,
+                80,
+                28,
+                8
+            );
+            ctx.fill();
+
+            ctx.fillStyle = '#000000';
+            ctx.font = '18px Arial';
+
+            ctx.fillText(
+                'VIP',
+                badgeX + 22,
+                115
+            );
+
+            badgeX += 100;
+        }
+
+        if (isBooster) {
+
+            ctx.fillStyle = '#fda8fa';
+
+            ctx.beginPath();
+            ctx.roundRect(
+                badgeX,
+                95,
+                120,
+                28,
+                8
+            );
+            ctx.fill();
+
+            ctx.fillStyle = '#000000';
+
+            ctx.fillText(
+                'Người Đzai',
+                badgeX + 12,
+                115
+            );
+        }
+
+        // Rank
+        ctx.fillStyle = '#FFFFFF';
+        ctx.font = 'bold 32px Arial';
+
+        ctx.fillText(
+            `TOP ${rank}`,
+            720,
+            75
+        );
+
+        ctx.font = '18px Arial';
+
+        ctx.fillText(
+            `${totalMembers} Members`,
+            720,
+            105
+        );
+
+        // Level
+        ctx.fillStyle = '#FFFFFF';
+        ctx.font = '28px Arial';
+
+        ctx.fillText(
+            `Level: ${data.level}`,
+            260,
+            165
+        );
+
+        // Role
+        ctx.fillText(
+            `Vai Trò: ${topRole}`,
+            260,
+            205
+        );
+
+        // XP
+        ctx.fillText(
+            `${data.xp} XP`,
+            260,
+            245
+        );
+
+        // Progress Background
+        ctx.fillStyle = '#40444B';
+
+        ctx.beginPath();
+        ctx.roundRect(
+            260,
+            260,
+            650,
+            25,
+            12
+        );
+        ctx.fill();
+
+        // Progress Fill
+        ctx.fillStyle = '#5865F2';
+
+        ctx.beginPath();
+        ctx.roundRect(
+            260,
+            260,
+            650 * progress,
+            25,
+            12
+        );
+        ctx.fill();
+
+        // XP Progress Text
+        ctx.fillStyle = '#FFFFFF';
         ctx.font = '20px Arial';
-
-        ctx.fillText(`TOP ${rank}`, 720, 75);
-        ctx.fillText(`${totalMembers} members`, 720, 105);
-
-        ctx.font = '24px Arial';
-
-        ctx.fillText(`Level: ${data.level}`, 260, 170);
-        ctx.fillText(`Role: ${member.roles.highest.name}`, 260, 205);
-        ctx.fillText(`XP: ${data.xp}`, 260, 240);
-
-
-        // =====================
-        // PROGRESS BAR
-        // =====================
-        ctx.fillStyle = '#2b2d31';
-        ctx.beginPath();
-        ctx.roundRect(260, 260, 650, 22, 12);
-        ctx.fill();
-
-        const bar = ctx.createLinearGradient(260, 0, 910, 0);
-        bar.addColorStop(0, '#5865f2');
-        bar.addColorStop(1, '#8ea1ff');
-
-        ctx.fillStyle = bar;
-        ctx.beginPath();
-        ctx.roundRect(260, 260, 650 * progress, 22, 12);
-        ctx.fill();
-
-
-        // =====================
-        // XP TEXT
-        // =====================
-        ctx.fillStyle = '#fff';
-        ctx.font = '16px Arial';
 
         ctx.fillText(
             `${data.xp - currentXP} / ${nextXP - currentXP} XP`,
@@ -267,14 +447,16 @@ module.exports = {
             305
         );
 
+        const attachment =
+            new AttachmentBuilder(
+                canvas.toBuffer(),
+                {
+                    name: 'rank.png'
+                }
+            );
 
-        // =====================
-        // SEND IMAGE
-        // =====================
-        const attachment = new AttachmentBuilder(canvas.toBuffer(), {
-            name: 'rank.png'
+        await interaction.reply({
+            files: [attachment]
         });
-
-        await interaction.reply({ files: [attachment] });
     }
 };
