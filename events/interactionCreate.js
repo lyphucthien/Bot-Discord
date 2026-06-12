@@ -2,13 +2,8 @@ const config = require('../config.json');
 const ticketStatus = require('../utils/ticketStatus');
 const doneCooldown = new Map();
 
-const {
-    ChannelType,
-    PermissionsBitField,
-    EmbedBuilder
-} = require('discord.js');
+const { ChannelType, PermissionsBitField, EmbedBuilder } = require('discord.js');
 
-// helper roles fix an toàn
 const helperRoles = Array.isArray(config.Helper)
     ? config.Helper
     : config.Helper
@@ -17,9 +12,6 @@ const helperRoles = Array.isArray(config.Helper)
 
 module.exports = (client) => {
 
-    // ======================
-    // INTERACTIONS
-    // ======================
     client.on('interactionCreate', async interaction => {
 
         try {
@@ -34,12 +26,12 @@ module.exports = (client) => {
             }
 
             // ======================
-            // BUTTONS
+            // BUTTONS / SELECT MENU
             // ======================
             if (!interaction.isButton() && !interaction.isStringSelectMenu()) return;
 
             // ======================
-            // VERIFY BUTTON
+            // VERIFY
             // ======================
             if (interaction.customId === 'verify') {
 
@@ -109,7 +101,7 @@ module.exports = (client) => {
             }
 
             // ======================
-            // RESOLVE TICKET
+            // RESOLVE TICKET (FIXED)
             // ======================
             if (interaction.customId === 'resolve_ticket') {
 
@@ -121,15 +113,24 @@ module.exports = (client) => {
                     ticketStatus.set(channelId, data);
                 }
 
-                const messages = await interaction.channel.messages.fetch({ limit: 20 });
-                const botMsg = messages.find(m => m.author.bot && m.embeds.length > 0);
+                // ✅ FIX: dùng messageId thay vì fetch random
+                if (!data?.messageId) {
+                    return interaction.reply({
+                        content: '❌ Không tìm thấy ticket message',
+                        flags: 64
+                    });
+                }
 
-                if (botMsg) {
-                    const embed = EmbedBuilder.from(botMsg.embeds[0])
-                        .setDescription(
-                            botMsg.embeds[0].description +
-                            `\n📊 Trạng thái: ✅ Đã Xử Lý`
-                        );
+                const botMsg = await interaction.channel.messages.fetch(data.messageId)
+                    .catch(() => null);
+
+                if (botMsg?.embeds?.length) {
+
+                    const old = botMsg.embeds[0];
+
+                    const embed = EmbedBuilder.from(old).setDescription(
+                        `${old.description}\n📊 Trạng thái: ✅ Đã Xử Lý`
+                    );
 
                     await botMsg.edit({ embeds: [embed] }).catch(() => { });
                 }
@@ -141,7 +142,7 @@ module.exports = (client) => {
             }
 
             // ======================
-            // TICKET MENU
+            // TICKET MENU (FIXED SAVE MESSAGE ID)
             // ======================
             if (interaction.isStringSelectMenu() && interaction.customId === 'ticket_menu') {
 
@@ -189,12 +190,6 @@ module.exports = (client) => {
 
                 const createdAt = Date.now();
 
-                ticketStatus.set(channel.id, {
-                    status: 'waiting',
-                    staffReplied: false,
-                    createdAt
-                });
-
                 const embed = new EmbedBuilder()
                     .setTitle(`🎫 ${type.toUpperCase()} Ticket`)
                     .setDescription(
@@ -217,9 +212,17 @@ module.exports = (client) => {
                     ]
                 };
 
-                await channel.send({
+                // ✅ FIX: lưu messageId
+                const ticketMsg = await channel.send({
                     embeds: [embed],
                     components: [row]
+                });
+
+                ticketStatus.set(channel.id, {
+                    status: 'waiting',
+                    staffReplied: false,
+                    createdAt,
+                    messageId: ticketMsg.id
                 });
 
                 return interaction.editReply({
@@ -245,7 +248,7 @@ module.exports = (client) => {
     });
 
     // ======================
-    // MESSAGE TRACKING
+    // MESSAGE TRACKING (.done)
     // ======================
     client.on('messageCreate', async (message) => {
 
@@ -261,9 +264,6 @@ module.exports = (client) => {
 
         if (!isStaff) return;
 
-        // ======================
-        // DONE COMMAND
-        // ======================
         if (message.content.toLowerCase() === '.done') {
 
             const channelId = message.channel.id;
@@ -274,7 +274,6 @@ module.exports = (client) => {
                 return message.reply('⚠️ Ticket Này Đã Được Xử Lý!');
             }
 
-            // anti spam
             const staffId = message.author.id;
             const now = Date.now();
 
@@ -293,17 +292,19 @@ module.exports = (client) => {
 
             await message.reply('✅ Ticket **Đã Được Xử Lý**, Đang Đóng...');
 
-            const messages = await message.channel.messages.fetch({ limit: 20 });
-            const botMsg = messages.find(m => m.author.bot && m.embeds.length > 0);
+            // FIX: update embed bằng messageId
+            if (data.messageId) {
+                const botMsg = await message.channel.messages.fetch(data.messageId).catch(() => null);
 
-            if (botMsg) {
-                const embed = EmbedBuilder.from(botMsg.embeds[0])
-                    .setDescription(
-                        botMsg.embeds[0].description +
-                        `\n📊 Trạng thái: 🔴 Đã xử lý`
+                if (botMsg?.embeds?.length) {
+                    const old = botMsg.embeds[0];
+
+                    const embed = EmbedBuilder.from(old).setDescription(
+                        `${old.description}\n📊 Trạng thái: 🔴 Đã xử lý`
                     );
 
-                await botMsg.edit({ embeds: [embed] }).catch(() => { });
+                    await botMsg.edit({ embeds: [embed] }).catch(() => { });
+                }
             }
 
             let time = 3;
