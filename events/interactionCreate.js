@@ -88,7 +88,6 @@ module.exports = (client) => {
 
                     const type = interaction.values[0];
 
-                    // ⚡ FIX CHECK CHANNEL ĐÚNG
                     const existing = interaction.guild.channels.cache.find(
                         c => c.name.includes(interaction.user.id)
                     );
@@ -100,7 +99,6 @@ module.exports = (client) => {
                         });
                     }
 
-                    // ⚡ FIX LAG / TIMEOUT → deferReply
                     await interaction.deferReply({ flags: 64 });
 
                     const channel = await interaction.guild.channels.create({
@@ -171,7 +169,7 @@ module.exports = (client) => {
                         embeds: [embed],
                         components: [row],
                         allowed_mentions: {
-                            roles: [config.Helper] // ⚡ FIX ĐÚNG ROLE
+                            roles: [config.Helper]
                         }
                     });
 
@@ -180,19 +178,31 @@ module.exports = (client) => {
                     });
                 }
             }
+            if (interaction.customId === 'ticket_info') {
+
+                return interaction.reply({
+                    content:
+                        `📌 **TICKET SYSTEM**\n\n` +
+                        `🛠️ Support → Hỗ trợ\n` +
+                        `🚨 Report → Báo cáo lỗi\n` +
+                        `🛒 Order → Đặt hàng\n\n` +
+                        `⏱ Thời gian phản hồi: 1–30 phút`,
+                    flags: 64
+                });
+            }
 
         } catch (err) {
             console.error(err);
 
             if (interaction.replied || interaction.deferred) {
                 return interaction.followUp({
-                    content: '❌ Đã xảy ra lỗi.',
+                    content: '❌ Đã Xảy Ra Lỗi.',
                     flags: 64
                 });
             }
 
             return interaction.reply({
-                content: '❌ Đã xảy ra lỗi.',
+                content: '❌ Đã Xảy Ra Lỗi.',
                 flags: 64
             });
         }
