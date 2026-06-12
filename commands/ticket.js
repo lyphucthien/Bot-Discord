@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, StringSelectMenuBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, StringSelectMenuBuilder } = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -9,7 +9,14 @@ module.exports = {
 
         const embed = new EmbedBuilder()
             .setTitle('🎫 Ticket System')
-            .setDescription('Chọn loại ticket bạn muốn tạo:')
+            .setDescription(
+                `📌 Chọn loại ticket bạn muốn tạo:\n\n` +
+                `🛠️ Support → Hỗ Trợ\n` +
+                `🚨 Report → Báo Cáo Người Dùng / Lỗi\n` +
+                `🛒 Order → Đặt Hàng / Mua Dịch Vụ\n\n` +
+                `⏱ Thời Gian Staff Phản Hồi: 1–30 Phút\n` +
+                `📦 Version: v1.0 (Test)`,
+            )
             .setColor('Blue');
 
         const menu = new StringSelectMenuBuilder()
@@ -38,16 +45,9 @@ module.exports = {
 
         const menuRow = new ActionRowBuilder().addComponents(menu);
 
-        const buttonRow = new ActionRowBuilder().addComponents(
-            new ButtonBuilder()
-                .setCustomId('ticket_info')
-                .setLabel('ℹ️ Info')
-                .setStyle(ButtonStyle.Secondary)
-        );
-
         await interaction.reply({
             embeds: [embed],
-            components: [menuRow, buttonRow]
+            components: [menuRow]
         });
     }
 };
