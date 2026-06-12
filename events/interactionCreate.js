@@ -105,7 +105,7 @@ module.exports = (client) => {
                                     PermissionsBitField.Flags.ReadMessageHistory,
                                 ],
                             },
-                            ...(config.staffRoles || []).map(roleId => ({
+                            ...(config.Helper || []).map(roleId => ({
                                 id: roleId,
                                 allow: [
                                     PermissionsBitField.Flags.ViewChannel,
