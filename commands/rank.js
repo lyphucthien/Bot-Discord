@@ -392,21 +392,21 @@ module.exports = {
         ctx.font = '28px Sans';
 
         ctx.fillText(
-            `⭐ Level ${data.level}`,
+            `Level ${data.level}`,
             260,
             165
         );
 
         // Role
         ctx.fillText(
-            `🎭 ${topRole}`,
+            `${topRole}`,
             260,
             205
         );
 
         // XP
         ctx.fillText(
-            `✨ ${data.xp} XP`,
+            `${data.xp} XP`,
             260,
             245
         );
