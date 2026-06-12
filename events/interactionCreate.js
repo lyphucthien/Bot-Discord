@@ -2,9 +2,11 @@ const config = require('../config.json');
 const ticketStatus = require('../utils/ticketStatus');
 const { ChannelType, PermissionsBitField, EmbedBuilder } = require('discord.js');
 
-
 module.exports = (client) => {
 
+    // ======================
+    // INTERACTIONS
+    // ======================
     client.on('interactionCreate', async interaction => {
 
         try {
@@ -13,58 +15,76 @@ module.exports = (client) => {
             // SLASH COMMANDS
             // ======================
             if (interaction.isChatInputCommand()) {
-
                 const command = client.commands.get(interaction.commandName);
                 if (!command) return;
-
-                await command.execute(interaction, client);
+                return command.execute(interaction, client);
             }
 
             // ======================
-            // BUTTONS + MENU
+            // BUTTONS
             // ======================
-            if (interaction.isButton()) {
+            if (!interaction.isButton()) return;
 
-                // ===== VERIFY BUTTON =====
-                if (interaction.customId === 'verify') {
+            // VERIFY
+            if (interaction.customId === 'verify') {
 
-                    const role = interaction.guild.roles.cache.get(config.verifyRole);
+                const role = interaction.guild.roles.cache.get(config.verifyRole);
 
-                    if (!role) {
-                        return interaction.reply({
-                            content: '❌ Không tìm thấy role',
-                            flags: 64
-                        });
-                    }
-
-                    await interaction.member.roles.add(role);
-
-                    return interaction.reply({
-                        content: '✅ Xác minh thành công',
-                        flags: 64
-                    });
+                if (!role) {
+                    return interaction.reply({ content: '❌ Không tìm thấy role', flags: 64 });
                 }
 
-                // ========================
-                // CLOSE TICKET
-                // ========================
-                if (interaction.customId === 'close_ticket') {
+                await interaction.member.roles.add(role);
 
-                    const channelId = interaction.channel.id;
+                return interaction.reply({
+                    content: '✅ Xác minh thành công',
+                    flags: 64
+                });
+            }
 
-                    ticketStatus.set(channelId, {
-                        status: 'closed'
-                    });
+            // CLOSE TICKET
+            if (interaction.customId === 'close_ticket') {
 
-                    await interaction.reply({
-                        content: 'Ticket Đã Được Được Xử Lý Xong...',
-                        flags: 64
-                    });
+                const channelId = interaction.channel.id;
 
-                    setTimeout(() => {
-                        interaction.channel.delete().catch(() => { });
-                    }, 3000);
+                ticketStatus.set(channelId, { status: 'closed' });
+
+                await interaction.reply({
+                    content: '🔴 Ticket đang được đóng...',
+                    flags: 64
+                });
+
+                setTimeout(() => {
+                    interaction.channel.delete().catch(() => { });
+                    ticketStatus.delete(channelId);
+                }, 3000);
+            }
+
+            // RESOLVE TICKET
+            if (interaction.customId === 'resolve_ticket') {
+
+                const channelId = interaction.channel.id;
+                const data = ticketStatus.get(channelId);
+
+                if (data) data.status = 'resolved';
+
+                const messages = await interaction.channel.messages.fetch({ limit: 20 });
+                const botMsg = messages.find(m => m.author.bot && m.embeds.length > 0);
+
+                if (botMsg) {
+                    const embed = EmbedBuilder.from(botMsg.embeds[0])
+                        .setDescription(
+                            botMsg.embeds[0].description +
+                            `\n📊 Trạng thái: ✅ Đã Xử Lý`
+                        );
+
+                    await botMsg.edit({ embeds: [embed] }).catch(() => { });
                 }
+
+                return interaction.reply({
+                    content: '✅ Ticket đã được đánh dấu xử lý',
+                    flags: 64
+                });
             }
 
             // ======================
@@ -72,176 +92,103 @@ module.exports = (client) => {
             // ======================
             if (interaction.isStringSelectMenu()) {
 
-                if (interaction.customId === 'ticket_menu') {
+                if (interaction.customId !== 'ticket_menu') return;
 
-                    const type = interaction.values[0];
+                const type = interaction.values[0];
 
-                    const existing = interaction.guild.channels.cache.find(
-                        c => c.name.includes(interaction.user.id)
-                    );
+                const existing = interaction.guild.channels.cache.find(
+                    c => c.name.includes(interaction.user.id)
+                );
 
-                    if (existing) {
-                        return interaction.reply({
-                            content: '❌ Bạn đã có ticket rồi!',
-                            flags: 64
-                        });
-                    }
-
-                    await interaction.deferReply({ flags: 64 });
-
-                    const channel = await interaction.guild.channels.create({
-                        name: `ticket-${type}-${interaction.user.id}`,
-                        type: ChannelType.GuildText,
-                        permissionOverwrites: [
-                            {
-                                id: interaction.guild.id,
-                                deny: [PermissionsBitField.Flags.ViewChannel],
-                            },
-                            {
-                                id: interaction.user.id,
-                                allow: [
-                                    PermissionsBitField.Flags.ViewChannel,
-                                    PermissionsBitField.Flags.SendMessages,
-                                    PermissionsBitField.Flags.ReadMessageHistory,
-                                ],
-                            },
-                            ...(config.Helper || []).map(roleId => ({
-                                id: roleId,
-                                allow: [
-                                    PermissionsBitField.Flags.ViewChannel,
-                                    PermissionsBitField.Flags.SendMessages,
-                                    PermissionsBitField.Flags.ReadMessageHistory,
-                                ],
-                            }))
-                        ]
-                    });
-
-                    let title = '';
-                    let color = '';
-
-                    if (type === 'support') {
-                        title = '🛠️ Support Ticket';
-                        color = 'Blue';
-                    }
-
-                    if (type === 'report') {
-                        title = '🚨 Report Ticket';
-                        color = 'Red';
-                    }
-
-                    if (type === 'order') {
-                        title = '🛒 Order Ticket';
-                        color = 'Green';
-                    }
-
-                    const createdAt = Date.now();
-
-                    ticketStatus.set(channel.id, {
-                        status: 'waiting',
-                        staffReplied: false,
-                        createdAt
-                    });
-
-                    const embed = new EmbedBuilder()
-                        .setTitle(title)
-                        .setDescription(
-                            `Staff Sẽ Hỗ Trợ Bạn Sớm Nhất.\n` +
-                            `Bấm nút 🔒 để đóng ticket.\n\n` +
-                            `⏱ Thời gian tạo: <t:${Math.floor(createdAt / 1000)}:F>\n` +
-                            `📊 Trạng thái: 🟡 Chờ Staff Phản Hồi`
-                        )
-                        .setColor(color);
-
-                    const row = {
-                        type: 1,
-                        components: [
-                            {
-                                type: 2,
-                                style: 4,
-                                label: 'Đóng Ticket',
-                                custom_id: 'close_ticket',
-                                emoji: '🔒'
-                            },
-                            {
-                                type: 2,
-                                style: 3,
-                                label: 'Đã xử lý',
-                                custom_id: 'resolve_ticket',
-                                emoji: '✅'
-                            }
-                        ]
-                    };
-
-                    await channel.send({
-                        content: `🚨 <@&${config.Helper}> Có Ticket Mới Được Tạo!`,
-                        embeds: [embed],
-                        components: [row],
-                        allowed_mentions: {
-                            roles: [config.Helper]
-                        }
-                    });
-
-                    return interaction.editReply({
-                        content: `✅ Đã Tạo Ticket: ${channel}`
-                    });
+                if (existing) {
+                    return interaction.reply({ content: '❌ Bạn đã có ticket rồi!', flags: 64 });
                 }
 
-                // ======================
-                // RESOLVE BUTTON
-                // ======================
-                if (interaction.customId === 'resolve_ticket') {
+                await interaction.deferReply({ flags: 64 });
 
-                    const channelId = interaction.channel.id;
-                    const data = ticketStatus.get(channelId);
+                const channel = await interaction.guild.channels.create({
+                    name: `ticket-${type}-${interaction.user.id}`,
+                    type: ChannelType.GuildText,
+                    permissionOverwrites: [
+                        {
+                            id: interaction.guild.id,
+                            deny: [PermissionsBitField.Flags.ViewChannel],
+                        },
+                        {
+                            id: interaction.user.id,
+                            allow: [
+                                PermissionsBitField.Flags.ViewChannel,
+                                PermissionsBitField.Flags.SendMessages,
+                                PermissionsBitField.Flags.ReadMessageHistory,
+                            ],
+                        },
+                        ...(config.staffRoles || []).map(roleId => ({
+                            id: roleId,
+                            allow: [
+                                PermissionsBitField.Flags.ViewChannel,
+                                PermissionsBitField.Flags.SendMessages,
+                                PermissionsBitField.Flags.ReadMessageHistory,
+                            ],
+                        }))
+                    ]
+                });
 
-                    if (data) data.status = 'resolved';
+                const createdAt = Date.now();
 
-                    let time = 3;
+                ticketStatus.set(channel.id, {
+                    status: 'waiting',
+                    staffReplied: false,
+                    createdAt
+                });
 
-                    await interaction.reply({
-                        content: `Ticket Sẽ Đóng Sau **${time}...**`,
-                        flags: 64
-                    });
+                const embed = new EmbedBuilder()
+                    .setTitle(`🎫 ${type.toUpperCase()} Ticket`)
+                    .setDescription(
+                        `Staff sẽ hỗ trợ bạn sớm nhất.\n\n` +
+                        `⏱ <t:${Math.floor(createdAt / 1000)}:F>\n` +
+                        `📊 Trạng thái: 🟡 Chờ Staff Phản Hồi`
+                    )
+                    .setColor('Blue');
 
-                    const interval = setInterval(async () => {
-
-                        time--;
-
-                        if (time > 0) {
-                            await interaction.editReply({
-                                content: `Ticket Sẽ Đóng Sau **${time}...**`
-                            });
-                        } else {
-                            await interaction.editReply({
-                                content: `Đang Đóng Ticket...`
-                            });
-
-                            clearInterval(interval);
-
-                            setTimeout(() => {
-                                interaction.channel.delete().catch(() => { });
-                                ticketStatus.delete(channelId);
-                            }, 1000);
+                const row = {
+                    type: 1,
+                    components: [
+                        {
+                            type: 2,
+                            style: 4,
+                            label: 'Đóng Ticket',
+                            custom_id: 'close_ticket',
+                            emoji: '🔒'
+                        },
+                        {
+                            type: 2,
+                            style: 3,
+                            label: 'Đã xử lý',
+                            custom_id: 'resolve_ticket',
+                            emoji: '✅'
                         }
+                    ]
+                };
 
-                    }, 1000);
-                }
+                await channel.send({
+                    content: `🚨 <@&${(config.staffRoles || []).join(' ')}> Có ticket mới`,
+                    embeds: [embed],
+                    components: [row]
+                });
+
+                return interaction.editReply({
+                    content: `✅ Đã Tạo Ticket: ${channel}`
+                });
             }
 
         } catch (err) {
             console.error(err);
 
             if (interaction.replied || interaction.deferred) {
-                return interaction.followUp({
-                    content: '❌ Đã Xảy Ra Lỗi.',
-                    flags: 64
-                });
+                return interaction.followUp({ content: '❌ Lỗi', flags: 64 });
             }
 
-            return interaction.reply({
-                content: '❌ Đã Xảy Ra Lỗi.',
-                flags: 64
-            });
+            return interaction.reply({ content: '❌ Lỗi', flags: 64 });
         }
     });
 
@@ -256,7 +203,7 @@ module.exports = (client) => {
         if (!data) return;
 
         const isStaff = message.member?.roles?.cache?.some(r =>
-            config.staffRoles.includes(r.id)
+            (config.staffRoles || []).includes(r.id)
         );
 
         if (!isStaff) return;
@@ -265,7 +212,7 @@ module.exports = (client) => {
         data.staffReplied = true;
         data.status = 'processing';
 
-        const messages = await message.channel.messages.fetch({ limit: 10 });
+        const messages = await message.channel.messages.fetch({ limit: 20 });
         const botMsg = messages.find(m => m.author.bot && m.embeds.length > 0);
 
         if (!botMsg) return;
@@ -273,9 +220,9 @@ module.exports = (client) => {
         const embed = EmbedBuilder.from(botMsg.embeds[0])
             .setDescription(
                 botMsg.embeds[0].description +
-                `\n📊 Trạng thái: 🟢 Ticket Đang Được Xử Lý`
+                `\n📊 Trạng thái: 🟢 Đang Xử Lý`
             );
 
-        botMsg.edit({ embeds: [embed] });
+        botMsg.edit({ embeds: [embed] }).catch(() => { });
     });
 };
