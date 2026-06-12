@@ -392,7 +392,7 @@ module.exports = {
         ctx.font = '28px Sans';
 
         ctx.fillText(
-            `Level ${data.level}`,
+            `Level: ${data.level}`,
             260,
             165
         );
