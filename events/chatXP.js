@@ -1,4 +1,7 @@
+const fs = require('fs');
+
 const cooldowns = new Map();
+
 module.exports = (client) => {
 
     client.on('messageCreate', async (message) => {
@@ -10,7 +13,7 @@ module.exports = (client) => {
 
         if (cooldowns.has(key)) return;
 
-        cooldowns.add(key);
+        cooldowns.set(key, Date.now());
 
         setTimeout(() => {
             cooldowns.delete(key);
@@ -38,8 +41,7 @@ module.exports = (client) => {
         levels[userId].xp += xp;
 
         while (
-            levels[userId].xp >=
-            xpFor(levels[userId].level + 1)
+            levels[userId].xp >= xpFor(levels[userId].level + 1)
         ) {
             levels[userId].level++;
         }
