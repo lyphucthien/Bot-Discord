@@ -89,7 +89,7 @@ module.exports = {
         }
 
         const embed = new EmbedBuilder()
-            .setColor('#5865F2')
+            .setColor('#8a82fd')
             .setTimestamp();
 
         try {
