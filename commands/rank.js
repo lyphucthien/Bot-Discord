@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, AttachmentBuilder } = require('discord.js');
 const { createCanvas, loadImage } = require('canvas');
-const Level = require('../models/Level');
+const Level = require('../../models/Level');
 
 function xpFor(level) {
     if (level <= 0) return 0;
