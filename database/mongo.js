@@ -1,11 +1,14 @@
-const mongoose = require("mongoose");
-const { URI } = require("../config/mongoURI");
+const mongoose = require('mongoose');
 
 module.exports = async () => {
     try {
-        await mongoose.connect(URI);
-        console.log("✅ MongoDB Đã Kết Nối Thành Công");
+        await mongoose.connect(process.env.MONGO_URI, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true
+        });
+
+        console.log('🟢 MongoDB Đã Kết Nối Thành Công!');
     } catch (err) {
-        console.error("❌ MongoDB Kết Nối Thất Bại:", err);
+        console.error('🔴 MongoDB Kết Nối Lỗi:', err);
     }
 };
