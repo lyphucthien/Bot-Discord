@@ -1,5 +1,5 @@
 const { Client, GatewayIntentBits, Collection } = require('discord.js');
-
+const mongo = require('./database/mongo');
 const fs = require('fs');
 const config = require('./config.json');
 const express = require("express");
@@ -269,4 +269,10 @@ for (const file of commandFiles) {
     client.commands.set(command.data.name, command);
 }
 
-client.login(process.env.TOKEN);
+(async () => {
+
+    await mongo();
+
+    client.login(process.env.TOKEN);
+
+})();
