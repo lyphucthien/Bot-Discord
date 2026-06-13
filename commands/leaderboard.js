@@ -1,6 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
-const path = require('path');
-const Level = require(path.join(__dirname, '../models/Level'));
+const Level = require('../database/models/Level');
 
 module.exports = {
     data: new SlashCommandBuilder()
