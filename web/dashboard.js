@@ -1,91 +1,150 @@
 module.exports = (app, client) => {
+    function formatUptime() {
+        const total = Math.floor(process.uptime());
 
-    function formatUptime(u) {
-        return `${u.days}d ${u.hours}h ${u.minutes}m`;
+        const d = Math.floor(total / 86400);
+        const h = Math.floor((total % 86400) / 3600);
+        const m = Math.floor((total % 3600) / 60);
+        const s = total % 60;
+
+        return `${d}d ${h}h ${m}m ${s}s`;
+    }
+    app.get("/", (req, res) => {
+
+        const online = client.isReady();
+        const statusText = online ? "ONLINE" : "OFFLINE";
+
+        res.send(`
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <title>🤖 Bot Dashboard</title>
+    <meta http-equiv="refresh" content="30">
+
+    <style>
+    body{
+        margin:0;
+        min-height:100vh;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        background:linear-gradient(-45deg,#0f172a,#1e293b,#0f172a,#2563eb);
+        background-size:400% 400%;
+        animation:gradient 15s ease infinite;
+        color:white;
+        font-family:Arial;
     }
 
-    app.get("/", (req, res) => {
-        res.send(`
-<!DOCTYPE html>
-<html>
-<head>
-<title>Bot Dashboard</title>
+    @keyframes gradient{
+        0%{background-position:0% 50%;}
+        50%{background-position:100% 50%;}
+        100%{background-position:0% 50%;}
+    }
 
-<style>
-body{
-    margin:0;
-    font-family:Arial;
-    background:#0f172a;
-    color:white;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    height:100vh;
-}
+    .card{
+        width:90%;
+        max-width:600px;
+        background:rgba(255,255,255,0.08);
+        backdrop-filter:blur(15px);
+        border:1px solid rgba(255,255,255,0.15);
+        border-radius:20px;
+        padding:30px;
+        box-shadow:0 0 30px rgba(0,0,0,0.4);
+    }
 
-.card{
-    width:500px;
-    padding:20px;
-    background:rgba(255,255,255,0.05);
-    border-radius:15px;
-}
+    .card:hover{
+        transform:translateY(-5px);
+        transition:0.3s;
+    }
 
-.row{
-    display:flex;
-    justify-content:space-between;
-    margin:10px 0;
-}
-</style>
-</head>
+    .status{
+        font-size:30px;
+        font-weight:bold;
+        margin:20px 0;
+    }
 
-<body>
+    .stat{
+        display:flex;
+        justify-content:space-between;
+        padding:12px;
+        margin:10px 0;
+        background:rgba(255,255,255,0.05);
+        border-radius:10px;
+    }
 
-<div class="card">
-    <h2>🤖 ${client.user?.username || "Bot"}</h2>
+    .dot{
+        width:18px;
+        height:18px;
+        border-radius:50%;
+        display:inline-block;
+        margin-right:10px;
+    }
 
-    <div class="row"><span>Status</span><span id="status">Loading...</span></div>
-    <div class="row"><span>Ping</span><span id="ping"></span></div>
-    <div class="row"><span>RAM</span><span id="ram"></span></div>
-    <div class="row"><span>Guilds</span><span id="guilds"></span></div>
-    <div class="row"><span>Users</span><span id="users"></span></div>
-    <div class="row"><span>Time</span><span id="time"></span></div>
-    <div class="row"><span>Uptime</span><span id="uptime"></span></div>
-</div>
+    .online{
+        background:#22c55e;
+        box-shadow:0 0 10px #22c55e,0 0 20px #22c55e;
+    }
 
-<script>
-async function load(){
-    const res = await fetch('/status');
-    const data = await res.json();
+    .offline{
+        background:#ef4444;
+        box-shadow:0 0 10px #ef4444,0 0 20px #ef4444;
+    }
+    </style>
+    </head>
 
-    document.getElementById("status").innerText =
-        data.online ? "🟢 ONLINE" : "🔴 OFFLINE";
+    <body>
 
-    document.getElementById("ping").innerText =
-        data.ping !== null ? data.ping + "ms" : "N/A";
+    <div class="card">
 
-    document.getElementById("ram").innerText =
-        data.ram + " MB";
+        <h1>🤖 ${client.user ? client.user.username : "Bot Dashboard"}</h1>
 
-    document.getElementById("guilds").innerText =
-        data.guilds;
+        <div class="status">
+            <span class="dot ${online ? "online" : "offline"}"></span>
+            ${statusText}
+        </div>
 
-    document.getElementById("users").innerText =
-        data.users;
+        <div class="stat">
+            <span>⚡ Ping</span>
+            <span>${online ? client.ws.ping + "ms" : "N/A"}</span>
+        </div>
 
-    document.getElementById("time").innerText =
-        data.time;
+        <div class="stat">
+            <span>🏠 Servers</span>
+            <span>${online ? client.guilds.cache.size : 0}</span>
+        </div>
 
-    document.getElementById("uptime").innerText =
-        formatUptime(data.uptime || 0);
-}
+        <div class="stat">
+            <span>👥 Users</span>
+            <span>${online ? client.users.cache.size : 0}</span>
+        </div>
 
-load();
-setInterval(load, 1000);
+        <div class="stat">
+            <span>💾 RAM</span>
+            <span>${Math.round(process.memoryUsage().rss / 1024 / 1024)} MB</span>
+        </div>
 
-</script>
+        <div class="stat">
+            <span>📅 Time</span>
+            <span>${new Date().toLocaleString("vi-VN")}</span>
+        </div>
 
-</body>
-</html>
+        <div class="stat">
+            <span>🕒 Uptime</span>
+            <span>${formatUptime()}</span>
+        </div>
+
+        <hr style="border:none;height:1px;background:rgba(255,255,255,0.15);margin:20px 0;">
+
+        <div style="opacity:0.7;text-align:center">
+            💻 Created By Lý Phúc Thiện
+        </div>
+
+    </div>
+
+    </body>
+    </html>
         `);
     });
-};
+
+}
