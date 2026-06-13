@@ -1,7 +1,7 @@
 const { Client, GatewayIntentBits, Collection } = require('discord.js');
 const fs = require('fs');
 const config = require('./config.json');
-
+console.log("FILE EXISTS:", fs.existsSync("./web/webServer.js"));
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
