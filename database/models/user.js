@@ -1,0 +1,15 @@
+const mongoose = require("mongoose");
+
+const userSchema = new mongoose.Schema({
+    userId: String,
+    guildId: String,
+
+    coins: { type: Number, default: 0 },
+    xp: { type: Number, default: 0 },
+    level: { type: Number, default: 1 },
+
+    warns: { type: Number, default: 0 },
+    createdAt: { type: Date, default: Date.now }
+});
+
+module.exports = mongoose.model("User", userSchema);
