@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
-const Level = require('../models/Level');
+const Level = require('../../models/Level');
 
 function xpFor(level) {
     return level * level * 100;
