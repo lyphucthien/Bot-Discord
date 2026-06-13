@@ -1,7 +1,7 @@
 const { Client, GatewayIntentBits, Collection } = require('discord.js');
 const fs = require('fs');
 const config = require('./config.json');
-console.log("FILE EXISTS:", fs.existsSync("./web/webServer.js"));
+
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
@@ -12,7 +12,7 @@ const client = new Client({
     ]
 });
 
-require("./web/webServer.js")(client);
+require(__dirname + "/web/webServer.js")(client);
 
 const URL = "https://my-discord-bot-mfu0.onrender.com";
 
