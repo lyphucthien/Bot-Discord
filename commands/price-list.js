@@ -10,7 +10,7 @@ module.exports = {
 
     async execute(interaction) {
 
-        const filePath = path.join(__dirname, '../data/prices.json');
+        const filePath = path.join(__dirname, '../database/models/Prices.json');
         const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
 
         function buildEmbed(type, title, color) {
