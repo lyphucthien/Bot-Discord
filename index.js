@@ -12,7 +12,7 @@ const client = new Client({
     ]
 });
 
-require("./web/webServer")(client);
+require("./web/webServer.js")(client);
 
 const URL = "https://my-discord-bot-mfu0.onrender.com";
 
