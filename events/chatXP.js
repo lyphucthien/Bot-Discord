@@ -1,5 +1,4 @@
-const fs = require('fs');
-const levelFile = require('../utils/levelFile');
+const Level = require('../database/models/Level');
 
 const cooldowns = new Map();
 
@@ -21,35 +20,29 @@ module.exports = (client) => {
         cooldowns.set(key, true);
         setTimeout(() => cooldowns.delete(key), 5000);
 
-        let levels = {};
-
-        if (fs.existsSync(levelFile)) {
-            try {
-                levels = JSON.parse(fs.readFileSync(levelFile, 'utf8'));
-            } catch {
-                levels = {};
-            }
-        }
-
-        const userId = message.author.id;
-
-        if (!levels[userId]) {
-            levels[userId] = { xp: 0, level: 1 };
-        }
-
         const xp = Math.floor(Math.random() * 11) + 10;
 
-        levels[userId].xp += xp;
+        let user = await Level.findOne({ userId: message.author.id });
 
-        while (levels[userId].xp >= xpFor(levels[userId].level + 1)) {
-            levels[userId].xp -= xpFor(levels[userId].level + 1);
-            levels[userId].level++;
+        if (!user) {
+            user = await Level.create({
+                userId: message.author.id,
+                xp: 0,
+                level: 1
+            });
+        }
+
+        user.xp += xp;
+
+        while (user.xp >= xpFor(user.level + 1)) {
+            user.xp -= xpFor(user.level + 1);
+            user.level++;
 
             message.channel.send(
-                `🎉 ${message.author} Đã Lên **Level ${levels[userId].level}**!`
+                `🎉 ${message.author} Lên **Level ${user.level}**`
             );
         }
 
-        fs.writeFileSync(levelFile, JSON.stringify(levels, null, 2));
+        await user.save();
     });
 };
