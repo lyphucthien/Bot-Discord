@@ -1,5 +1,4 @@
 {
-    "mongoURI": "mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.8.3",
     "welcomeChannel": "1503396671613046804",
     "logsChannel": "1513480325353832549",
     "Helper": "1503601043722993816",
