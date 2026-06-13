@@ -10,6 +10,7 @@ module.exports = (app, client) => {
 <html>
 <head>
 <title>Bot Dashboard</title>
+
 <style>
 body{
     margin:0;
@@ -21,12 +22,14 @@ body{
     align-items:center;
     height:100vh;
 }
+
 .card{
     width:500px;
     padding:20px;
     background:rgba(255,255,255,0.05);
     border-radius:15px;
 }
+
 .row{
     display:flex;
     justify-content:space-between;
@@ -54,18 +57,31 @@ async function load(){
     const res = await fetch('/status');
     const data = await res.json();
 
-    document.getElementById("status").innerText = data.online ? "🟢 ONLINE" : "🔴 OFFLINE";
-    document.getElementById("ping").innerText = data.ping + "ms";
-    document.getElementById("ram").innerText = data.ram + " MB";
-    document.getElementById("guilds").innerText = data.guilds;
-    document.getElementById("users").innerText = data.users;
-    document.getElementById("time").innerText = data.time;
+    document.getElementById("status").innerText =
+        data.online ? "🟢 ONLINE" : "🔴 OFFLINE";
+
+    document.getElementById("ping").innerText =
+        data.ping !== null ? data.ping + "ms" : "N/A";
+
+    document.getElementById("ram").innerText =
+        data.ram + " MB";
+
+    document.getElementById("guilds").innerText =
+        data.guilds;
+
+    document.getElementById("users").innerText =
+        data.users;
+
+    document.getElementById("time").innerText =
+        data.time;
+
     document.getElementById("uptime").innerText =
-        data.uptime.days + "d " + data.uptime.hours + "h " + data.uptime.minutes + "m";
+        formatUptime(data.uptime || 0);
 }
 
 load();
-setInterval(load, 2000);
+setInterval(load, 1000);
+
 </script>
 
 </body>
