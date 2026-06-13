@@ -2,8 +2,7 @@ const { SlashCommandBuilder, AttachmentBuilder } = require('discord.js');
 const { createCanvas, loadImage } = require('canvas');
 const { SlashCommandBuilder, AttachmentBuilder } = require('discord.js');
 const { createCanvas, loadImage } = require('canvas');
-const path = require('path');
-const Level = require(path.join(__dirname, '../models/Level'));
+const Level = require('../database/models/Level');
 
 function xpFor(level) {
     if (level <= 0) return 0;
