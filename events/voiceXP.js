@@ -1,5 +1,4 @@
-const fs = require('fs');
-const levelFile = require('../utils/levelFile');
+const Level = require('../database/models/Level');
 
 function xpFor(level) {
     return level * level * 100;
@@ -7,17 +6,7 @@ function xpFor(level) {
 
 module.exports = (client) => {
 
-    setInterval(() => {
-
-        let levels = {};
-
-        if (fs.existsSync(levelFile)) {
-            try {
-                levels = JSON.parse(fs.readFileSync(levelFile, 'utf8'));
-            } catch {
-                levels = {};
-            }
-        }
+    setInterval(async () => {
 
         for (const guild of client.guilds.cache.values()) {
 
@@ -32,23 +21,27 @@ module.exports = (client) => {
 
                 for (const member of members.values()) {
 
-                    const userId = member.id;
+                    let user = await Level.findOne({ userId: member.id });
 
-                    if (!levels[userId]) {
-                        levels[userId] = { xp: 0, level: 1 };
+                    if (!user) {
+                        user = await Level.create({
+                            userId: member.id,
+                            xp: 0,
+                            level: 1
+                        });
                     }
 
-                    levels[userId].xp += xpAmount;
+                    user.xp += xpAmount;
 
-                    while (levels[userId].xp >= xpFor(levels[userId].level + 1)) {
-                        levels[userId].xp -= xpFor(levels[userId].level + 1);
-                        levels[userId].level++;
+                    while (user.xp >= xpFor(user.level + 1)) {
+                        user.xp -= xpFor(user.level + 1);
+                        user.level++;
                     }
+
+                    await user.save();
                 }
             }
         }
-
-        fs.writeFileSync(levelFile, JSON.stringify(levels, null, 2));
 
     }, 60000);
 };
