@@ -1,6 +1,6 @@
 module.exports = (client) => {
 
-    client.once('ready', async () => {
+    client.once('clientReady', async () => {
 
         console.log(`✅ ${client.user.tag} đã online`);
 
