@@ -1,24 +1,8 @@
 const config = require('../config.json');
-const fs = require('fs');
-const path = require('path');
-
 const ticketStatus = require('../utils/ticketDB');
+const levelDB = require('../utils/levelDB');
+
 const cooldowns = new Map();
-
-const levelFile = path.join(__dirname, '../data/levels.json');
-
-// ======================
-// LOAD CACHE 1 LẦN (FIX LAG)
-// ======================
-let levels = {};
-
-if (fs.existsSync(levelFile)) {
-    try {
-        levels = JSON.parse(fs.readFileSync(levelFile, 'utf8')) || {};
-    } catch (err) {
-        console.error('Load level file error:', err);
-    }
-}
 
 // ======================
 // HELPER ROLES SAFE
@@ -39,58 +23,48 @@ module.exports = (client) => {
         // ======================
         // XP SYSTEM (FIXED)
         // ======================
+
         const userId = message.author.id;
         const key = `${message.guild.id}-${userId}`;
 
         if (!cooldowns.has(key)) {
+
             cooldowns.set(key, Date.now());
             setTimeout(() => cooldowns.delete(key), 3000);
 
-            if (!levels[key]) {
-                levels[key] = { xp: 0, level: 1 };
-            }
+            // 🔥 lấy data từ DB
+            let user = levelDB.get(userId);
 
             const gainedXP = Math.floor(Math.random() * 15) + 5;
-            levels[key].xp += gainedXP;
+            user.xp += gainedXP;
 
-            const neededXP = levels[key].level * 100;
+            const neededXP = user.level * 100;
 
-            if (levels[key].xp >= neededXP) {
-                levels[key].xp -= neededXP;
-                levels[key].level++;
+            if (user.xp >= neededXP) {
+                user.xp -= neededXP;
+                user.level++;
 
                 message.channel.send(
-                    `🎉 ${message.author} Lên **Level ${levels[key].level}**!`
+                    `🎉 ${message.author} Lên **Level ${user.level}**!`
                 );
             }
 
-            // ======================
-            // SAFE WRITE FILE
-            // ======================
-            try {
-                fs.writeFileSync(
-                    levelFile,
-                    JSON.stringify(levels, null, 2)
-                );
-            } catch (err) {
-                console.error('Write level file error:', err);
-            }
+            // 🔥 lưu lại DB
+            levelDB.update(userId, user.xp, user.level);
         }
 
         // ======================
-        // TICKET STAFF TRACKING
+        // TICKET SYSTEM
         // ======================
+
         const data = ticketStatus.get(message.channel.id);
         if (!data) return;
 
-        // chỉ staff mới được xử lý
         const isStaff = message.member?.roles?.cache?.some(r =>
             helperRoles.includes(r.id)
         );
 
         if (!isStaff) return;
-
-        // chỉ khi ticket đang waiting mới chuyển trạng thái
         if (data.status !== 'waiting') return;
 
         data.status = 'processing';
@@ -98,13 +72,17 @@ module.exports = (client) => {
 
         ticketStatus.set(message.channel.id, data);
 
-        // dùng messageId thay vì fetch random
         if (!data.messageId) return;
 
-        const botMsg = await message.channel.messages.fetch(data.messageId).catch(() => null);
+        const botMsg = await message.channel.messages
+            .fetch(data.messageId)
+            .catch(() => null);
+
         if (!botMsg?.embeds?.length) return;
 
         const oldEmbed = botMsg.embeds[0];
+
+        const { EmbedBuilder } = require('discord.js');
 
         const embed = EmbedBuilder.from(oldEmbed).setDescription(
             oldEmbed.description.replace(
