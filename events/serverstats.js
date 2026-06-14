@@ -68,10 +68,10 @@ module.exports = (client) => {
             boosts: guild.channels.cache.get('1514454605998592110'),
             members: guild.channels.cache.get('1514454436905353326'),
 
-            online: guild.channels.cache.get('ID_KENH_ONLINE'),
-            idle: guild.channels.cache.get('ID_KENH_IDLE'),
-            dnd: guild.channels.cache.get('ID_KENH_DND'),
-            offline: guild.channels.cache.get('ID_KENH_OFFLINE')
+            online: guild.channels.cache.get('1515573448192167948'),
+            idle: guild.channels.cache.get('1515581678897070115'),
+            dnd: guild.channels.cache.get('1515581688124801034'),
+            offline: guild.channels.cache.get('1515581699336179884')
 
         };
         if (channels.owner)
@@ -84,16 +84,16 @@ module.exports = (client) => {
             channels.members.setName(`👥 𝗠𝗘𝗠𝗕𝗘𝗥𝗦: ${members}`);
 
         if (channels.online)
-            channels.online.setName(`🟢 ONLINE: ${onlineCount}`);
+            channels.online.setName(`🟢 𝗢𝗡𝗟𝗜𝗡𝗘: ${onlineCount}`);
 
         if (channels.idle)
-            channels.idle.setName(`🌙 IDLE: ${idleCount}`);
+            channels.idle.setName(`🌙 𝗜𝗗𝗟𝗘: ${idleCount}`);
 
         if (channels.dnd)
-            channels.dnd.setName(`⛔ DND: ${dndCount}`);
+            channels.dnd.setName(`⛔ 𝗗𝗡𝗗: ${dndCount}`);
 
         if (channels.offline)
-            channels.offline.setName(`⚫ OFFLINE: ${offlineCount}`);
+            channels.offline.setName(`⚫ 𝗢𝗙𝗙𝗟𝗜𝗡𝗘: ${offlineCount}`);
 
     }
 
