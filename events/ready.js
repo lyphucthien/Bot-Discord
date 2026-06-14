@@ -21,21 +21,24 @@ module.exports = (client) => {
             "⚡ Discord Bot Pro",
         ];
 
-        const types = [0, 2, 3];
-
         let i = 0;
+
+        function getRandomType() {
+            const rand = Math.random() * 100;
+
+            if (rand < 25) return 0;
+            if (rand < 40) return 2;
+            return 3;
+        }
 
         setInterval(() => {
             const status = statuses[i];
 
-            const type = types[Math.floor(Math.random() * types.length)];
-
             client.user.setActivity(status, {
-                type: type
+                type: getRandomType()
             });
 
             i++;
-
             if (i >= statuses.length) i = 0;
 
         }, 8000);
