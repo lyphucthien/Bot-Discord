@@ -12,27 +12,33 @@ module.exports = (client) => {
         );
 
         const statuses = [
-            { name: "💡 Gõ /help Để Xem Lệnh", type: 0 },
-            { name: "⚡ Discord Bot Pro", type: 3 },
-            { name: "🌱 Server Đang Phát Triển", type: 3 },
-            { name: `👥Đang Phục Vụ Cho ${client.guilds.cache.size} Servers`, type: 3 },
-            { name: "🚀 Online 24/7", type: 3 },
-            { name: "😎 Sẵn Sàng Hỗ Trợ Mọi Lúc", type: 2 }
+            "🟢 Bot Online",
+            `👥 Đang Phục Vụ Cho ${client.guilds.cache.size} Servers`,
+            "💡 /help Để Xem Danh Sách Lệnh",
+            "😎 Sẵn Sàng Hỗ Trợ Mọi Lúc",
+            "🚀 Online 24/7",
+            "🌱 Server Đang Phát Triển",
+            "⚡ Discord Bot Pro",
         ];
 
+        const types = [0, 2, 3];
+
         let i = 0;
+
         setInterval(() => {
             const status = statuses[i];
 
-            client.user.setActivity(status.name, {
-                type: status.type
+            const type = types[Math.floor(Math.random() * types.length)];
+
+            client.user.setActivity(status, {
+                type: type
             });
 
             i++;
 
             if (i >= statuses.length) i = 0;
 
-        }, 5000);
+        }, 8000);
 
     });
 
