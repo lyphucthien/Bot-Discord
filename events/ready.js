@@ -12,7 +12,7 @@ module.exports = (client) => {
         );
 
         client.user.setActivity('Discord Bot Pro', {
-            type: 3
+            type: 4
         });
     });
 
