@@ -5,17 +5,20 @@ module.exports = (client) => {
         console.log(`✅ ${client.user.tag} Đã Online`);
 
         const commands = await client.application.commands.fetch();
+
         console.log(
             "📌 Slash Commands:",
             commands.map(cmd => cmd.name).join(', ')
         );
 
         const statuses = [
-            { name: "Discord Bot Pro", type: 3 }, // Watching
-            { name: "/help để xem lệnh", type: 0 }, // Playing
-            { name: `${client.guilds.cache.size} servers`, type: 3 },
-            { name: "users đang online", type: 2 } // Listening
+            { name: "💡 Gõ /help Để Xem Lệnh", type: 0 },
+            { name: "⚡ Discord Bot Pro", type: 3 },
+            { name: "🌱 Server Đang Phát Triển", type: 3 },
+            { name: "🚀 Online 24/7", type: 3 },
+            { name: "😎 Sẵn Sàng Hỗ Trợ Mọi Lúc", type: 2 }
         ];
+
         let i = 0;
         setInterval(() => {
             const status = statuses[i];
