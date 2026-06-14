@@ -3,7 +3,12 @@ require('./database/sqlite');
 const fs = require('fs');
 const config = require('./config.json');
 const express = require("express");
+const http = require("http");
+const { Server } = require("socket.io");
+
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
 
 const { Client, GatewayIntentBits, Collection } = require('discord.js');
 
@@ -158,22 +163,22 @@ body{
 
             <div class="stat">
               <span>⚡ Ping</span>
-              <span id="ping">Loading...</span>
+                <span id="ping">Loading...</span>
             </div>
 
             <div class="stat">
              <span>🏠 Servers</span>
-              <span>${online ? client.guilds.cache.size : 0}</span>
+                <span id="guilds">${online ? client.guilds.cache.size : 0}</span>
             </div>
 
             <div class="stat">
               <span>👥 Users</span>
-                 <span>${online ? client.users.cache.size : 0}</span>
+                <span id="users">${online ? client.users.cache.size : 0}</span>
             </div>
 
             <div class="stat">
               <span>💾 RAM</span>
-               <span>${Math.round(process.memoryUsage().rss / 1024 / 1024)} MB</span>
+                <span id="ram">${Math.round(process.memoryUsage().rss / 1024 / 1024)} MB</span>
             </div>
 
             <div class="stat">
@@ -194,42 +199,36 @@ body{
 
         </div>
         
-        <script>
-        async function updateDashboard() {
-            try {
-                const res = await fetch("/status");
-                const data = await res.json();
+            <script src="/socket.io/socket.io.js"></script>
 
-                // 🔥 PING realtime
-                document.getElementById("ping").innerText = data.ping !== null ? data.ping + "ms" : "N/A";
+            <script>
+            const socket = io();
 
-                // 🕒 TIME realtime (server VN)
-                document.getElementById("time").innerText = data.time;
-
-            } catch (err) {
-                console.log("Realtime update error:", err);
+            /* CLOCK */
+            function updateClock() {
+                const now = new Date();
+                document.getElementById("time").innerText =
+                    now.toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" });
             }
-        }
 
-        updateDashboard();
-        setInterval(updateDashboard, 1000);
-        </script>
+            /* REALTIME DATA */
+            socket.on("stats", (data) => {
 
-    </body>
+                document.getElementById("ping").innerText =
+                    data.ping !== null ? data.ping + "ms" : "N/A";
+
+                document.getElementById("guilds").innerText = data.guilds;
+                document.getElementById("users").innerText = data.users;
+                document.getElementById("ram").innerText = data.ram + " MB";
+            });
+
+            setInterval(updateClock, 1000);
+            updateClock();
+            </script>
+
+        </body>
     </html>
     `);
-});
-
-app.get("/status", (req, res) => {
-    res.json({
-        online: client.isReady(),
-        bot: client.user ? client.user.tag : "Đang khởi động...",
-        guilds: client.isReady() ? client.guilds.cache.size : 0,
-        users: client.isReady() ? client.users.cache.size : 0,
-        uptime: Math.floor(process.uptime()),
-        ping: client.isReady() ? client.ws.ping : null,
-        time: new Date().toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" })
-    });
 });
 
 app.get("/ping", (req, res) => {
@@ -240,10 +239,40 @@ app.get("/ping", (req, res) => {
     });
 });
 
-app.listen(PORT, "0.0.0.0", () => {
+server.listen(PORT, "0.0.0.0", () => {
     console.log(`🌐 Web Server chạy ở cổng ${PORT}`);
 });
 const URL = "https://my-discord-bot-mfu0.onrender.com";
+
+let statsCache = null;
+
+setInterval(() => {
+    if (!client.isReady()) return;
+
+    statsCache = {
+        ping: client.ws.ping,
+        guilds: client.guilds.cache.size,
+        users: client.users.cache.size,
+        ram: Math.round(process.memoryUsage().rss / 1024 / 1024),
+        time: new Date().toLocaleString("vi-VN", {
+            timeZone: "Asia/Ho_Chi_Minh"
+        }),
+        uptime: Math.floor(process.uptime())
+    };
+}, 1000);
+
+io.on("connection", (socket) => {
+    console.log("🟢 Dashboard Đã Kết Nối");
+
+    const interval = setInterval(() => {
+        if (statsCache) socket.emit("stats", statsCache);
+    }, 1000);
+
+    socket.on("disconnect", () => {
+        clearInterval(interval);
+        console.log("🔴 Dashboard Mất Kết Nối");
+    });
+});
 
 setInterval(async () => {
     try {
