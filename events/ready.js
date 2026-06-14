@@ -12,7 +12,7 @@ module.exports = (client) => {
         );
 
         // 🔧 BẬT / TẮT BẢO TRÌ Ở ĐÂY
-        const MAINTENANCE = false;
+        const MAINTENANCE = true;
 
         function getRandomType() {
             const rand = Math.random() * 100;
