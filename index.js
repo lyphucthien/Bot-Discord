@@ -262,7 +262,6 @@ setInterval(() => {
 }, 1000);
 
 io.on("connection", (socket) => {
-    console.log("🟢 Dashboard Đã Kết Nối");
 
     const interval = setInterval(() => {
         if (statsCache) socket.emit("stats", statsCache);
@@ -270,7 +269,6 @@ io.on("connection", (socket) => {
 
     socket.on("disconnect", () => {
         clearInterval(interval);
-        console.log("🔴 Dashboard Mất Kết Nối");
     });
 });
 
