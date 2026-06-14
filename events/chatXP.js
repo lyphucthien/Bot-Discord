@@ -22,6 +22,8 @@ module.exports = (client) => {
 
         const xp = Math.floor(Math.random() * 11) + 10;
 
+        levelDB.create(message.author.id);
+
         const user = levelDB.get(message.author.id);
 
         let currentXP = user.xp + xp;
