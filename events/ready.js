@@ -26,16 +26,32 @@ module.exports = (client) => {
         function getRandomType() {
             const rand = Math.random() * 100;
 
-            if (rand < 25) return 0;
-            if (rand < 40) return 2;
-            return 3;
+            if (rand < 25) return 0;      // Playing 25%
+            if (rand < 40) return 2;      // Listening 15% (25-40)
+            return 3;                     // Watching 60%
         }
+
+        client.user.setPresence({
+            status: "online", // 👈 luôn hiển thị xanh
+            activities: [
+                {
+                    name: statuses[0],
+                    type: getRandomType()
+                }
+            ],
+        });
 
         setInterval(() => {
             const status = statuses[i];
 
-            client.user.setActivity(status, {
-                type: getRandomType()
+            client.user.setPresence({
+                status: "online", // luôn online
+                activities: [
+                    {
+                        name: status,
+                        type: getRandomType()
+                    }
+                ],
             });
 
             i++;
