@@ -26,20 +26,17 @@ module.exports = {
         // ======================
         // GET / CREATE USER
         // ======================
-        let data = await Level.findOne({ userId: target.id });
+        let data = Level.get(target.id);
 
         if (!data) {
-            data = await Level.create({
-                userId: target.id,
-                xp: 0,
-                level: 1
-            });
+            Level.create(target.id);
+            data = Level.get(target.id);
         }
 
         // ======================
         // RANK
         // ======================
-        const leaderboard = await Level.find().sort({ xp: -1 });
+        const leaderboard = Level.getLeaderboard();
 
         const rank =
             leaderboard.findIndex(u => u.userId === target.id) + 1;
