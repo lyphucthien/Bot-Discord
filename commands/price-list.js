@@ -14,19 +14,32 @@ module.exports = {
         const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
 
         function buildEmbed(type, title, color) {
-            const items = data[type];
+
+            const items = data[type] || [];
 
             const embed = new EmbedBuilder()
                 .setTitle(title)
                 .setColor(color)
-                .setDescription('Danh Sách Sản Phẩm:')
+                .setDescription('Danh Sách Sản Phẩm:');
+
+            if (items.length === 0) {
+
+                embed.addFields({
+                    name: '❌ Không có dữ liệu',
+                    value: 'Danh mục này hiện đang trống'
+                });
+
+                return embed;
+            }
 
             items.forEach(item => {
+
                 embed.addFields({
                     name: item.name,
                     value: `💰 ${item.price}`,
                     inline: true
                 });
+
             });
 
             return embed;
