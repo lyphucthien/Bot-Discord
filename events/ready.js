@@ -11,51 +11,54 @@ module.exports = (client) => {
             commands.map(cmd => cmd.name).join(', ')
         );
 
-        const statuses = [
-            "🟢 Bot Online",
-            `👥 Đang Phục Vụ Cho ${client.guilds.cache.size} Servers`,
-            "💡 /help Để Xem Danh Sách Lệnh",
-            "😎 Sẵn Sàng Hỗ Trợ Mọi Lúc",
-            "🚀 Online 24/7",
-            "🌱 Server Đang Phát Triển",
-            "⚡ Discord Bot Pro (Version 1.0)",
-        ];
-
-        let i = 0;
+        // 🔧 BẬT / TẮT BẢO TRÌ Ở ĐÂY
+        const MAINTENANCE = false;
 
         function getRandomType() {
             const rand = Math.random() * 100;
 
-            if (rand < 25) return 0;      // Playing 25%
-            if (rand < 40) return 2;      // Listening 15% (25-40)
-            return 3;                     // Watching 60%
+            if (rand < 25) return 0;      // Playing
+            if (rand < 40) return 2;      // Listening
+            return 3;                     // Watching
         }
 
-        client.user.setPresence({
-            status: "online", // 👈 luôn hiển thị xanh
-            activities: [
-                {
-                    name: statuses[0],
-                    type: getRandomType()
-                }
-            ],
-        });
-
-        setInterval(() => {
-            const status = statuses[i];
-
-            client.user.setPresence({
-                status: "online", // luôn online
+        if (MAINTENANCE) {
+            return client.user.setPresence({
+                status: "dnd", // 🔴 đỏ
                 activities: [
                     {
-                        name: status,
+                        name: "🔧 Đang Bảo Trì Hệ Thống",
+                        type: 0
+                    }
+                ],
+            });
+        }
+
+        let i = 0;
+
+        setInterval(() => {
+
+            const statuses = [
+                "🟢 Bot Online",
+                `👥 Đang Phục Vụ Cho ${client.guilds.cache.size} Servers`,
+                "💡 /help Để Xem Danh Sách Lệnh",
+                "😎 Sẵn Sàng Hỗ Trợ Mọi Lúc",
+                "🚀 Online 24/7",
+                "🌱 Server Đang Phát Triển",
+                "⚡ Discord Bot Pro (Version 1.0)",
+            ];
+
+            client.user.setPresence({
+                status: "online",
+                activities: [
+                    {
+                        name: statuses[i],
                         type: getRandomType()
                     }
                 ],
             });
 
-            i++;
-            if (i >= statuses.length) i = 0;
+            i = (i + 1) % statuses.length;
 
         }, 8000);
 
