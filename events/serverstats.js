@@ -45,19 +45,19 @@ module.exports = (client) => {
             switch (owner.presence.status) {
 
                 case 'online':
-                    ownerStatus = 'OWNER • Online 🟢';
+                    ownerStatus = '🟢 OWNER • Online';
                     break;
 
                 case 'idle':
-                    ownerStatus = 'OWNER • IDLE 🌙';
+                    ownerStatus = '🌙 OWNER • IDLE';
                     break;
 
                 case 'dnd':
-                    ownerStatus = 'OWNER • DND ⛔';
+                    ownerStatus = '⛔ OWNER • DND';
                     break;
 
                 default:
-                    ownerStatus = 'OWNER • Offline ⚫';
+                    ownerStatus = '⚫ OWNER • Offline';
                     break;
             }
         }
