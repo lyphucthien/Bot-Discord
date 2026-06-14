@@ -18,7 +18,7 @@ module.exports = (client) => {
             "😎 Sẵn Sàng Hỗ Trợ Mọi Lúc",
             "🚀 Online 24/7",
             "🌱 Server Đang Phát Triển",
-            "⚡ Discord Bot Pro",
+            "⚡ Discord Bot Pro (Version 1.0)",
         ];
 
         let i = 0;
