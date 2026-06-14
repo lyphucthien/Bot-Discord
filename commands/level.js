@@ -12,42 +12,52 @@ module.exports = {
 
     async execute(interaction) {
 
-        const userId = interaction.user.id;
-
-        // ======================
-        // FIND OR CREATE USER
-        // ======================
-        let userData = await Level.findOne({ userId });
+        let userData =
+            Level.get(interaction.user.id);
 
         if (!userData) {
-            userData = await Level.create({
-                userId,
-                xp: 0,
-                level: 1
-            });
+
+            Level.create(interaction.user.id);
+
+            userData =
+                Level.get(interaction.user.id);
         }
 
-        const currentLevel = Math.max(1, userData.level);
+        const currentLevel =
+            userData.level;
 
-        const currentXP = xpFor(currentLevel);
-        const nextXP = xpFor(currentLevel + 1);
+        const nextXP =
+            xpFor(currentLevel + 1);
 
-        const progressXP = Math.max(0, userData.xp - currentXP);
-        const neededXP = nextXP - currentXP || 1;
+        const currentXP =
+            userData.xp;
 
-        const progress = Math.min(1, progressXP / neededXP);
-        const percentage = Math.floor(progress * 100);
+        const percentage =
+            Math.floor(
+                (currentXP / nextXP) * 100
+            );
 
-        const filled = Math.round(progress * 10);
-        const bar = '🟩'.repeat(filled) + '⬜'.repeat(10 - filled);
+        const filled =
+            Math.round(
+                (currentXP / nextXP) * 10
+            );
+
+        const bar =
+            '🟩'.repeat(filled) +
+            '⬜'.repeat(10 - filled);
 
         const embed = new EmbedBuilder()
             .setColor('#5865F2')
             .setAuthor({
                 name: interaction.user.tag,
-                iconURL: interaction.user.displayAvatarURL()
+                iconURL:
+                    interaction.user.displayAvatarURL()
             })
-            .setThumbnail(interaction.user.displayAvatarURL({ size: 512 }))
+            .setThumbnail(
+                interaction.user.displayAvatarURL({
+                    size: 512
+                })
+            )
             .setTitle('📊 Thông Tin Level')
             .addFields(
                 {
@@ -57,13 +67,13 @@ module.exports = {
                 },
                 {
                     name: '✨ XP',
-                    value: `${userData.xp}`,
+                    value: `${currentXP}/${nextXP}`,
                     inline: true
                 },
                 {
                     name: '📈 Tiến Trình',
                     value:
-                        `${bar} ${percentage}%\n${progressXP}/${neededXP} XP`,
+                        `${bar} ${percentage}%`,
                     inline: false
                 }
             )
