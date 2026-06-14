@@ -34,6 +34,16 @@ module.exports = (client) => {
 
         setInterval(() => {
 
+            client.user.setPresence({
+                status: "online", // 🟢 chấm xanh
+                activities: [
+                    {
+                        name: "dev Lý Phúc Thiện",
+                        type: 4
+                    }
+                ]
+            });
+
             if (state.maintenance) {
                 return client.user.setPresence({
                     status: "dnd",
