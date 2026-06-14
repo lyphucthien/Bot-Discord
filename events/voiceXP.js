@@ -26,6 +26,8 @@ module.exports = (client) => {
 
                 for (const member of members.values()) {
 
+                    levelDB.create(member.id);
+
                     const user =
                         levelDB.get(member.id);
 
