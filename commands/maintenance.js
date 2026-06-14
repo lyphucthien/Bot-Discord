@@ -1,46 +1,41 @@
+const { SlashCommandBuilder, PermissionFlagsBits } = require("discord.js");
 const state = require("../state");
 
-module.exports = (client) => {
+module.exports = {
+    data: new SlashCommandBuilder()
+        .setName("maintenance")
+        .setDescription("Bật / Tắt Chế Độ Bảo Trì Bot")
+        .addStringOption(option =>
+            option.setName("mode")
+                .setDescription("on hoặc off")
+                .setRequired(true)
+                .addChoices(
+                    { name: "ON", value: "on" },
+                    { name: "OFF", value: "off" }
+                )
+        )
+        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
 
-    client.on("messageCreate", async (message) => {
+    async execute(interaction) {
 
-        if (message.author.bot) return;
-        if (!message.guild) return;
+        const mode = interaction.options.getString("mode");
 
-        const prefix = ".";
-        if (!message.content.startsWith(prefix)) return;
+        if (mode === "on") {
+            state.maintenance = true;
 
-        const args = message.content.slice(prefix.length).trim().split(/ +/g);
-        const command = args.shift().toLowerCase();
-
-        // ======================
-        // .maint COMMAND
-        // ======================
-        if (command === "maint") {
-
-            // chỉ admin
-            if (!message.member.permissions.has("Administrator")) {
-                return message.reply("❌ Bạn Không Có Quyền Dùng Lệnh Này!");
-            }
-
-            const mode = args[0];
-
-            if (!mode) {
-                return message.reply("⚠️ Dùng: `.maint on` hoặc `.maint off`");
-            }
-
-            if (mode === "on") {
-                state.maintenance = true;
-                return message.reply("🔴 **Đã BẬT BẢO TRÌ!**");
-            }
-
-            if (mode === "off") {
-                state.maintenance = false;
-                return message.reply("🟢 **Đã TẮT BẢO TRÌ!**");
-            }
-
-            return message.reply("⚠️ Chỉ dùng: `on` hoặc `off`");
+            return interaction.reply({
+                content: "🔴 **Đã Bật BẢO TRÌ!**",
+                flags: 64
+            });
         }
-    });
 
+        if (mode === "off") {
+            state.maintenance = false;
+
+            return interaction.reply({
+                content: "🟢 **Đã Tắt Bảo Trì!**",
+                flags: 64
+            });
+        }
+    }
 };
