@@ -1,3 +1,5 @@
+const state = require("./state");
+
 module.exports = (client) => {
 
     client.once('clientReady', async () => {
@@ -11,42 +13,38 @@ module.exports = (client) => {
             commands.map(cmd => cmd.name).join(', ')
         );
 
-        // 🔧 BẬT / TẮT BẢO TRÌ Ở ĐÂY
-        const MAINTENANCE = true;
-
-        function getRandomType() {
-            const rand = Math.random() * 100;
-
-            if (rand < 25) return 0;      // Playing
-            if (rand < 40) return 2;      // Listening
-            return 3;                     // Watching
-        }
-
-        if (MAINTENANCE) {
-            return client.user.setPresence({
-                status: "dnd", // 🔴 đỏ
-                activities: [
-                    {
-                        name: "🔧 Đang Bảo Trì Hệ Thống",
-                        type: 0
-                    }
-                ],
-            });
-        }
+        const statuses = [
+            "🟢 Bot Online",
+            `👥 Đang Phục Vụ Cho ${client.guilds.cache.size} Servers`,
+            "💡 /help Để Xem Danh Sách Lệnh",
+            "😎 Sẵn Sàng Hỗ Trợ Mọi Lúc",
+            "🚀 Online 24/7",
+            "🌱 Server Đang Phát Triển",
+            "⚡ Discord Bot Pro (Version 1.0)",
+        ];
 
         let i = 0;
 
+        function getRandomType() {
+            const rand = Math.random() * 100;
+            if (rand < 25) return 0;
+            if (rand < 40) return 2;
+            return 3;
+        }
+
         setInterval(() => {
 
-            const statuses = [
-                "🟢 Bot Online",
-                `👥 Đang Phục Vụ Cho ${client.guilds.cache.size} Servers`,
-                "💡 /help Để Xem Danh Sách Lệnh",
-                "😎 Sẵn Sàng Hỗ Trợ Mọi Lúc",
-                "🚀 Online 24/7",
-                "🌱 Server Đang Phát Triển",
-                "⚡ Discord Bot Pro (Version 1.0)",
-            ];
+            if (state.maintenance) {
+                return client.user.setPresence({
+                    status: "dnd",
+                    activities: [
+                        {
+                            name: "🔧 Đang Bảo Trì Hệ Thống",
+                            type: 0
+                        }
+                    ],
+                });
+            }
 
             client.user.setPresence({
                 status: "online",
