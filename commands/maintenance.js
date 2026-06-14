@@ -4,7 +4,7 @@ const state = require("../state");
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("maintenance")
-        .setDescription("Bật / tắt chế độ bảo trì bot")
+        .setDescription("Bật / Tắt Chế Độ Bảo Trì Bot")
         .addStringOption(option =>
             option.setName("mode")
                 .setDescription("on hoặc off")
@@ -24,8 +24,8 @@ module.exports = {
             state.maintenance = true;
 
             return interaction.reply({
-                content: "🔴 Đã bật chế độ BẢO TRÌ!",
-                ephemeral: true
+                content: "🔴 **Đã Bật BẢO TRÌ!**",
+                flags: 64
             });
         }
 
@@ -33,8 +33,8 @@ module.exports = {
             state.maintenance = false;
 
             return interaction.reply({
-                content: "🟢 Đã tắt chế độ BẢO TRÌ!",
-                ephemeral: true
+                content: "🟢 **Đã Tắt Bảo Trì!**",
+                flags: 64
             });
         }
     }
