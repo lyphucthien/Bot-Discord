@@ -36,6 +36,31 @@ module.exports = {
             SET level = ?
             WHERE userId = ?
         `).run(level, userId);
+    },
+
+    update(userId, xp, level) {
+
+        this.create(userId);
+
+        db.prepare(`
+            UPDATE users
+            SET xp = ?, level = ?
+            WHERE userId = ?
+        `).run(
+            xp,
+            level,
+            userId
+        );
+    },
+
+    getLeaderboard() {
+
+        return db.prepare(`
+            SELECT *
+            FROM users
+            ORDER BY level DESC, xp DESC
+        `).all();
+
     }
 
 };
