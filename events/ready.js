@@ -15,6 +15,7 @@ module.exports = (client) => {
             { name: "💡 Gõ /help Để Xem Lệnh", type: 0 },
             { name: "⚡ Discord Bot Pro", type: 3 },
             { name: "🌱 Server Đang Phát Triển", type: 3 },
+            { name: "👥Đang Phục Vụ Cho ${client.guilds.cache.size} Servers", type: 3 },
             { name: "🚀 Online 24/7", type: 3 },
             { name: "😎 Sẵn Sàng Hỗ Trợ Mọi Lúc", type: 2 }
         ];
@@ -35,4 +36,4 @@ module.exports = (client) => {
 
     });
 
-};
+};e
