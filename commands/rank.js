@@ -38,8 +38,12 @@ module.exports = {
         // ======================
         const leaderboard = Level.getLeaderboard();
 
-        const rank =
-            leaderboard.findIndex(u => u.userId === target.id) + 1;
+        let rank =
+            leaderboard.findIndex(
+                u => u.userId === target.id
+            ) + 1;
+
+        if (rank <= 0) rank = leaderboard.length + 1;
 
         const totalMembers = interaction.guild.memberCount;
 
@@ -60,14 +64,14 @@ module.exports = {
         // ======================
         // XP
         // ======================
-        const currentXP = xpFor(data.level);
+        const currentXP = data.xp;
         const nextXP = xpFor(data.level + 1);
 
         const progress = Math.max(
             0,
             Math.min(
                 1,
-                (data.xp - currentXP) / (nextXP - currentXP || 1)
+                currentXP / nextXP
             )
         );
 
@@ -113,7 +117,11 @@ module.exports = {
 
         ctx.fillText(`Vai Trò: ${topRole}`, 260, 200);
 
-        ctx.fillText(`${data.xp} XP`, 260, 240);
+        ctx.fillText(
+            `${data.xp}/${xpFor(data.level + 1)} XP`,
+            260,
+            240
+        );
 
         // TOP
         ctx.fillText(`TOP ${rank}`, 720, 80);
