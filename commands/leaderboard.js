@@ -8,46 +8,42 @@ module.exports = {
 
     async execute(interaction) {
 
-        // ======================
-        // GET DATA
-        // ======================
-        const top = await Level.find()
-            .sort({ xp: -1 })
-            .limit(10);
+        const top = Level
+            .getLeaderboard()
+            .slice(0, 10);
 
-        if (top.length === 0) {
+        if (!top.length) {
             return interaction.reply({
-                content: '❌ Chưa có dữ liệu leaderboard!',
+                content: '❌ Chưa có dữ liệu level',
                 flags: 64
             });
         }
 
         let desc = '';
 
-        // ======================
-        // BUILD LIST
-        // ======================
         for (let i = 0; i < top.length; i++) {
 
             const data = top[i];
 
-            let userTag = 'Unknown User';
+            let username = 'Unknown User';
 
             try {
                 const user = await interaction.client.users.fetch(data.userId);
-                userTag = user.username;
-            } catch {
-                userTag = data.userId;
-            }
+                username = user.username;
+            } catch { }
 
-            desc += `**${i + 1}.** ${userTag} • Lv ${data.level} • XP ${data.xp}\n`;
+            desc +=
+                `🏅 **#${i + 1}** ${username}\n` +
+                `┗ Level: **${data.level}** | XP: **${data.xp}**\n\n`;
         }
 
         const embed = new EmbedBuilder()
             .setColor('Gold')
-            .setTitle('🏆 bảng Xếp Hạng Level')
+            .setTitle('🏆 Bảng Xếp Hạng Level')
             .setDescription(desc)
-            .setFooter({ text: interaction.guild.name })
+            .setFooter({
+                text: interaction.guild.name
+            })
             .setTimestamp();
 
         return interaction.reply({
