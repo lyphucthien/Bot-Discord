@@ -53,16 +53,24 @@ module.exports = {
             const current =
                 orders.slice(start, start + pageSize);
 
-            let history = '';
+            let history =
+                'MÃ ĐƠN      SẢN PHẨM                 GIÁ TIỀN        NGÀY MUA\n';
 
-            current.forEach((order) => {
+            current.forEach(order => {
 
                 const date = new Date(
                     order.createdAt
                 ).toLocaleDateString('vi-VN');
 
+                const price =
+                    Number(order.price)
+                        .toLocaleString('vi-VN') + 'đ';
+
                 history +=
-                    `${order.orderId}　　 ${order.product}　　　${Number(order.price).toLocaleString('vi-VN')}đ　　${date}\n`;
+                    `${order.orderId.padEnd(12)}` +
+                    `${order.product.padEnd(28)}` +
+                    `${price.padEnd(16)}` +
+                    `${date}\n`;
             });
 
             return new EmbedBuilder()
@@ -83,9 +91,7 @@ module.exports = {
                     `### ➤ Đơn hàng đã mua: ${orders.length} 🛒\n\n` +
 
                     `### 🧾 LỊCH SỬ MUA HÀNG\n\n` +
-                    `**MÃ ĐƠN**　　　**Sản phẩm**　　　　**Giá**　　　　**Ngày Mua**\n` +
-
-                    `${history}`
+                    `\`\`\`\n${history}\`\`\``
                 )
                 .setFooter({
                     text:
