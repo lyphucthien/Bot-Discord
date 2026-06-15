@@ -62,7 +62,7 @@ module.exports = {
                 ).toLocaleDateString('vi-VN');
 
                 history +=
-                    `${order.orderId}　　 ${order.product}　　　 ${Number(order.price).toLocaleString('vi-VN')}đ　　${date}\n`;
+                    `${order.orderId}　　 ${order.product}　　  ${Number(order.price).toLocaleString('vi-VN')}đ　　${date}\n`;
             });
 
             return new EmbedBuilder()
