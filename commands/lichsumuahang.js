@@ -66,7 +66,7 @@ module.exports = {
                     Number(order.price).toLocaleString('vi-VN') + 'đ';
 
                 history +=
-                    `${order.orderId}　　　${order.product}　　　${price}　　　${date}\n`;
+                    `${order.orderId.padEnd(12)}${order.product.padEnd(20)}${price}/${date}\n`;
             });
 
             return new EmbedBuilder()
@@ -87,11 +87,13 @@ module.exports = {
                     `### ➤ Đơn hàng đã mua: ${orders.length} 🛒\n\n` +
 
                     `### 🧾 LỊCH SỬ MUA HÀNG\n\n` +
-                    `${history}`
+                    '```fix\n' +
+                    history +
+                    '```'
                 )
                 .setFooter({
                     text:
-                        `Trang ${page + 1}/${totalPages} • Lâm Đồng Community`
+                        `Trang ${page + 1}/${totalPages} - Lâm Đồng Community`
                 })
                 .setTimestamp();
         }
