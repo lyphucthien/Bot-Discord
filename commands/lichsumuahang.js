@@ -77,15 +77,15 @@ module.exports = {
                     interaction.user.displayAvatarURL()
                 )
                 .setDescription(
-                    `✨ **Thông Tin Khách Hàng** ${interaction.user}\n\n` +
+                    `## ✨ Thông Tin Khách Hàng ${interaction.user}\n\n` +
 
-                    `┃ 💰 **Tổng Chi Tiêu:** ${totalSpent.toLocaleString('vi-VN')}đ\n` +
-                    `┃ 🎯 **Cấp Bậc:** ${rank}\n\n` +
+                    `> 💰 **Tổng Chi Tiêu:** ${totalSpent.toLocaleString('vi-VN')}đ\n` +
+                    `> 🎯 **Cấp Bậc:** ${rank}\n\n` +
 
-                    `➤ **Đơn hàng đã mua:** ${orders.length} 🛒\n\n` +
+                    `## ➤ Đơn hàng đã mua: ${orders.length} 🛒\n\n` +
 
-                    `🧾 **LỊCH SỬ MUA HÀNG**\n\n` +
-                    `**MÃ ĐƠN**　　　　**Sản phẩm**　　　　**Giá**　　　　**Ngày mua**\n` +
+                    `## 🧾 LỊCH SỬ MUA HÀNG\n\n` +
+                    `**MÃ ĐƠN**　　　　**Sản phẩm**　　　　**Giá**　　　　**Ngày Mua**\n` +
 
                     `${history}`
                 )
