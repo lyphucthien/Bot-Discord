@@ -1,25 +1,34 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('support')
-        .setDescription('Tạo Ticket Hỗ Trợ'),
+        .setDescription('Gửi Bảng Support Ticket'),
 
     async execute(interaction) {
 
         const embed = new EmbedBuilder()
-            .setTitle('🛠️ Support Ticket')
+            .setTitle('🛠️ Tạo Phiếu Hỗ Trợ')
             .setDescription(
-                `📌 Vui Lòng Mô Tả Chi Tiết Vấn Đề Của Bạn.\n\n` +
-                `• Hỗ Trợ Kỹ Thuật\n` +
-                `• Lỗi Bot / Hệ Thống\n` +
-                `• Các Vấn Đề Khác\n\n` +
-                `⏱ Staff sẽ phản hồi sớm nhất có thể.`
+                'Nhấn nút bên dưới để tạo ticket hỗ trợ.\n\n' +
+                '• Hỗ trợ kỹ thuật\n' +
+                '• Lỗi bot\n' +
+                '• Hỗ trợ server'
             )
             .setColor('Blue');
 
+        const row = new ActionRowBuilder()
+            .addComponents(
+                new ButtonBuilder()
+                    .setCustomId('create_support')
+                    .setLabel('SUPPORT')
+                    .setEmoji('🛠️')
+                    .setStyle(ButtonStyle.Primary)
+            );
+
         await interaction.reply({
-            embeds: [embed]
+            embeds: [embed],
+            components: [row]
         });
     }
 };
