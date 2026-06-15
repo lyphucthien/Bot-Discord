@@ -18,7 +18,7 @@ module.exports = {
             });
         }
 
-        const pageSize = 7;
+        const pageSize = 10;
         let page = 0;
 
         const totalPages =
