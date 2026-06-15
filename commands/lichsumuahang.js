@@ -54,7 +54,7 @@ module.exports = {
                 orders.slice(start, start + pageSize);
 
             let history =
-                'MÃ ĐƠN      SẢN PHẨM                 GIÁ TIỀN        NGÀY MUA\n';
+                '**MÃ ĐƠN**　　　**Sản phẩm**　　　**Giá tiền**　　　**Ngày mua**\n';
 
             current.forEach(order => {
 
@@ -63,20 +63,10 @@ module.exports = {
                 ).toLocaleDateString('vi-VN');
 
                 const price =
-                    Number(order.price)
-                        .toLocaleString('vi-VN') + 'đ';
-
-                function pad(str, len) {
-                    return str + ' '.repeat(
-                        Math.max(0, len - str.length)
-                    );
-                }
+                    Number(order.price).toLocaleString('vi-VN') + 'đ';
 
                 history +=
-                    `${order.orderId.padEnd(12)}` +
-                    `${order.product.padEnd(32)}` +
-                    `${price.padEnd(16)}` +
-                    `${date}\n`;
+                    `${order.orderId}　　　${order.product}　　　${price}　　　${date}\n`;
             });
 
             return new EmbedBuilder()
