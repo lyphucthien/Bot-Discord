@@ -8,8 +8,6 @@ module.exports = {
         .setDescription('Xem Lịch Sử Mua Hàng'),
 
     async execute(interaction) {
-
-        const orders = orderDB.getUser(interaction.user.id);
         
         console.log(orderDB.read());
         
