@@ -33,7 +33,7 @@ module.exports = (client) => {
                 size: 1024
             }))
             .setImage(
-                'https://cdn.discordapp.com/attachments/1503393797680398438/1514157252754411661/Panda.png'
+                'https://cdn.discordapp.com/attachments/1515926642042601532/1515935084782420050/Panda.png?ex=6a30d010&is=6a2f7e90&hm=c8224bb9d64a75f4154cb901fff80f4faac982e70cb1d942ac360c0ac361aea0&'
             )
             .setFooter({
                 text: 'Tận Hưởng Phút Giây Giải Trí Tại Server Nhé ❤️'
