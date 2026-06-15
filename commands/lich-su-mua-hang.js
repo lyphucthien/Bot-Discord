@@ -10,7 +10,9 @@ module.exports = {
     async execute(interaction) {
 
         const orders = orderDB.getUser(interaction.user.id);
-
+        
+        console.log(orderDB.read());
+        
         if (!orders.length) {
             return interaction.reply({
                 content: '❌ Chưa Có Đơn Hàng Nào.',
