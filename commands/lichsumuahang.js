@@ -118,7 +118,7 @@ module.exports = {
             embeds: [generateEmbed()],
             components: [getButtons()],
             flags: 64,
-            fetchReply: true
+            withResponse: true
         });
 
         const collector =
