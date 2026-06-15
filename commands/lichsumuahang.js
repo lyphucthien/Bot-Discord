@@ -79,7 +79,7 @@ module.exports = {
                 .setDescription(
                     `✨ **Thông Tin Khách Hàng** ${interaction.user}\n\n` +
 
-                    `💰 **Tổng Chi Tiêu:** ${totalSpent.toLocaleString('vi-VN')}đ\n` +
+                    `> 💰 **Tổng Chi Tiêu:** ${totalSpent.toLocaleString('vi-VN')}đ\n` +
                     `🎯 **Cấp Bậc:** ${rank}\n\n` +
 
                     `➤ **Đơn hàng đã mua:** ${orders.length} 🛒\n\n` +
@@ -91,7 +91,7 @@ module.exports = {
                 )
                 .setFooter({
                     text:
-                        `Trang ${page + 1}/${totalPages} • Lâm Đồng Community\n`
+                        `Trang ${page + 1}/${totalPages} • Lâm Đồng Community\n\n`
                 })
                 .setTimestamp();
         }
