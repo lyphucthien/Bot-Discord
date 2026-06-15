@@ -5,7 +5,7 @@ const orderDB = require('../utils/orderDB');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('lich-su-mua-hang')
-        .setDescription('Xem Lịch Sử Mua Hàng'),
+        .setDescription('Xem Lịch Sử Mua Hàng Của Bạn'),
 
     async execute(interaction) {
 
@@ -73,13 +73,12 @@ module.exports = {
                     name: interaction.guild.name,
                     iconURL: interaction.guild.iconURL({ dynamic: true })
                 })
-                .setTitle('🛒 LỊCH SỬ MUA HÀNG')
                 .setThumbnail(
                     interaction.user.displayAvatarURL()
                 )
                 .setDescription(
-                    `✨ **Thông Tin Khách Hàng** ${interaction.user}\n` +
-                    `┃\n` +
+                    `✨ **Thông Tin Khách Hàng** ${interaction.user}\n\n` +
+
                     `💰 **Tổng Chi Tiêu:** ${totalSpent.toLocaleString('vi-VN')}đ\n` +
                     `🎯 **Cấp Bậc:** ${rank}\n\n` +
 
