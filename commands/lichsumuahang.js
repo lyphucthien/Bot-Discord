@@ -66,9 +66,15 @@ module.exports = {
                     Number(order.price)
                         .toLocaleString('vi-VN') + 'đ';
 
+                function pad(str, len) {
+                    return str + ' '.repeat(
+                        Math.max(0, len - str.length)
+                    );
+                }
+
                 history +=
                     `${order.orderId.padEnd(12)}` +
-                    `${order.product.padEnd(28)}` +
+                    `${order.product.padEnd(32)}` +
                     `${price.padEnd(16)}` +
                     `${date}\n`;
             });
@@ -91,7 +97,7 @@ module.exports = {
                     `### ➤ Đơn hàng đã mua: ${orders.length} 🛒\n\n` +
 
                     `### 🧾 LỊCH SỬ MUA HÀNG\n\n` +
-                    `\`\`\`\n${history}\`\`\``
+                    `${history}`
                 )
                 .setFooter({
                     text:
