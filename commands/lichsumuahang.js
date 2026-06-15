@@ -62,7 +62,7 @@ module.exports = {
                 ).toLocaleDateString('vi-VN');
 
                 history +=
-                    `\`${order.orderId}\`    ` +
+                    `${order.orderId}    ` +
                     `${order.product}    ` +
                     `${Number(order.price).toLocaleString('vi-VN')}đ/${date}\n`;
             });
@@ -71,7 +71,7 @@ module.exports = {
                 .setColor('#2ECC71')
                 .setAuthor({
                     name: interaction.guild.name,
-                    iconURL: interaction.guild.iconURL({ dynamic: true })
+                    iconURL: interaction.guild.iconURL()
                 })
                 .setThumbnail(
                     interaction.user.displayAvatarURL()
@@ -79,19 +79,19 @@ module.exports = {
                 .setDescription(
                     `✨ **Thông Tin Khách Hàng** ${interaction.user}\n\n` +
 
-                    `> 💰 **Tổng Chi Tiêu:** ${totalSpent.toLocaleString('vi-VN')}đ\n` +
-                    `🎯 **Cấp Bậc:** ${rank}\n\n` +
+                    `┃ 💰 **Tổng Chi Tiêu:** ${totalSpent.toLocaleString('vi-VN')}đ\n` +
+                    `┃ 🎯 **Cấp Bậc:** ${rank}\n\n` +
 
                     `➤ **Đơn hàng đã mua:** ${orders.length} 🛒\n\n` +
 
                     `🧾 **LỊCH SỬ MUA HÀNG**\n\n` +
-                    `**MÃ ĐƠN**　　　　 **Sản phẩm**　　　　 **Giá/Ngày mua**\n` +
+                    `**MÃ ĐƠN**　　　　**Sản phẩm**　　　　**Giá**　　　　**Ngày mua**\n` +
 
                     `${history}`
                 )
                 .setFooter({
                     text:
-                        `Trang ${page + 1}/${totalPages} • Lâm Đồng Community\n\n`
+                        `Trang ${page + 1}/${totalPages} • Lâm Đồng Community`
                 })
                 .setTimestamp();
         }
