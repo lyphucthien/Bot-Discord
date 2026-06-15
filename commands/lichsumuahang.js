@@ -62,7 +62,7 @@ module.exports = {
                 ).toLocaleDateString('vi-VN');
 
                 history +=
-                    `${order.orderId}　　　${order.product}　　　${Number(order.price).toLocaleString('vi-VN')}đ　　　${date}\n`;
+                    `${order.orderId}　　 ${order.product}　　  ${Number(order.price).toLocaleString('vi-VN')}đ　　${date}\n`;
             });
 
             return new EmbedBuilder()
@@ -83,7 +83,7 @@ module.exports = {
                     `### ➤ Đơn hàng đã mua: ${orders.length} 🛒\n\n` +
 
                     `### 🧾 LỊCH SỬ MUA HÀNG\n\n` +
-                    `**MÃ ĐƠN**　　　　**Sản phẩm**　　　　**Giá**　　　　**Ngày Mua**\n` +
+                    `**MÃ ĐƠN**　　　**Sản phẩm**　　　　**Giá**　　　　**Ngày Mua**\n` +
 
                     `${history}`
                 )
