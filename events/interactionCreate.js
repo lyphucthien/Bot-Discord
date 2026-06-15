@@ -112,7 +112,6 @@ module.exports = (client) => {
                     ticketStatus.update(channelId, data);
                 }
 
-                // ✅ FIX: dùng messageId thay vì fetch random
                 if (!data?.messageId) {
                     return interaction.reply({
                         content: '❌ Không tìm thấy ticket message',
@@ -151,9 +150,25 @@ module.exports = (client) => {
             // ======================
             // TICKET MENU (FIXED SAVE MESSAGE ID)
             // ======================
-            if (interaction.isStringSelectMenu() && interaction.customId === 'ticket_menu') {
+            if (
+                interaction.isButton() &&
+                (
+                    interaction.customId === 'create_support' ||
+                    interaction.customId === 'create_report' ||
+                    interaction.customId === 'create_order'
+                )
+            ) {
 
-                const type = interaction.values[0];
+                let type;
+
+                if (interaction.customId === 'create_support')
+                    type = 'support';
+
+                if (interaction.customId === 'create_report')
+                    type = 'report';
+
+                if (interaction.customId === 'create_order')
+                    type = 'order';
 
                 const existing = interaction.guild.channels.cache.find(
                     c => c.name.includes(interaction.user.id)
@@ -207,11 +222,17 @@ module.exports = (client) => {
                 const embed = new EmbedBuilder()
                     .setTitle(`🎫 ${type.toUpperCase()} Ticket`)
                     .setDescription(
-                        `Staff sẽ hỗ trợ bạn sớm nhất.\n\n` +
+                        `👤 Người tạo: ${interaction.user}\n\n` +
                         `⏱ <t:${Math.floor(createdAt / 1000)}:F>\n` +
                         `📊 Trạng thái: 🟡 Chờ Staff Phản Hồi`
                     )
-                    .setColor('Blue');
+                    .setColor(
+                        type === 'support'
+                            ? 'Blue'
+                            : type === 'report'
+                                ? 'Red'
+                                : 'Green'
+                    );
 
                 const row = {
                     type: 1,
