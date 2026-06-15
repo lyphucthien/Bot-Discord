@@ -30,8 +30,6 @@ module.exports = {
             0
         );
 
-        const member = interaction.guild.members.cache.get(userId);
-
         let rank = '👤 Thành Viên';
 
         if (totalSpent >= 5000)
