@@ -112,12 +112,12 @@ module.exports = {
                         )
                 );
 
-        const msg = await interaction.reply({
+        await interaction.reply({
             embeds: [generateEmbed()],
             components: [getButtons()],
-            flags: 64,
-            withResponse: true
         });
+
+        const msg = await interaction.fetchReply();
 
         const collector =
             msg.createMessageComponentCollector({
