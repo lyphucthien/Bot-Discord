@@ -53,25 +53,18 @@ module.exports = {
             const current =
                 orders.slice(start, start + pageSize);
 
-            let history =
-                'MÃ ĐƠN       SẢN PHẨM                GIÁ TIỀN       NGÀY MUA\n';
+            let history = '';
 
-            current.forEach((order, index) => {
-
-                const orderId =
-                    order.orderId ||
-                    `LD${String(start + index + 1)
-                        .padStart(6, '0')}`;
+            current.forEach((order) => {
 
                 const date = new Date(
                     order.createdAt
                 ).toLocaleDateString('vi-VN');
 
                 history +=
-                    `${orderId.padEnd(13)}` +
-                    `${order.product.padEnd(25)}` +
-                    `${(Number(order.price).toLocaleString('vi-VN') + 'đ').padEnd(15)}` +
-                    `${date}\n`;
+                    `\`${order.orderId}\`    ` +
+                    `${order.product}    ` +
+                    `${Number(order.price).toLocaleString('vi-VN')}đ/${date}\n`;
             });
 
             return new EmbedBuilder()
@@ -85,16 +78,17 @@ module.exports = {
                     interaction.user.displayAvatarURL()
                 )
                 .setDescription(
-                    `✨ **Thông Tin Khách Hàng** ${interaction.user}\n\n` +
+                    `✨ **Thông Tin Khách Hàng** ${interaction.user}\n` +
+                    `┃\n` +
+                    `💰 **Tổng Chi Tiêu:** ${totalSpent.toLocaleString('vi-VN')}đ\n` +
+                    `🎯 **Cấp Bậc:** ${rank}\n\n` +
 
-                    `💰 Tổng Chi Tiêu: **${totalSpent.toLocaleString('vi-VN')}đ**\n` +
-                    `🎯 Cấp Bậc: **${rank}**\n\n` +
+                    `➤ **Đơn hàng đã mua:** ${orders.length} 🛒\n\n` +
 
-                    `➤ Tổng Đơn Hàng Đã Mua: **${orders.length}**\n\n` +
+                    `🧾 **LỊCH SỬ MUA HÀNG**\n\n` +
+                    `**MÃ ĐƠN**　　　　 **Sản phẩm**　　　　 **Giá/Ngày mua**\n` +
 
-                    `🛒 **LỊCH SỬ MUA HÀNG:**\n` +
-
-                    `\`\`\`\n${history}\`\`\``
+                    `${history}`
                 )
                 .setFooter({
                     text:
