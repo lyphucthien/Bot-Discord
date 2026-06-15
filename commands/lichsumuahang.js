@@ -42,7 +42,7 @@ module.exports = {
 
                 const orderId =
                     order.orderId ||
-                    `BM${String(start + index + 1)
+                    `LD${String(start + index + 1)
                         .padStart(6, '0')}`;
 
                 const date = new Date(
