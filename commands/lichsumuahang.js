@@ -5,7 +5,7 @@ const orderDB = require('../utils/orderDB');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('lich-su-mua-hang')
-        .setDescription('Xem Lịch Sử Mua Hàng Của Bạn'),
+        .setDescription('Xem Lịch Sử Mua Hàng'),
 
     async execute(interaction) {
 
