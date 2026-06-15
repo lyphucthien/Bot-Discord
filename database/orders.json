@@ -1,0 +1,23 @@
+[
+    {
+        "orderId": "BM000001",
+        "userId": "123456789",
+        "product": "x1 Nitro Basic",
+        "price": 50000,
+        "createdAt": 1781519200000
+    },
+    {
+        "orderId": "BM000002",
+        "userId": "123456789",
+        "product": "x1 Netflix Premium",
+        "price": 120000,
+        "createdAt": 1781519300000
+    },
+    {
+        "orderId": "BM000003",
+        "userId": "123456789",
+        "product": "x1 Spotify Premium",
+        "price": 30000,
+        "createdAt": 1781519400000
+    }
+]
