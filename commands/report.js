@@ -1,16 +1,16 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('report')
-        .setDescription('Tạo Ticket Báo Cáo'),
+        .setDescription('Gửi Bảng Report Ticket'),
 
     async execute(interaction) {
 
         const embed = new EmbedBuilder()
-            .setTitle('🚨 Report Ticket')
+            .setTitle('🚨 Tạo Phiếu Tố Cáo')
             .setDescription(
-                `📌 Vui Lòng Cung Cấp Bằng Chứng Khi Báo Cáo.\n\n` +
+                'Nhấn nút bên dưới để tạo ticket báo cáo.\n\n' +
                 `• Báo Cáo Người Chơi\n` +
                 `• Spam / Scam\n` +
                 `• Link Độc Hại\n` +
@@ -19,8 +19,18 @@ module.exports = {
             )
             .setColor('Red');
 
+        const row = new ActionRowBuilder()
+            .addComponents(
+                new ButtonBuilder()
+                    .setCustomId('create_report')
+                    .setLabel('Báo Cáo')
+                    .setEmoji('🚨')
+                    .setStyle(ButtonStyle.Danger)
+            );
+
         await interaction.reply({
-            embeds: [embed]
+            embeds: [embed],
+            components: [row]
         });
     }
 };
