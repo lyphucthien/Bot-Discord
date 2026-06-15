@@ -11,9 +11,10 @@ module.exports = {
             .setTitle('🛠️ Tạo Phiếu Hỗ Trợ')
             .setDescription(
                 'Nhấn nút bên dưới để tạo ticket hỗ trợ.\n\n' +
-                '• Hỗ trợ kỹ thuật\n' +
-                '• Lỗi bot\n' +
-                '• Hỗ trợ server'
+                `• Hỗ Trợ Kỹ Thuật\n` +
+                `• Lỗi Bot / Hệ Thống\n` +
+                `• Các Vấn Đề Khác\n\n` +
+                `⏱ Staff sẽ phản hồi sớm nhất có thể.`
             )
             .setColor('Blue');
 
