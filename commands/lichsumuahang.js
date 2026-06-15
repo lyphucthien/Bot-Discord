@@ -30,13 +30,31 @@ module.exports = {
             0
         );
 
+        let rank = '👤 Thành Viên';
+
+        if (totalSpent >= 100000)
+            rank = '🥉 Đồng';
+
+        if (totalSpent >= 200000)
+            rank = '🥈 Bạc';
+
+        if (totalSpent >= 500000)
+            rank = '🥇 Vàng';
+
+        if (totalSpent >= 1000000)
+            rank = '💎 Kim Cương';
+
+        if (totalSpent >= 5000000)
+            rank = '👑 Đại Gia';
+
         function generateEmbed() {
 
             const start = page * pageSize;
             const current =
                 orders.slice(start, start + pageSize);
 
-            let history = '';
+            let history =
+                'MÃ ĐƠN       SẢN PHẨM                GIÁ TIỀN       NGÀY MUA\n';
 
             current.forEach((order, index) => {
 
@@ -50,13 +68,18 @@ module.exports = {
                 ).toLocaleDateString('vi-VN');
 
                 history +=
-                    `${orderId} | ${order.product}\n` +
-                    `💰 ${Number(order.price)
-                        .toLocaleString('vi-VN')}đ | 📅 ${date}\n\n`;
+                    `${orderId.padEnd(13)}` +
+                    `${order.product.padEnd(25)}` +
+                    `${(Number(order.price).toLocaleString('vi-VN') + 'đ').padEnd(15)}` +
+                    `${date}\n`;
             });
 
             return new EmbedBuilder()
                 .setColor('#2ECC71')
+                .setAuthor({
+                    name: interaction.guild.name,
+                    iconURL: interaction.guild.iconURL({ dynamic: true })
+                })
                 .setTitle('🛒 LỊCH SỬ MUA HÀNG')
                 .setThumbnail(
                     interaction.user.displayAvatarURL()
@@ -65,16 +88,20 @@ module.exports = {
                     `✨ **Thông Tin Khách Hàng** ${interaction.user}\n\n` +
 
                     `💰 Tổng Chi Tiêu: **${totalSpent.toLocaleString('vi-VN')}đ**\n` +
-                    `📦 Tổng Đơn Hàng: **${orders.length}**\n\n` +
+                    `🎯 Cấp Bậc: **${rank}**\n\n` +
 
-                    `▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n\n` +
+                    `➤ Tổng Đơn Hàng Đã Mua: **${orders.length}**\n\n` +
 
-                    `${history}`
+                    `🛒 **LỊCH SỬ MUA HÀNG:**\n` +
+
+                    `\`\`\`\n${history}\`\`\``
                 )
                 .setFooter({
                     text:
-                        `Trang ${page + 1}/${totalPages}`
-                });
+                        `Trang ${page + 1}/${totalPages} • Lâm Đồng Community`
+                })
+
+                .setTimestamp();
         }
 
         const getButtons = () =>
