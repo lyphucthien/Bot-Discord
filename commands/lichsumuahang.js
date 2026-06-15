@@ -98,9 +98,8 @@ module.exports = {
                 )
                 .setFooter({
                     text:
-                        `Trang ${page + 1}/${totalPages} • Lâm Đồng Community`
+                        `Trang ${page + 1}/${totalPages} • Lâm Đồng Community\n`
                 })
-
                 .setTimestamp();
         }
 
