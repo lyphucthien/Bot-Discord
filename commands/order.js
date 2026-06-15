@@ -1,16 +1,16 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('order')
-        .setDescription('Tạo Ticket Đặt Hàng'),
+        .setDescription('Gửi Bảng Order Ticket'),
 
     async execute(interaction) {
 
         const embed = new EmbedBuilder()
-            .setTitle('🛒 Order Ticket')
+            .setTitle('🛒 ORDER')
             .setDescription(
-                `📌 Vui lòng ghi rõ nhu cầu của bạn.\n\n` +
+                'Nhấn nút bên dưới để tạo ticket đặt hàng.\n\n' +
                 `• Đặt Hàng\n` +
                 `• Thanh Toán\n` +
                 `• Kiểm Tra Đơn Hàng\n` +
@@ -19,8 +19,18 @@ module.exports = {
             )
             .setColor('Green');
 
+        const row = new ActionRowBuilder()
+            .addComponents(
+                new ButtonBuilder()
+                    .setCustomId('create_order')
+                    .setLabel('ORDER')
+                    .setEmoji('🛒')
+                    .setStyle(ButtonStyle.Success)
+            );
+
         await interaction.reply({
-            embeds: [embed]
+            embeds: [embed],
+            components: [row]
         });
     }
 };
