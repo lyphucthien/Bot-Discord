@@ -66,7 +66,7 @@ module.exports = {
                     Number(order.price).toLocaleString('vi-VN') + 'đ';
 
                 history +=
-                    `${order.orderId.padEnd(12)}${order.product.padEnd(20)}${price}/${date}\n`;
+                    `${order.orderId}　　　${order.product}　　　${price}　　　${date}\n`;
             });
 
             return new EmbedBuilder()
@@ -87,9 +87,7 @@ module.exports = {
                     `### ➤ Đơn hàng đã mua: ${orders.length} 🛒\n\n` +
 
                     `### 🧾 LỊCH SỬ MUA HÀNG\n\n` +
-                    '```fix\n' +
-                    history +
-                    '```'
+                    `${history}`
                 )
                 .setFooter({
                     text:
