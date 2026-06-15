@@ -24,7 +24,9 @@ module.exports = (client) => {
                 `📜 Luật Server ➜ <#1503245852129493174>`,
                 `🎁 Giveaway ➜ <#1503608814606487552>`,
                 `💬 Kênh Chat ➜ <#1503393797680398438>`,
-                `🛒 Ticket Support, Report, Oder ➜ <#1514124605936369717>`,
+                `🛒 Ticket Oder ➜ <#1514124605936369717>`,
+                `🛠️ Ticket Support ➜ <#1515926856589775100>`,
+                `🚨 Ticket Report ➜ <#1515926642042601532>`,
             ].join('\n'))
             .setThumbnail(member.user.displayAvatarURL({
                 dynamic: true,
