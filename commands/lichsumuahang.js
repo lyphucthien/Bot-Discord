@@ -30,22 +30,28 @@ module.exports = {
             0
         );
 
+        const member = interaction.guild.members.cache.get(userId);
+
         let rank = '👤 Thành Viên';
 
-        if (totalSpent >= 100000)
-            rank = '🥉 Đồng';
-
-        if (totalSpent >= 200000)
-            rank = '🥈 Bạc';
-
-        if (totalSpent >= 500000)
-            rank = '🥇 Vàng';
-
-        if (totalSpent >= 1000000)
-            rank = '💎 Kim Cương';
-
-        if (totalSpent >= 5000000)
-            rank = '👑 Đại Gia';
+        if (totalSpent >= 5000)
+            rank = `<@&1516035637118107678>`;
+        else if (totalSpent >= 50000)
+            rank = `<@&1516035775240867961>`;
+        else if (totalSpent >= 100000)
+            rank = `<@&1516045762360774696>`;
+        else if (totalSpent >= 200000)
+            rank = `<@&1516045778089410700>`;
+        else if (totalSpent >= 500000)
+            rank = `<@&1516045780228640778>`;
+        else if (totalSpent >= 1000000)
+            rank = `<@&1516045781164101722>`;
+        else if (totalSpent >= 2000000)
+            rank = `<@&1516045781881196595>`;
+        else if (totalSpent >= 5000000)
+            rank = `<@&1516045782858465381>`;
+        else if (totalSpent >= 10000000)
+            rank = `<@&1516045783865233579>`;
 
         function generateEmbed() {
 
