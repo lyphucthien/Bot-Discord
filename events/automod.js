@@ -2,6 +2,11 @@ const warnDB = require('../utils/warnDB');
 
 const spamTracker = new Map();
 
+// ID Owner được miễn nhiễm
+const OWNER_IDS = [
+    "1330395226933559297"
+];
+
 module.exports = (client) => {
 
     const badWords = [
@@ -23,6 +28,9 @@ module.exports = (client) => {
         if (!message.guild) return;
 
         const userId = message.author.id;
+
+        // OWNER MIỄN NHIỄM
+        if (OWNER_IDS.includes(userId)) return;
 
         // =====================
         // ANTI SPAM
@@ -89,22 +97,14 @@ module.exports = (client) => {
 
         const warnCount = warnDB.count(userId);
 
-        // =====================
-        // DM USER
-        // =====================
         try {
-
             await message.author.send(
                 `⚠️ Bạn đã vi phạm nội quy trong server **${message.guild.name}**.\n\n` +
                 `📌 Lý Do: ${reason}\n` +
                 `📊 Số Warn Hiện Tại: ${warnCount}/5`
             );
-
         } catch { }
 
-        // =====================
-        // AUTO TIMEOUT
-        // =====================
         if (warnCount >= 5) {
 
             try {
@@ -114,7 +114,6 @@ module.exports = (client) => {
                     'AutoMod: 5 lần vi phạm'
                 );
 
-                // reset warn sau timeout
                 warnDB.clear(userId);
 
                 try {
