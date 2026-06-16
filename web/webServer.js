@@ -33,7 +33,7 @@ module.exports = (client) => {
         const ram = Math.round(process.memoryUsage().rss / 1024 / 1024);
         const ping = client.ws?.ping || 0;
 
-        const uptime = Math.floor(process.uptime());
+        const uptime = formatUptime(Math.floor(process.uptime()));
 
         statsCache = {
             ping,
@@ -353,7 +353,12 @@ body{
 
                 const ctx = document.getElementById("chartCanvas");
 
-                const data = type === "ram" ? ramData : pingData;
+                let data = type === "ram" ? ramData : pingData;
+
+                if (!data || data.length === 0) {
+                    alert("📊 Chưa Có Dữ Liệu Để Hiển Thị!");
+                    return;
+                }
 
                 if (chart) chart.destroy();
 
