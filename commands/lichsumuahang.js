@@ -31,6 +31,42 @@ module.exports = {
             0
         );
 
+        const member = await interaction.guild.members.fetch(interaction.user.id);
+
+        const ranks = [
+            { amount: 10000000, role: "1516045783865233579" },
+            { amount: 5000000, role: "1516045782858465381" },
+            { amount: 2000000, role: "1516045781881196595" },
+            { amount: 1000000, role: "1516045781164101722" },
+            { amount: 500000, role: "1516045780228640778" },
+            { amount: 200000, role: "1516045778089410700" },
+            { amount: 100000, role: "1516045762360774696" },
+            { amount: 50000, role: "1516035775240867961" },
+            { amount: 5000, role: "1516035637118107678" }
+        ];
+
+        let currentRole = null;
+
+        for (const rankData of ranks) {
+            if (totalSpent >= rankData.amount) {
+                currentRole = rankData.role;
+                break;
+            }
+        }
+
+        if (currentRole) {
+
+            for (const rankData of ranks) {
+                if (member.roles.cache.has(rankData.role)) {
+                    await member.roles.remove(rankData.role);
+                }
+            }
+
+            if (!member.roles.cache.has(currentRole)) {
+                await member.roles.add(currentRole);
+            }
+        }
+
         let rank = '👤 Thành Viên';
 
         if (totalSpent >= 10000000)
