@@ -11,28 +11,28 @@ module.exports = (client) => {
     const PORT = process.env.PORT || 3000;
     const URL = "https://my-discord-bot-mfu0.onrender.com";
 
-    function formatUptime() {
-        const totalSeconds = Math.floor(process.uptime());
+    function formatUptime(sec) {
+        const d = Math.floor(sec / 86400);
+        const h = Math.floor((sec % 86400) / 3600);
+        const m = Math.floor((sec % 3600) / 60);
+        const s = sec % 60;
 
-        const days = Math.floor(totalSeconds / 86400);
-        const hours = Math.floor((totalSeconds % 86400) / 3600);
-        const minutes = Math.floor((totalSeconds % 3600) / 60);
-
-        return `${days} ngày ${hours} giờ ${minutes} phút`;
+        return `${d} ngày ${h} giờ ${m} phút ${s} giây`;
     }
 
     let statsCache = null;
 
     setInterval(() => {
 
-        if (!client.isReady()) return;
+        if (!client || !client.ws) return;
+        if (!client.isReady?.()) return;
 
         statsCache = {
-            ping: client.ws.ping,
-            guilds: client.guilds.cache.size,
-            users: client.users.cache.size,
+            ping: client.ws?.ping || null,
+            users: client.users.cache?.size || 0,
+            guilds: client.guilds.cache?.size || 0,
             ram: Math.round(process.memoryUsage().rss / 1024 / 1024),
-            uptime: Math.floor(process.uptime())
+            uptime: formatUptime(Math.floor(process.uptime()))
         };
 
     }, 1000);
@@ -145,25 +145,56 @@ body{
     border-radius:50%;
     display:inline-block;
     margin-right:10px;
+    position:relative;
 }
 
 .online{
     background:#22c55e;
-    box-shadow:
-        0 0 10px #22c55e,
-        0 0 20px #22c55e;
+    box-shadow:0 0 10px #22c55e;
+}
+
+.online::after{
+    content:"";
+    position:absolute;
+    top:50%;
+    left:50%;
+    width:18px;
+    height:18px;
+    border-radius:50%;
+    transform:translate(-50%,-50%);
+    background:#22c55e;
+    animation:pulse 1.5s infinite;
+    opacity:.6;
 }
 
 .offline{
     background:#ef4444;
-    box-shadow:
-        0 0 10px #ef4444,
-        0 0 20px #ef4444;
+    box-shadow:0 0 10px #ef4444;
 }
 
-.stat{
-    transition:0.2s;
-    cursor:pointer;
+.offline::after{
+    content:"";
+    position:absolute;
+    top:50%;
+    left:50%;
+    width:18px;
+    height:18px;
+    border-radius:50%;
+    transform:translate(-50%,-50%);
+    background:#ef4444;
+    animation:pulse 1.5s infinite;
+    opacity:.5;
+}
+
+@keyframes pulse{
+    0%{transform:translate(-50%,-50%) scale(1);opacity:.6;}
+    70%{transform:translate(-50%,-50%) scale(2.8);opacity:0;}
+    100%{opacity:0;}
+}
+
+.stat {
+    transition: all .25s ease;
+    cursor: pointer;
     display:flex;
     justify-content:space-between;
 
@@ -171,37 +202,46 @@ body{
     margin:10px 0;
 
     background:var(--stat);
-
     border-radius:10px;
-}  
+}
+
+.stat:hover {
+    transform: translateY(-3px) scale(1.02);
+    background: rgba(255,255,255,.12);
+    box-shadow: 0 10px 25px rgba(0,0,0,.25);
+}
+ 
 #themeBtn{
     position:fixed;
     top:20px;
     right:20px;
 
-    padding:10px 18px;
+    padding:12px 20px;
 
     border:none;
-    border-radius:12px;
+    border-radius:14px;
 
     cursor:pointer;
 
     font-size:15px;
     font-weight:bold;
 
-    background:#2563eb;
+    background:linear-gradient(135deg,#2563eb,#60a5fa);
     color:white;
 
-    box-shadow:0 8px 20px rgba(0,0,0,.25);
+    box-shadow:0 10px 25px rgba(37,99,235,.4);
 
-    transition:
-        transform .2s ease,
-        box-shadow .2s ease,
-        background .3s ease;
+    transition:all .25s ease;
 }
 
 #themeBtn:hover{
-    transform:scale(1.05);
+    transform:translateY(-4px) scale(1.08);
+    box-shadow:0 15px 35px rgba(37,99,235,.6);
+    filter:brightness(1.1);
+}
+
+#themeBtn:active{
+    transform:scale(0.95);
 }
         </style>
     </head>
@@ -247,7 +287,7 @@ body{
 
             <div class="stat">
                 <span>🕒 Uptime</span>
-             <span>${formatUptime()}</span>
+             <span id="uptime">Loading...</span>
             </div>
 
             <hr style="border:none;height:1px;background:rgba(255, 255, 255, 0.13);margin:20px 0;">
@@ -262,7 +302,7 @@ body{
 
             <script>
             const socket = io();
-
+            
             function updateClock() {
                 const now = new Date();
                 document.getElementById("time").innerText =
@@ -276,6 +316,7 @@ body{
                 document.getElementById("guilds").innerText = data.guilds;
                 document.getElementById("users").innerText = data.users;
                 document.getElementById("ram").innerText = data.ram + " MB";
+                document.getElementById("uptime").innerText = data.uptime;
             });
 
             setInterval(updateClock, 1000);
@@ -346,19 +387,13 @@ body{
         console.log(`🌐 Web Server Chạy Ở Cổng ${PORT}`);
     });
 
-    setInterval(async () => {
+    const https = require("https");
 
-        try {
+    setInterval(() => {
 
-            await fetch(URL);
+        https.get(URL, () => { }).on("error", () => { });
 
-            console.log("🔄 Đã Gửi Tín Hiệu Giữ Kết Nối");
-
-        } catch {
-
-            console.log("❌ Ping Failed");
-
-        }
+        console.log("🔄 Đã Gửi Tín Hiệu Giữ Kết Nối");
 
     }, 4 * 60 * 1000);
 
