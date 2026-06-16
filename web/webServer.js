@@ -1,6 +1,9 @@
 const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
+const ramHistory = [];
+const pingHistory = [];
+const MAX_POINTS = 60;
 
 module.exports = (client) => {
 
@@ -24,16 +27,28 @@ module.exports = (client) => {
 
     setInterval(() => {
 
-        if (!client || !client.ws) return;
-        if (!client.isReady?.()) return;
+        if (!client?.isReady?.()) return;
+        if (!client?.ws) return;
+
+        const ram = Math.round(process.memoryUsage().rss / 1024 / 1024);
+        const ping = client.ws?.ping || 0;
+
+        const uptime = Math.floor(process.uptime());
 
         statsCache = {
-            ping: client.ws?.ping || null,
+            ping,
             users: client.users.cache?.size || 0,
             guilds: client.guilds.cache?.size || 0,
-            ram: Math.round(process.memoryUsage().rss / 1024 / 1024),
-            uptime: formatUptime(Math.floor(process.uptime()))
+            ram,
+            uptime
         };
+
+        // ===== lưu history =====
+        ramHistory.push(ram);
+        pingHistory.push(ping ?? 0);
+
+        if (ramHistory.length > MAX_POINTS) ramHistory.shift();
+        if (pingHistory.length > MAX_POINTS) pingHistory.shift();
 
     }, 1000);
 
@@ -46,7 +61,7 @@ module.exports = (client) => {
         res.send(`
     <html>
     <head>
-    
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <title>🤖 Bot Dashboard</title>
         <meta http-equiv="refresh" content="30">
 
@@ -250,6 +265,28 @@ body{
         <button id="themeBtn">🌙 Dark Mode</button>
 
         <div class="card">
+            <div id="chartBox" style="
+                display:none;
+                position:fixed;
+                top:0; left:0;
+                width:100%; height:100%;
+                background:rgba(0,0,0,0.7);
+                justify-content:center;
+                align-items:center;
+                z-index:9999;
+            ">
+                <div style="
+                    width:85%;
+                    max-width:800px;
+                    background:#fff;
+                    padding:20px;
+                    border-radius:15px;
+                ">
+                    <canvas id="chartCanvas"></canvas>
+                    <br>
+                    <button onclick="closeChart()">Đóng</button>
+                </div>
+            </div>
 
             <h1>
                 🤖 ${client.user ? client.user.username : "Bot Lâm Đồng"}
@@ -260,8 +297,8 @@ body{
                  ${statusText}
             </div>
 
-            <div class="stat">
-              <span>⚡ Ping</span>
+            <div class="stat" onclick="openChart('ping')">
+             <span>⚡ Ping</span>
                 <span id="ping">Loading...</span>
             </div>
 
@@ -271,12 +308,12 @@ body{
             </div>
 
             <div class="stat">
-              <span>👥 Users</span>
+             <span>👥 Users</span>
                 <span id="users">${online ? client.users.cache.size : 0}</span>
             </div>
 
-            <div class="stat">
-              <span>💾 RAM</span>
+            <div class="stat" onclick="openChart('ram')">
+             <span>💾 RAM</span>
                 <span id="ram">${Math.round(process.memoryUsage().rss / 1024 / 1024)} MB</span>
             </div>
 
@@ -302,7 +339,50 @@ body{
 
             <script>
             const socket = io();
-            
+            let chart;
+            let ramData = [];
+            let pingData = [];
+
+            socket.on("history", (data) => {
+                ramData = data?.ram || [];
+                pingData = data?.ping || [];
+            });
+
+            function openChart(type) {
+                document.getElementById("chartBox").style.display = "flex";
+
+                const ctx = document.getElementById("chartCanvas");
+
+                const data = type === "ram" ? ramData : pingData;
+
+                if (chart) chart.destroy();
+
+                chart = new Chart(ctx, {
+                    type: "line",
+                    data: {
+                        labels: data.map((_, i) => i),
+                        datasets: [{
+                            label: type.toUpperCase(),
+                            data: data,
+                            borderColor: type === "ram" ? "blue" : "green",
+                            fill: false,
+                            tension: 0.3
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        animation: false,
+                        scales: {
+                            y: { beginAtZero: true }
+                        }
+                    }
+                });
+            }
+
+            function closeChart() {
+                document.getElementById("chartBox").style.display = "none";
+            }
+
             function updateClock() {
                 const now = new Date();
                 document.getElementById("time").innerText =
@@ -310,6 +390,7 @@ body{
             }
 
             socket.on("stats", (data) => {
+
                 document.getElementById("ping").innerText =
                     data.ping !== null ? data.ping + " ms" : "N/A";
 
@@ -317,6 +398,17 @@ body{
                 document.getElementById("users").innerText = data.users;
                 document.getElementById("ram").innerText = data.ram + " MB";
                 document.getElementById("uptime").innerText = data.uptime;
+
+                // 👉 update chart live nếu đang mở
+                if (chart) {
+                    const currentData = chart.data.datasets[0].label === "RAM"
+                        ? ramData
+                        : pingData;
+
+                    chart.data.labels = currentData.map((_, i) => i);
+                    chart.data.datasets[0].data = currentData;
+                    chart.update();
+                }
             });
 
             setInterval(updateClock, 1000);
@@ -369,6 +461,11 @@ body{
     });
 
     io.on("connection", socket => {
+
+        socket.emit("history", {
+            ram: ramHistory,
+            ping: pingHistory
+        });
 
         const interval = setInterval(() => {
 
