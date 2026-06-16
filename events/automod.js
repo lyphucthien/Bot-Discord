@@ -63,9 +63,11 @@ module.exports = (client) => {
         // =====================
         const content = message.content.toLowerCase();
 
-        const hasBadWord = badWords.some(word =>
+        const detectedWord = badWords.find(word =>
             content.includes(word)
         );
+
+        const hasBadWord = !!detectedWord;
 
         const hasInvite =
             content.includes('discord.gg/') ||
@@ -77,9 +79,8 @@ module.exports = (client) => {
 
         const reason = hasInvite
             ? 'Gửi Link Discord Invite'
-            : 'Sử Dụng Từ Ngữ Bị Cấm';
+            : `Sử Dụng Từ Ngữ Bị Cấm (${detectedWord})`;
 
-        // Lưu SQLite
         warnDB.add(
             userId,
             client.user.id,
