@@ -41,6 +41,9 @@ module.exports = (client) => {
 
         const online = client.isReady();
 
+        const statusIcon = online ? "🟢" : "🔴";
+        const statusText = online ? "ONLINE" : "OFFLINE";
+
         res.send(`
     <html>
     <head>
