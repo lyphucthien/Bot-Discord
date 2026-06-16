@@ -47,9 +47,37 @@ module.exports = (client) => {
         res.send(`
     <html>
     <head>
+    
         <title>🤖 Bot Dashboard</title>
         <meta http-equiv="refresh" content="30">
+
         <style>
+:root{
+    --bg1:#0f172a;
+    --bg2:#1e293b;
+    --bg3:#0f172a;
+    --bg4:#2563eb;
+
+    --card:rgba(255,255,255,.08);
+    --text:white;
+    --border:rgba(255,255,255,.15);
+    --stat:rgba(255,255,255,.05);
+}
+
+body.light{
+
+    --bg1:#f8fafc;
+    --bg2:#e2e8f0;
+    --bg3:#ffffff;
+    --bg4:#dbeafe;
+
+    --card:rgba(255,255,255,.9);
+    --text:#111827;
+    --border:#d1d5db;
+    --stat:#f3f4f6;
+
+}
+
 body{
     margin:0;
     min-height:100vh;
@@ -60,16 +88,16 @@ body{
 
     background:linear-gradient(
         -45deg,
-        #0f172a,
-        #1e293b,
-        #0f172a,
-        #2563eb
-    );
+        var(--bg1),
+        var(--bg2),
+        var(--bg3),
+        var(--bg4)
+        );
 
     background-size:400% 400%;
     animation:gradient 15s ease infinite;
 
-    color:white;
+    color:var(--text);
     font-family:Arial;
 }
 
@@ -83,11 +111,11 @@ body{
     width:90%;
     max-width:600px;
 
-    background:rgba(255,255,255,0.08);
+    background:var(--card);
 
     backdrop-filter:blur(15px);
 
-    border:1px solid rgba(255,255,255,0.15);
+    border:1px solid var(--border);
 
     border-radius:20px;
 
@@ -139,13 +167,39 @@ body{
     padding:12px;
     margin:10px 0;
 
-    background:rgba(255,255,255,0.05);
+    background:var(--stat);
 
     border-radius:10px;
 }  
+#themeBtn{
+
+    position:fixed;
+    top:20px;
+    right:20px;
+
+    padding:10px 18px;
+
+    border:none;
+    border-radius:10px;
+
+    cursor:pointer;
+
+    font-size:15px;
+
+    background:#2563eb;
+    color:white;
+
+    transition:.3s;
+}
+
+#themeBtn:hover{
+    transform:scale(1.05);
+}
         </style>
     </head>
     <body>
+        
+        <button id="themeBtn">🌙 Dark Mode</button>
 
         <div class="card">
 
@@ -201,18 +255,15 @@ body{
             <script>
             const socket = io();
 
-            /* CLOCK */
             function updateClock() {
                 const now = new Date();
                 document.getElementById("time").innerText =
                     now.toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" });
             }
 
-            /* REALTIME DATA */
             socket.on("stats", (data) => {
-
                 document.getElementById("ping").innerText =
-                    data.ping !== null ? data.ping + "ms" : "N/A";
+                    data.ping !== null ? data.ping + " ms" : "N/A";
 
                 document.getElementById("guilds").innerText = data.guilds;
                 document.getElementById("users").innerText = data.users;
@@ -221,6 +272,37 @@ body{
 
             setInterval(updateClock, 1000);
             updateClock();
+
+            const themeBtn = document.getElementById("themeBtn");
+
+            const savedTheme = localStorage.getItem("theme");
+
+            if (savedTheme === "light") {
+                document.body.classList.add("light");
+            }
+
+            updateThemeButton();
+
+            themeBtn.addEventListener("click", () => {
+                document.body.classList.toggle("light");
+
+                if (document.body.classList.contains("light")) {
+                    localStorage.setItem("theme", "light");
+                } else {
+                    localStorage.setItem("theme", "dark");
+                }
+
+                updateThemeButton();
+            });
+
+            function updateThemeButton() {
+                if (document.body.classList.contains("light")) {
+                    themeBtn.innerHTML = "☀️ Light";
+                } else {
+                    themeBtn.innerHTML = "🌙 Dark";
+                }
+            };
+            
             </script>
 
         </body>
