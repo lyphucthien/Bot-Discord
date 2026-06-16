@@ -41,7 +41,6 @@ module.exports = (client) => {
 
         const online = client.isReady();
 
-        const statusIcon = online ? "🟢" : "🔴";
         const statusText = online ? "ONLINE" : "OFFLINE";
 
         res.send(`
@@ -92,13 +91,17 @@ body{
         var(--bg2),
         var(--bg3),
         var(--bg4)
-        );
+    );
 
     background-size:400% 400%;
     animation:gradient 15s ease infinite;
 
     color:var(--text);
     font-family:Arial;
+
+    transition:
+        background .4s ease,
+        color .3s ease;
 }
 
 @keyframes gradient{
@@ -172,7 +175,6 @@ body{
     border-radius:10px;
 }  
 #themeBtn{
-
     position:fixed;
     top:20px;
     right:20px;
@@ -180,16 +182,22 @@ body{
     padding:10px 18px;
 
     border:none;
-    border-radius:10px;
+    border-radius:12px;
 
     cursor:pointer;
 
     font-size:15px;
+    font-weight:bold;
 
     background:#2563eb;
     color:white;
 
-    transition:.3s;
+    box-shadow:0 8px 20px rgba(0,0,0,.25);
+
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease,
+        background .3s ease;
 }
 
 #themeBtn:hover{
@@ -302,7 +310,7 @@ body{
                     themeBtn.innerHTML = "🌙 Dark";
                 }
             };
-            
+
             </script>
 
         </body>
