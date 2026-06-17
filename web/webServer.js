@@ -69,7 +69,6 @@ module.exports = (client) => {
 
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <title>🤖 Bot Dashboard</title>
-        <meta http-equiv="refresh" content="30">
 
         <style>
 :root{
@@ -264,6 +263,41 @@ body{
 #themeBtn:active{
     transform:scale(0.95);
 }
+.loading-text{
+    display:inline-block;
+    width:90px;
+    height:18px;
+    border-radius:6px;
+
+    background:linear-gradient(
+        90deg,
+        rgba(255,255,255,.08) 25%,
+        rgba(255,255,255,.25) 50%,
+        rgba(255,255,255,.08) 75%
+    );
+
+    background-size:200% 100%;
+    animation:skeleton 1.2s infinite;
+}
+
+html.light .loading-text{
+    background:linear-gradient(
+        90deg,
+        #e5e7eb 25%,
+        #f9fafb 50%,
+        #e5e7eb 75%
+    );
+    background-size:200% 100%;
+}
+
+@keyframes skeleton{
+    0%{
+        background-position:200% 0;
+    }
+    100%{
+        background-position:-200% 0;
+    }
+}
         </style>
     </head>
     <body>
@@ -305,7 +339,7 @@ body{
 
             <div class="stat" onclick="openChart('ping')">
              <span>⚡ Ping</span>
-                <span id="ping">Loading...</span>
+                <span id="ping" class="loading-text"></span>
             </div>
 
             <div class="stat">
@@ -320,17 +354,17 @@ body{
 
             <div class="stat" onclick="openChart('ram')">
              <span>💾 RAM</span>
-                <span id="ram">${Math.round(process.memoryUsage().rss / 1024 / 1024)} MB</span>
+                <span id="ram" class="loading-text"></span>
             </div>
 
             <div class="stat">
-              <span>📅 Time</span>
-                <span id="time">Loading...</span>
+             <span>📅 Time</span>
+                <span id="time" class="loading-text"></span>
             </div>
 
             <div class="stat">
-                <span>🕒 Uptime</span>
-             <span id="uptime">Loading...</span>
+             <span>🕒 Uptime</span>
+                <span id="uptime" class="loading-text"></span>
             </div>
 
             <hr style="border:none;height:1px;background:rgba(255, 255, 255, 0.13);margin:20px 0;">
@@ -396,21 +430,40 @@ body{
 
             function updateClock() {
                 const now = new Date();
+
                 document.getElementById("time").innerText =
-                    now.toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" });
+                    now.toLocaleString("vi-VN", {
+                        timeZone: "Asia/Ho_Chi_Minh"
+                    });
             }
 
             socket.on("stats", (data) => {
 
-                document.getElementById("ping").innerText =
-                    data.ping !== null ? data.ping + " ms" : "N/A";
+                updateClock();
+
+                const ping = document.getElementById("ping");
+                const ram = document.getElementById("ram");
+                const time = document.getElementById("time");
+                const uptime = document.getElementById("uptime");
+
+                ping.classList.remove("loading-text");
+                ram.classList.remove("loading-text");
+                time.classList.remove("loading-text");
+                uptime.classList.remove("loading-text");
+
+                ramData.push(data.ram);
+                pingData.push(data.ping ?? 0);
+
+                if (ramData.length > 60) ramData.shift();
+                if (pingData.length > 60) pingData.shift();
+
+                ping.innerText = data.ping != null ? data.ping + " ms" : "N/A";
+                ram.innerText = data.ram + " MB";
+                uptime.innerText = data.uptime;
 
                 document.getElementById("guilds").innerText = data.guilds;
                 document.getElementById("users").innerText = data.users;
-                document.getElementById("ram").innerText = data.ram + " MB";
-                document.getElementById("uptime").innerText = data.uptime;
 
-                // 👉 update chart live nếu đang mở
                 if (chart) {
                     const currentData = chart.data.datasets[0].label === "RAM"
                         ? ramData
