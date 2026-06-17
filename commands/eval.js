@@ -14,7 +14,10 @@ module.exports = {
     async execute(interaction, client) {
         const ownerID = "1330395226933559297";
         if (interaction.user.id !== ownerID)
-            return interaction.reply({ content: "❌ Không có quyền!", ephemeral: true });
+            return interaction.reply({
+                content: "❌ Không có quyền!",
+                flags: 64
+            });
 
         const code = interaction.options.getString("code");
 
@@ -27,13 +30,13 @@ module.exports = {
 
             return interaction.reply({
                 content: `\`\`\`js\n${result}\n\`\`\``,
-                ephemeral: true
+                flags: 64
             });
 
         } catch (err) {
             return interaction.reply({
                 content: `❌ Lỗi:\n\`\`\`${err}\`\`\``,
-                ephemeral: true
+                flags: 64
             });
         }
     }
