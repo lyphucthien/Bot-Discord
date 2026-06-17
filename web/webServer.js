@@ -471,7 +471,7 @@ html.light .loading-text{
 
                     chart.data.labels = currentData.map((_, i) => i);
                     chart.data.datasets[0].data = currentData;
-                    chart.update();
+                    chart.update("none");
                 }
             });
 
