@@ -80,7 +80,7 @@ module.exports = (client) => {
     --bg3:#0f172a;
     --bg4:#2563eb;
 
-    --card:rgba(255,255,255,.05);
+    --card:rgba(255,255,255,.03);
     --text:white;
     --border:rgba(255,255,255,.15);
     --stat:rgba(255,255,255,.05);
