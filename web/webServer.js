@@ -556,6 +556,12 @@ html.light .loading-spinner{
                 }
 
             };
+            
+            function handleOverlayClick(event) {
+                if (event.target === event.currentTarget) {
+                    closeChart();
+                }
+            }
 
             function closeChart() {
                 document.getElementById("chartBox").style.display = "none";
