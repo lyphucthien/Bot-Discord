@@ -28,9 +28,9 @@ module.exports = {
             });
 
         try {
-            delete require.cache[require.resolve(`../${cmdName}.js`)];
+            delete require.cache[require.resolve(`./${cmdName}.js`)];
 
-            const newCmd = require(`../${cmdName}.js`);
+            const newCmd = require(`./${cmdName}.js`);
             client.commands.set(newCmd.data.name, newCmd);
 
             return interaction.reply(`✅ Reload thành công: **${cmdName}**`);
