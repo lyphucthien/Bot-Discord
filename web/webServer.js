@@ -37,10 +37,13 @@ module.exports = (client) => {
 
         statsCache = {
             ping,
-            users: client.users.cache?.size || 0,
-            guilds: client.guilds.cache?.size || 0,
+            users: client.users.cache.size,
+            guilds: client.guilds.cache.size,
             ram,
-            uptime
+            uptime,
+            time: new Date().toLocaleString("vi-VN", {
+                timeZone: "Asia/Ho_Chi_Minh"
+            })
         };
 
         // ===== lưu history =====
@@ -419,19 +422,8 @@ html.light .loading-spinner{
             function closeChart() {
                 document.getElementById("chartBox").style.display = "none";
             }
-
-            function updateClock() {
-                const now = new Date();
-
-                document.getElementById("time").innerText =
-                    now.toLocaleString("vi-VN", {
-                        timeZone: "Asia/Ho_Chi_Minh"
-                    });
-            }
-
+            
             socket.on("stats", (data) => {
-
-                updateClock();
 
                 const ping = document.getElementById("ping");
                 const ram = document.getElementById("ram");
@@ -443,8 +435,9 @@ html.light .loading-spinner{
                 time.classList.remove("loading-spinner");
                 uptime.classList.remove("loading-spinner");
 
-                ramData.push(data.ram);
                 pingData.push(data.ping ?? 0);
+                ramData.push(data.ram);
+                time.innerText = data.time;
 
                 if (ramData.length > 60) ramData.shift();
                 if (pingData.length > 60) pingData.shift();
@@ -466,9 +459,6 @@ html.light .loading-spinner{
                     chart.update("none");
                 }
             });
-
-            setInterval(updateClock, 1000);
-            updateClock();
 
             const themeBtn = document.getElementById("themeBtn");
 
