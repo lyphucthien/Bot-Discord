@@ -300,7 +300,7 @@ html.light .loading-spinner{
         <button id="themeBtn">🌙 Dark Mode</button>
 
         <div class="card">
-            <div id="chartBox" style="
+            <div id="chartBox" onclick="handleOverlayClick(event)" style="
                 display:none;
                 position:fixed;
                 top:0; left:0;
@@ -487,6 +487,18 @@ html.light .loading-spinner{
 
             };
 
+            function handleOverlayClick(event) {
+                if (event.target.id === "chartBox") {
+                    closeChart();
+                }
+            }
+
+            document.addEventListener("keydown", (event) => {
+                if (event.key === "Escape") {
+                    closeChart();
+                }
+            });
+            
             </script>
 
         </body>
