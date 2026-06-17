@@ -14,7 +14,6 @@ module.exports = {
             });
 
         await interaction.reply("♻️ Đang Restart Bot...");
-        flags: 64
 
         setTimeout(() => {
             process.exit(1);
