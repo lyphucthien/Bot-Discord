@@ -80,7 +80,7 @@ module.exports = (client) => {
     --bg3:#0f172a;
     --bg4:#2563eb;
 
-    --card:rgba(255,255,255,0.8);
+    --card:rgba(255,255,255,.08);
     --text:white;
     --border:rgba(255,255,255,.15);
     --stat:rgba(255,255,255,.05);
@@ -297,7 +297,7 @@ html.light .loading-spinner{
     display:none;
     position:fixed;
     inset:0;
-    background:rgba(0,0,0,0.4);
+    background:rgba(0,0,0,0.6);
     backdrop-filter:blur(8px);
     justify-content:center;
     align-items:center;
