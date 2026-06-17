@@ -293,6 +293,68 @@ html.light .loading-spinner{
         transform:rotate(360deg);
     }
 }
+.chart-overlay{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.6);
+    backdrop-filter:blur(8px);
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+    animation:fadeIn .2s ease;
+}
+
+.chart-modal{
+    width:90%;
+    max-width:850px;
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:18px;
+    padding:20px;
+    box-shadow:0 20px 60px rgba(0,0,0,.5);
+    transform:scale(.9);
+    animation:pop .25s ease forwards;
+}
+
+.chart-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:10px;
+}
+
+.chart-header h3{
+    margin:0;
+    font-size:18px;
+}
+
+.close-btn{
+    background:red;
+    border:none;
+    color:white;
+    width:35px;
+    height:35px;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:16px;
+    transition:.2s;
+}
+
+.close-btn:hover{
+    transform:scale(1.1);
+    background:#ff3333;
+}
+
+@keyframes fadeIn{
+    from{opacity:0;}
+    to{opacity:1;}
+}
+
+@keyframes pop{
+    to{transform:scale(1);}
+}
+
         </style>
     </head>
     <body>
@@ -300,26 +362,14 @@ html.light .loading-spinner{
         <button id="themeBtn">🌙 Dark Mode</button>
 
         <div class="card">
-            <div id="chartBox" onclick="handleOverlayClick(event)" style="
-                display:none;
-                position:fixed;
-                top:0; left:0;
-                width:100%; height:100%;
-                background:rgba(0,0,0,0.7);
-                justify-content:center;
-                align-items:center;
-                z-index:9999;
-            ">
-                <div style="
-                    width:85%;
-                    max-width:800px;
-                    background:#fff;
-                    padding:20px;
-                    border-radius:15px;
-                ">
+            <div id="chartBox" class="chart-overlay" onclick="handleOverlayClick(event)">
+                <div class="chart-modal">
+                    <div class="chart-header">
+                        <h3 id="chartTitle">📊 Biểu đồ</h3>
+                        <button class="close-btn" onclick="closeChart()">✖</button>
+                    </div>
+
                     <canvas id="chartCanvas"></canvas>
-                    <br>
-                    <button onclick="closeChart()">Đóng</button>
                 </div>
             </div>
 
@@ -388,10 +438,13 @@ html.light .loading-spinner{
 
                 const ctx = document.getElementById("chartCanvas");
 
-                let data = type === "ram" ? ramData : pingData;
+                const data = type === "ram" ? ramData : pingData;
+
+                document.getElementById("chartTitle").innerText =
+                    type === "ram" ? "💾 RAM Usage" : "⚡ Ping History";
 
                 if (!data || data.length === 0) {
-                    alert("📊 Chưa Có Dữ Liệu Để Hiển Thị!");
+                    alert("📊 Chưa Có Dữ Liệu!");
                     return;
                 }
 
@@ -404,16 +457,33 @@ html.light .loading-spinner{
                         datasets: [{
                             label: type.toUpperCase(),
                             data: data,
-                            borderColor: type === "ram" ? "blue" : "green",
-                            fill: false,
-                            tension: 0.3
+                            borderColor: type === "ram" ? "#3b82f6" : "#22c55e",
+                            backgroundColor: "rgba(59,130,246,0.1)",
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 2
                         }]
                     },
                     options: {
                         responsive: true,
-                        animation: false,
+                        animation: {
+                            duration: 600
+                        },
+                        plugins: {
+                            legend: {
+                                labels: {
+                                    color: "#fff"
+                                }
+                            }
+                        },
                         scales: {
-                            y: { beginAtZero: true }
+                            x: {
+                                grid: { color: "rgba(255,255,255,0.05)" }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                grid: { color: "rgba(255,255,255,0.05)" }
+                            }
                         }
                     }
                 });
