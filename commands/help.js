@@ -11,132 +11,241 @@ module.exports = {
 
             // ===== TRANG 1 =====
             new EmbedBuilder()
-                .setColor('#5865F2')
-                .setTitle('📖 Help Menu (1/2)')
+                .setColor("#5865F2")
+                .setTitle("📖 Help Menu (1/4)")
                 .setDescription(`
+            ━━━━━━━━━━━━━━━━━━
+            🛠️ **Quản lý Server**
+            ━━━━━━━━━━━━━━━━━━ 
 
-\`/help\`
-➜ Hiển Thị Danh Sách Lệnh
+            \`/ban <user>\`
+            ➜ Cấm thành viên
 
-\`/ban <user>\`
-➜ Cấm Thành Viên Khỏi Server
+            \`/kick <user>\`
+            ➜ Đuổi thành viên
 
-\`/kick <user>\`
-➜ Đuổi Thành Viên Khỏi Server
+            \`/mute <user>\`
+            ➜ Timeout thành viên
 
-\`/clear <amount>\`
-➜ Xóa Nhiều Tin Nhắn
+            \`/unmute <user>\`
+            ➜ Gỡ timeout
 
-\`/mute <user>\`
-➜ Hạn Chế (Timeout) Thành Viên
+            \`/warn <user>\`
+            ➜ Cảnh cáo thành viên
 
-\`/unmute <user>\`
-➜ Gỡ timeout thành viên
+            \`/clear <amount>\`
+            ➜ Xóa nhiều tin nhắn
 
-\`/warn <user>\`
-➜ Cảnh Cáo Thành Viên
-
-\`/setrole add/remove/toggle\`
-➜ Quản Lý Role Thành Viên
-    `),
+            \`/setrole\`
+            ➜ Thêm / Xóa / Toggle Role
+            `)
+                .setFooter({
+                    text: "Trang 1/4 • Sử dụng các nút bên dưới để chuyển trang"
+                }),
 
             // ===== TRANG 2 =====
             new EmbedBuilder()
-                .setColor('#5865F2')
-                .setTitle('📖 Help Menu (2/2)')
+                .setColor("#5865F2")
+                .setTitle("📖 Help Menu (2/4)")
                 .setDescription(`
+            ━━━━━━━━━━━━━━━━━━
+            🎉 **Tiện ích Server**
+            ━━━━━━━━━━━━━━━━━━
 
-\`/ticket\`
-➜ Tạo Hệ Thống Ticket
+            \`/ticket\`
+            ➜ Tạo hệ thống Ticket
 
-\`/verify\`
-➜ Tạo Hệ Thống Xác Minh
+            \`/verify\`
+            ➜ Tạo hệ thống Verify
 
-\`/giveaway\`
-➜ Tạo Giveaway
+            \`/giveaway\`
+            ➜ Tạo Giveaway
 
-\`/reroll\`
-➜ Quay Lại Giveaway
+            \`/reroll\`
+            ➜ Quay lại Giveaway
 
-\`/level\`
-➜ Xem Level Của Bạn
+            \`/report\`
+            ➜ Báo cáo thành viên
 
-\`/leaderboard\`
-➜ Bảng Xếp Hạng Level
+            \`/support\`
+            ➜ Hiển thị thông tin hỗ trợ
+            `)
+                .setFooter({
+                    text: "Trang 2/4 • Sử dụng các nút bên dưới để chuyển trang"
+                }),
 
-\`/stats\`
-➜ Thống Kê Server
-    `)
+            // ===== TRANG 3 =====
+            new EmbedBuilder()
+                .setColor("#5865F2")
+                .setTitle("📖 Help Menu (3/4)")
+                .setDescription(`
+            ━━━━━━━━━━━━━━━━━━
+            📊 **Level & Thống Kê**
+            ━━━━━━━━━━━━━━━━━━
+
+            \`/level\`
+            ➜ Xem Level
+
+            \`/rank\`
+            ➜ Xem Rank
+
+            \`/leaderboard\`
+            ➜ BXH Level
+
+            \`/stats\`
+            ➜ Thống kê Server
+
+            \`/order\`
+            ➜ Xem thông tin đơn hàng
+
+            \`/lich-su-mua-hang\`
+            ➜ Xem lịch sử mua hàng
+            `)
+                .setFooter({
+                    text: "Trang 3/4 • Sử dụng các nút bên dưới để chuyển trang"
+                }),
+
+            // ===== TRANG 4 =====
+            new EmbedBuilder()
+                .setColor("#5865F2")
+                .setTitle("📖 Help Menu (4/4)")
+                .setDescription(`
+            ━━━━━━━━━━━━━━━━━━
+            👑 **Owner**
+            ━━━━━━━━━━━━━━━━━━
+
+            \`/reload\`
+            ➜ Reload Command
+
+            \`/restart\`
+            ➜ Khởi động lại Bot
+
+            \`/maintenance\`
+            ➜ Bật/Tắt chế độ bảo trì
+
+            \`/eval\`
+            ➜ Thực thi JavaScript
+
+            📚 **Khác**
+
+            \`/help\`
+            ➜ Hiển thị danh sách lệnh
+            `)
+                .setFooter({
+                    text: "Trang 4/4 • Sử dụng các nút bên dưới để chuyển trang"
+                })
+
         ];
 
         let page = 0;
 
-        const row = new ActionRowBuilder()
-            .addComponents(
+        const row = () =>
+            new ActionRowBuilder().addComponents(
                 new ButtonBuilder()
-                    .setCustomId('prev')
-                    .setEmoji('⬅️')
-                    .setStyle(ButtonStyle.Secondary),
+                    .setCustomId("first")
+                    .setEmoji("⏪")
+                    .setStyle(ButtonStyle.Secondary)
+                    .setDisabled(page === 0),
 
                 new ButtonBuilder()
-                    .setCustomId('next')
-                    .setEmoji('➡️')
+                    .setCustomId("prev")
+                    .setEmoji("◀️")
                     .setStyle(ButtonStyle.Secondary)
+                    .setDisabled(page === 0),
+
+                new ButtonBuilder()
+                    .setCustomId("next")
+                    .setEmoji("▶️")
+                    .setStyle(ButtonStyle.Secondary)
+                    .setDisabled(page === pages.length - 1),
+
+                new ButtonBuilder()
+                    .setCustomId("last")
+                    .setEmoji("⏩")
+                    .setStyle(ButtonStyle.Secondary)
+                    .setDisabled(page === pages.length - 1)
             );
 
-        const msg = await interaction.reply({
+        await interaction.reply({
             embeds: [pages[page]],
-            components: [row],
-            withResponse: true
+            components: [row()]
         });
+
+        const msg = await interaction.fetchReply();
 
         const collector = msg.createMessageComponentCollector({
             time: 300000
         });
 
-        collector.on('collect', async i => {
+        collector.on("collect", async i => {
 
             if (i.user.id !== interaction.user.id) {
                 return i.reply({
-                    content: '❌ Chỉ người dùng lệnh mới có thể sử dụng menu này.',
+                    content: "❌ Chỉ người dùng lệnh mới có thể sử dụng menu này.",
                     flags: 64
                 });
             }
 
-            if (i.customId === 'next') {
-                page = (page + 1) % pages.length;
-            }
+            switch (i.customId) {
 
-            if (i.customId === 'prev') {
-                page = (page - 1 + pages.length) % pages.length;
+                case "first":
+                    page = 0;
+                    break;
+
+                case "prev":
+                    if (page > 0) page--;
+                    break;
+
+                case "next":
+                    if (page < pages.length - 1) page++;
+                    break;
+
+                case "last":
+                    page = pages.length - 1;
+                    break;
             }
 
             await i.update({
                 embeds: [pages[page]],
-                components: [row]
+                components: [row()]
             });
+
         });
 
-        collector.on('end', async () => {
+        collector.on("end", async () => {
 
-            const disabledRow = new ActionRowBuilder()
-                .addComponents(
-                    new ButtonBuilder()
-                        .setCustomId('prev')
-                        .setEmoji('⬅️')
-                        .setStyle(ButtonStyle.Secondary)
-                        .setDisabled(true),
+            const disabledRow = new ActionRowBuilder().addComponents(
 
-                    new ButtonBuilder()
-                        .setCustomId('next')
-                        .setEmoji('➡️')
-                        .setStyle(ButtonStyle.Secondary)
-                        .setDisabled(true)
-                );
+                new ButtonBuilder()
+                    .setCustomId("first")
+                    .setEmoji("⏪")
+                    .setStyle(ButtonStyle.Secondary)
+                    .setDisabled(true),
+
+                new ButtonBuilder()
+                    .setCustomId("prev")
+                    .setEmoji("◀️")
+                    .setStyle(ButtonStyle.Secondary)
+                    .setDisabled(true),
+
+                new ButtonBuilder()
+                    .setCustomId("next")
+                    .setEmoji("▶️")
+                    .setStyle(ButtonStyle.Secondary)
+                    .setDisabled(true),
+
+                new ButtonBuilder()
+                    .setCustomId("last")
+                    .setEmoji("⏩")
+                    .setStyle(ButtonStyle.Secondary)
+                    .setDisabled(true)
+
+            );
 
             await msg.edit({
                 components: [disabledRow]
             }).catch(() => { });
+
         });
 
     }
