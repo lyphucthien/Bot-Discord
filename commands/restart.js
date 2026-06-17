@@ -8,9 +8,13 @@ module.exports = {
     async execute(interaction) {
         const ownerID = "1330395226933559297";
         if (interaction.user.id !== ownerID)
-            return interaction.reply({ content: "❌ Bạn Không Có Quyền!", ephemeral: true });
+            return interaction.reply({
+                content: "❌ Bạn Không Có Quyền!",
+                flags: 64
+            });
 
         await interaction.reply("♻️ Đang Restart Bot...");
+        flags: 64
 
         setTimeout(() => {
             process.exit(1);
