@@ -13,13 +13,19 @@ module.exports = {
     async execute(interaction, client) {
         const ownerID = "1330395226933559297";
         if (interaction.user.id !== ownerID)
-            return interaction.reply({ content: "❌ Không có quyền!", ephemeral: true });
+            return interaction.reply({
+                content: "❌ Không có quyền!",
+                flags: 64
+            });
 
         const cmdName = interaction.options.getString("command");
         const cmd = client.commands.get(cmdName);
 
         if (!cmd)
-            return interaction.reply({ content: "❌ Không tìm thấy command!", ephemeral: true });
+            return interaction.reply({
+                content: "❌ Không tìm thấy command!",
+                flags: 64
+            });
 
         try {
             delete require.cache[require.resolve(`../${cmdName}.js`)];
@@ -30,7 +36,10 @@ module.exports = {
             return interaction.reply(`✅ Reload thành công: **${cmdName}**`);
         } catch (err) {
             console.error(err);
-            return interaction.reply({ content: "❌ Reload thất bại!", ephemeral: true });
+            return interaction.reply({
+                content: "❌ Reload thất bại!",
+                flags: 64
+            });
         }
     }
 };
