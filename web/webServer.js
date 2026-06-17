@@ -297,7 +297,7 @@ html.light .loading-spinner{
     display:none;
     position:fixed;
     inset:0;
-    background:rgba(0,0,0,0.2);
+    background:rgba(0,0,0,0.4);
     backdrop-filter:blur(8px);
     justify-content:center;
     align-items:center;
