@@ -263,39 +263,31 @@ body{
 #themeBtn:active{
     transform:scale(0.95);
 }
-.loading-text{
-    display:inline-block;
-    width:90px;
+.loading-spinner{
+    width:18px;
     height:18px;
-    border-radius:6px;
 
-    background:linear-gradient(
-        90deg,
-        rgba(255,255,255,.08) 25%,
-        rgba(255,255,255,.25) 50%,
-        rgba(255,255,255,.08) 75%
-    );
+    display:inline-block;
 
-    background-size:200% 100%;
-    animation:skeleton 1.2s infinite;
+    border:3px solid rgba(255,255,255,.2);
+    border-top:3px solid #3b82f6;
+
+    border-radius:50%;
+
+    animation:spin .8s linear infinite;
 }
 
-html.light .loading-text{
-    background:linear-gradient(
-        90deg,
-        #e5e7eb 25%,
-        #f9fafb 50%,
-        #e5e7eb 75%
-    );
-    background-size:200% 100%;
+html.light .loading-spinner{
+    border:3px solid rgba(0,0,0,.15);
+    border-top:3px solid #2563eb;
 }
 
-@keyframes skeleton{
-    0%{
-        background-position:200% 0;
+@keyframes spin{
+    from{
+        transform:rotate(0deg);
     }
-    100%{
-        background-position:-200% 0;
+    to{
+        transform:rotate(360deg);
     }
 }
         </style>
@@ -339,7 +331,7 @@ html.light .loading-text{
 
             <div class="stat" onclick="openChart('ping')">
              <span>⚡ Ping</span>
-                <span id="ping" class="loading-text"></span>
+                <span id="ping" class="loading-spinner"></span>
             </div>
 
             <div class="stat">
@@ -354,17 +346,17 @@ html.light .loading-text{
 
             <div class="stat" onclick="openChart('ram')">
              <span>💾 RAM</span>
-                <span id="ram" class="loading-text"></span>
+                <span id="ram" class="loading-spinner"></span>
             </div>
 
             <div class="stat">
              <span>📅 Time</span>
-                <span id="time" class="loading-text"></span>
+                <span id="time" class="loading-spinner"></span>
             </div>
 
             <div class="stat">
              <span>🕒 Uptime</span>
-                <span id="uptime" class="loading-text"></span>
+                <span id="uptime" class="loading-spinner"></span>
             </div>
 
             <hr style="border:none;height:1px;background:rgba(255, 255, 255, 0.13);margin:20px 0;">
@@ -446,10 +438,10 @@ html.light .loading-text{
                 const time = document.getElementById("time");
                 const uptime = document.getElementById("uptime");
 
-                ping.classList.remove("loading-text");
-                ram.classList.remove("loading-text");
-                time.classList.remove("loading-text");
-                uptime.classList.remove("loading-text");
+                ping.classList.remove("loading-spinner");
+                ram.classList.remove("loading-spinner");
+                time.classList.remove("loading-spinner");
+                uptime.classList.remove("loading-spinner");
 
                 ramData.push(data.ram);
                 pingData.push(data.ping ?? 0);
