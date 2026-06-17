@@ -427,12 +427,6 @@ body{
 
             const themeBtn = document.getElementById("themeBtn");
 
-            const savedTheme = localStorage.getItem("theme");
-
-            if (savedTheme === "light") {
-                document.documentElement.classList.add("light");
-            }
-
             updateThemeButton();
 
             themeBtn.addEventListener("click", () => {
