@@ -458,7 +458,7 @@ html.light .loading-spinner{
                             label: type.toUpperCase(),
                             data: data,
                             borderColor: type === "ram" ? "#3b82f6" : "#22c55e",
-                            backgroundColor: "rgba(59,130,246,0.05)",
+                            backgroundColor: "rgba(59,130,246,0.03)",
                             fill: true,
                             tension: 0.4,
                             pointRadius: 2
