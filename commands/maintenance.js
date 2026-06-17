@@ -3,7 +3,7 @@ const state = require("../state");
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName("maintenance")
+        .setName("maint")
         .setDescription("Bật / Tắt Chế Độ Bảo Trì Bot")
         .addStringOption(option =>
             option.setName("mode")
