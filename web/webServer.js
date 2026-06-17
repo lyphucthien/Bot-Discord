@@ -74,33 +74,38 @@ module.exports = (client) => {
         <title>🤖 Bot Dashboard</title>
 
         <style>
-:root{
-    --bg1:#0f172a;
-    --bg2:#1e293b;
-    --bg3:#0f172a;
-    --bg4:#2563eb;
 
-    --card:rgba(255,255,255,.08);
-    --text:white;
-    --border:rgba(255,255,255,.15);
-    --stat:rgba(255,255,255,.05);
+:root {
+    --bg: #0f172a;
+    --bg2: #1e293b;
+    --card: rgba(255,255,255,.08);
+    --text: #ffffff;
+    --border: rgba(255,255,255,.15);
+    --stat: rgba(255,255,255,.05);
+
+    --primary: #3b82f6;
+    --success: #22c55e;
+    --danger: #ef4444;
+
+    --chart-grid: rgba(255,255,255,0.05);
 }
 
-html.light{
+[data-theme="light"] {
+    --bg: #f8fafc;
+    --bg2: #e2e8f0;
+    --card: rgba(255,255,255,.9);
+    --text: #111827;
+    --border: #d1d5db;
+    --stat: #f3f4f6;
 
-    --bg1:#f8fafc;
-    --bg2:#e2e8f0;
-    --bg3:#ffffff;
-    --bg4:#dbeafe;
+    --primary: #2563eb;
+    --success: #16a34a;
+    --danger: #dc2626;
 
-    --card:rgba(255,255,255,.9);
-    --text:#111827;
-    --border:#d1d5db;
-    --stat:#f3f4f6;
-
+    --chart-grid: rgba(0,0,0,0.08);
 }
 
-body{
+body {
     margin:0;
     min-height:100vh;
 
@@ -108,23 +113,15 @@ body{
     justify-content:center;
     align-items:center;
 
-    background:linear-gradient(
-        -45deg,
-        var(--bg1),
-        var(--bg2),
-        var(--bg3),
-        var(--bg4)
-    );
+    background: linear-gradient(-45deg, var(--bg), var(--bg2), var(--bg), var(--bg2));
 
-    background-size:400% 400%;
-    animation:gradient 15s ease infinite;
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
 
-    color:var(--text);
-    font-family:Arial;
+    color: var(--text);
+    font-family: Arial;
 
-    transition:
-        background .4s ease,
-        color .3s ease;
+    transition: background .4s ease, color .3s ease;
 }
 
 @keyframes gradient{
@@ -137,11 +134,11 @@ body{
     width:90%;
     max-width:600px;
 
-    background:var(--card);
+    background: var(--card);
 
     backdrop-filter:blur(15px);
 
-    border:1px solid var(--border);
+    border: 1px solid var(--border);;
 
     border-radius:20px;
 
@@ -230,7 +227,8 @@ body{
 
 .stat:hover {
     transform: translateY(-3px) scale(1.02);
-    background: rgba(255,255,255,.12);
+    background: var(--card);
+    filter: brightness(1.15);
     box-shadow: 0 10px 25px rgba(0,0,0,.25);
 }
  
@@ -297,7 +295,7 @@ html.light .loading-spinner{
     display:none;
     position:fixed;
     inset:0;
-    background:rgba(0,0,0,0.6);
+    background: rgba(0,0,0,0.6);
     backdrop-filter:blur(8px);
     justify-content:center;
     align-items:center;
@@ -330,7 +328,7 @@ html.light .loading-spinner{
 }
 
 .close-btn{
-    background:red;
+    background: var(--danger);
     border:none;
     color:white;
     width:35px;
@@ -534,28 +532,26 @@ html.light .loading-spinner{
 
             updateThemeButton();
 
-            themeBtn.addEventListener("click", () => {
-
-                document.documentElement.classList.toggle("light");
-
-                if (document.documentElement.classList.contains("light")) {
-                    localStorage.setItem("theme", "light");
-                } else {
-                    localStorage.setItem("theme", "dark");
-                }
-
+            function setTheme(mode) {
+                document.documentElement.setAttribute("data-theme", mode);
+                localStorage.setItem("theme", mode);
                 updateThemeButton();
+            }
+
+            const saved = localStorage.getItem("theme") || "dark";
+            setTheme(saved);
+
+            themeBtn.addEventListener("click", () => {
+                const current = document.documentElement.getAttribute("data-theme");
+                setTheme(current === "dark" ? "light" : "dark");
             });
 
             function updateThemeButton() {
+                const theme = document.documentElement.getAttribute("data-theme");
 
-                if (document.documentElement.classList.contains("light")) {
-                    themeBtn.innerHTML = "☀️ Light";
-                } else {
-                    themeBtn.innerHTML = "🌙 Dark";
-                }
-
-            };
+                themeBtn.innerHTML =
+                    theme === "light" ? "☀️ Light" : "🌙 Dark";
+            }
             
             function handleOverlayClick(event) {
                 if (event.target === event.currentTarget) {
