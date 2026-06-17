@@ -61,6 +61,12 @@ module.exports = (client) => {
         res.send(`
     <html>
     <head>
+        <script>
+            if (localStorage.getItem("theme") === "light") {
+                document.documentElement.classList.add("light");
+            }
+            </script>
+
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <title>🤖 Bot Dashboard</title>
         <meta http-equiv="refresh" content="30">
@@ -78,7 +84,7 @@ module.exports = (client) => {
     --stat:rgba(255,255,255,.05);
 }
 
-body.light{
+html.light{
 
     --bg1:#f8fafc;
     --bg2:#e2e8f0;
@@ -424,15 +430,16 @@ body{
             const savedTheme = localStorage.getItem("theme");
 
             if (savedTheme === "light") {
-                document.body.classList.add("light");
+                document.documentElement.classList.add("light");
             }
 
             updateThemeButton();
 
             themeBtn.addEventListener("click", () => {
-                document.body.classList.toggle("light");
 
-                if (document.body.classList.contains("light")) {
+                document.documentElement.classList.toggle("light");
+
+                if (document.documentElement.classList.contains("light")) {
                     localStorage.setItem("theme", "light");
                 } else {
                     localStorage.setItem("theme", "dark");
@@ -442,11 +449,13 @@ body{
             });
 
             function updateThemeButton() {
-                if (document.body.classList.contains("light")) {
+
+                if (document.documentElement.classList.contains("light")) {
                     themeBtn.innerHTML = "☀️ Light";
                 } else {
                     themeBtn.innerHTML = "🌙 Dark";
                 }
+
             };
 
             </script>
