@@ -460,7 +460,6 @@ html.light .loading-spinner{
                             borderColor: type === "ram" ? "#3b82f6" : "#22c55e",
                             fill: false,
                             backgroundColor: "transparent",
-                            fill: true,
                             tension: 0.4,
                             pointRadius: 2
                         }]
