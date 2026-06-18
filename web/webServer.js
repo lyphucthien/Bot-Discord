@@ -51,9 +51,11 @@ module.exports = (client) => {
 
         ramHistory.push(ram);
         pingHistory.push(ping ?? 0);
+        cpuHistory.push(cpu);
 
         if (ramHistory.length > MAX_POINTS) ramHistory.shift();
         if (pingHistory.length > MAX_POINTS) pingHistory.shift();
+        if (cpuHistory.length > MAX_POINTS) cpuHistory.shift();
 
     }, 1000);
 
@@ -145,7 +147,7 @@ body {
     transform:translateY(-5px);
 }
 
-.dashboard{
+.dashboard {
     width:100%;
     max-width:1700px;
 
@@ -352,10 +354,19 @@ body {
 
         <div class="dashboard">
 
-        <div class="chart-card">
-            <h2>⚡ Ping</h2>
-            <canvas id="pingChart"></canvas>
-        </div>
+            <div class="left-charts">
+
+                <div class="chart-card small">
+                    <h2>⚡ Ping</h2>
+                    <canvas id="pingChart"></canvas>
+                </div>
+
+                <div class="chart-card small">
+                    <h2>🖥 CPU</h2>
+                    <canvas id="cpuChart"></canvas>
+                </div>
+
+            </div>
 
         <div class="card">
 
@@ -403,7 +414,6 @@ body {
              💻 Created By Lý Phúc Thiện
              
             </div>
-
         </div>
 
         <div class="chart-card">
@@ -420,9 +430,11 @@ body {
 
             let pingChart;
             let ramChart;
+            let cpuChart;
 
             let pingData = [];
             let ramData = [];
+            let cpuData = [];
 
             pingChart = new Chart(document.getElementById("pingChart"), {
                 type: "line",
@@ -506,10 +518,46 @@ body {
                 }
             });
 
+            cpuChart = new Chart(document.getElementById("cpuChart"), {
+                type: "line",
+                data: {
+                    labels: [],
+                    datasets: [{
+                        data: [],
+                        borderColor: "#ef4444",
+                        backgroundColor: "rgba(239,68,68,.15)",
+                        fill: true,
+                        tension: .35,
+
+                        pointRadius(ctx) {
+                            const i = ctx.dataIndex;
+                            const d = ctx.dataset.data;
+                            if (i === 0) return 0;
+                            return d[i] !== d[i - 1] ? 4 : 0;
+                        },
+
+                        pointHoverRadius: 6,
+                        pointHitRadius: 15
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: { display: false },
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+
             socket.on("history", data => {
 
                 pingData = data.ping || [];
                 ramData = data.ram || [];
+                cpuData = data.cpu || [];
 
                 pingChart.data.labels = pingData.map((_, i) => i);
                 pingChart.data.datasets[0].data = pingData;
@@ -518,6 +566,10 @@ body {
                 ramChart.data.labels = ramData.map((_, i) => i);
                 ramChart.data.datasets[0].data = ramData;
                 ramChart.update();
+
+                cpuChart.data.labels = cpuData.map((_, i) => i);
+                cpuChart.data.datasets[0].data = cpuData;
+                cpuChart.update();
 
             });
             
@@ -537,11 +589,14 @@ body {
 
                 pingData.push(data.ping ?? 0);
                 ramData.push(data.ram);
+                cpuData.push(data.cpu);
                 
                 time.innerText = data.time;
 
-                if (ramData.length > 60) ramData.shift();
-                if (pingData.length > 60) pingData.shift();
+                const MAX = 60;
+                if (pingData.length > MAX) pingData.shift();
+                if (ramData.length > MAX) ramData.shift();
+                if (cpuData.length > MAX) cpuData.shift();
 
                 ping.innerText = data.ping != null ? data.ping + " ms" : "N/A";
                 ram.innerText = data.ram + " MB";
@@ -557,6 +612,10 @@ body {
                 ramChart.data.labels = ramData.map((_, i) => i);
                 ramChart.data.datasets[0].data = ramData;
                 ramChart.update("none");
+
+                cpuChart.data.labels = cpuData.map((_, i) => i);
+                cpuChart.data.datasets[0].data = cpuData;
+                cpuChart.update("none");
 
             });
 
