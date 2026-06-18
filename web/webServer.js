@@ -33,13 +33,13 @@ module.exports = (client) => {
 
         const ram = Math.round(process.memoryUsage().rss / 1024 / 1024);
         const ping = client.ws?.ping ?? 0;
+        const cpu = Number((await si.currentLoad()).currentLoad.toFixed(1));
 
         const uptime = formatUptime(Math.floor(process.uptime()));
 
         statsCache = {
             ping,
             ram,
-            cpu,
             guilds: client.guilds.cache.size,
             uptime,
             time: new Date().toLocaleString("vi-VN", {
@@ -607,7 +607,6 @@ body {
         socket.emit("history", {
             ram: ramHistory,
             ping: pingHistory,
-            cpu: cpuHistory
         });
 
         if (statsCache)
