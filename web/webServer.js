@@ -31,7 +31,7 @@ module.exports = (client) => {
         if (!client?.ws) return;
 
         const ram = Math.round(process.memoryUsage().rss / 1024 / 1024);
-        const ping = client.ws?.ping || 0;
+        const ping = client.ws?.ping ?? 0;
 
         const uptime = formatUptime(Math.floor(process.uptime()));
 
@@ -64,11 +64,6 @@ module.exports = (client) => {
         res.send(`
     <html>
     <head>
-        <script>
-            if (localStorage.getItem("theme") === "light") {
-                document.documentElement.classList.add("light");
-            }
-            </script>
 
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <title>🤖 Bot Dashboard</title>
@@ -131,26 +126,79 @@ body {
 }
 
 .card{
-    width:90%;
-    max-width:600px;
+    width:620px;
+    flex-shrink:0;
 
     background: var(--card);
-
     backdrop-filter:blur(15px);
-
-    border: 1px solid var(--border);;
-
+    border:1px solid var(--border);
     border-radius:20px;
-
     padding:30px;
+    box-shadow:0 0 30px rgba(0,0,0,.4);
 
-    box-shadow:0 0 30px rgba(0,0,0,0.4);
-
-    transition:0.3s;
+    transition:.25s;
 }
 
 .card:hover{
     transform:translateY(-5px);
+}
+
+.dashboard{
+    width:100%;
+    max-width:1700px;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:35px;
+    padding:40px;
+}
+
+.chart-card{
+    width:320px;
+    height:600px;
+
+    flex-shrink:0;
+
+    background:var(--card);
+    backdrop-filter:blur(15px);
+    border:1px solid var(--border);
+    border-radius:20px;
+    padding:20px;
+    transform:translateY(-5px);
+
+    transition:.25s;
+}
+
+.chart-card h2{
+    margin-top:0;
+    text-align:center;
+}
+
+.chart-card canvas{
+    width:100%!important;
+    height:520px!important;
+}
+
+@media(max-width:1400px){
+
+.dashboard{
+    flex-direction:column;
+}
+
+.card{
+    width:90%;
+}
+
+.chart-card{
+    width:90%;
+    height:320px;
+}
+
+.chart-card canvas{
+    height:250px!important;
+}
+
 }
 
 .status{
@@ -278,7 +326,7 @@ body {
     animation:spin .8s linear infinite;
 }
 
-html.light .loading-spinner{
+[data-theme="light"] .loading-spinner{
     border:3px solid rgba(0,0,0,.15);
     border-top:3px solid #2563eb;
 }
@@ -291,85 +339,20 @@ html.light .loading-spinner{
         transform:rotate(360deg);
     }
 }
-.chart-overlay{
-    display:none;
-    position:fixed;
-    inset:0;
-    background: rgba(0,0,0,0.6);
-    backdrop-filter:blur(8px);
-    justify-content:center;
-    align-items:center;
-    z-index:9999;
-    animation:fadeIn .2s ease;
-}
-
-.chart-modal{
-    width:90%;
-    max-width:850px;
-    background:var(--card);
-    border:1px solid var(--border);
-    border-radius:18px;
-    padding:20px;
-    box-shadow:0 20px 60px rgba(0,0,0,.5);
-    transform:scale(.9);
-    animation:pop .25s ease forwards;
-}
-
-.chart-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:10px;
-}
-
-.chart-header h3{
-    margin:0;
-    font-size:18px;
-}
-
-.close-btn{
-    background: var(--danger);
-    border:none;
-    color:white;
-    width:35px;
-    height:35px;
-    border-radius:10px;
-    cursor:pointer;
-    font-size:16px;
-    transition:.2s;
-}
-
-.close-btn:hover{
-    transform:scale(1.1);
-    background:#ff3333;
-}
-
-@keyframes fadeIn{
-    from{opacity:0;}
-    to{opacity:1;}
-}
-
-@keyframes pop{
-    to{transform:scale(1);}
-}
-
         </style>
     </head>
     <body>
         
-        <button id="themeBtn">🌙 Dark Mode</button>
+        <button id="themeBtn">🌙 Dark</button>
+
+        <div class="dashboard">
+
+        <div class="chart-card">
+            <h2>⚡ Ping</h2>
+            <canvas id="pingChart"></canvas>
+        </div>
 
         <div class="card">
-            <div id="chartBox" class="chart-overlay" onclick="handleOverlayClick(event)">
-                <div class="chart-modal">
-                    <div class="chart-header">
-                        <h3 id="chartTitle">📊 Biểu đồ</h3>
-                        <button class="close-btn" onclick="closeChart()">✖</button>
-                    </div>
-
-                    <canvas id="chartCanvas"></canvas>
-                </div>
-            </div>
 
             <h1>
                 🤖 ${client.user ? client.user.username : "Bot Lâm Đồng"}
@@ -380,7 +363,7 @@ html.light .loading-spinner{
                  ${statusText}
             </div>
 
-            <div class="stat" onclick="openChart('ping')">
+            <div class="stat">
              <span>⚡ Ping</span>
                 <span id="ping" class="loading-spinner"></span>
             </div>
@@ -395,7 +378,7 @@ html.light .loading-spinner{
                 <span id="users">${online ? client.users.cache.size : 0}</span>
             </div>
 
-            <div class="stat" onclick="openChart('ram')">
+            <div class="stat">
              <span>💾 RAM</span>
                 <span id="ram" class="loading-spinner"></span>
             </div>
@@ -417,79 +400,99 @@ html.light .loading-spinner{
             </div>
 
         </div>
+
+        <div class="chart-card">
+            <h2>💾 RAM</h2>
+            <canvas id="ramChart"></canvas>
+        </div>
+
+    </div>
         
             <script src="/socket.io/socket.io.js"></script>
 
             <script>
             const socket = io();
-            let chart;
-            let ramData = [];
+
+            let pingChart;
+            let ramChart;
+
             let pingData = [];
+            let ramData = [];
 
-            socket.on("history", (data) => {
-                ramData = data?.ram || [];
-                pingData = data?.ping || [];
-            });
-
-            function openChart(type) {
-                document.getElementById("chartBox").style.display = "flex";
-
-                const ctx = document.getElementById("chartCanvas");
-
-                const data = type === "ram" ? ramData : pingData;
-
-                document.getElementById("chartTitle").innerText =
-                    type === "ram" ? "💾 RAM Usage" : "⚡ Ping History";
-
-                if (!data || data.length === 0) {
-                    alert("📊 Chưa Có Dữ Liệu!");
-                    return;
-                }
-
-                if (chart) chart.destroy();
-
-                chart = new Chart(ctx, {
-                    type: "line",
-                    data: {
-                        labels: data.map((_, i) => i),
-                        datasets: [{
-                            label: type.toUpperCase(),
-                            data: data,
-                            borderColor: type === "ram" ? "#3b82f6" : "#22c55e",
-                            backgroundColor: "rgba(59,130,246,0.1)",
-                            fill: true,
-                            tension: 0.4,
-                            pointRadius: 2
-                        }]
+            pingChart = new Chart(document.getElementById("pingChart"), {
+                type: "line",
+                data: {
+                    labels: [],
+                    datasets: [{
+                        data: [],
+                        borderColor: "#22c55e",
+                        backgroundColor: "rgba(34,197,94,.15)",
+                        fill: true,
+                        tension: .35,
+                        pointRadius: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
                     },
-                    options: {
-                        responsive: true,
-                        animation: {
-                            duration: 600
+                    scales: {
+                        x: {
+                            display: false
                         },
-                        plugins: {
-                            legend: {
-                                labels: {
-                                    color: "#fff"
-                                }
-                            }
-                        },
-                        scales: {
-                            x: {
-                                grid: { color: "rgba(255,255,255,0.05)" }
-                            },
-                            y: {
-                                beginAtZero: true,
-                                grid: { color: "rgba(255,255,255,0.05)" }
-                            }
+                        y: {
+                            beginAtZero: true
                         }
                     }
-                });
-            }
+                }
+            });
 
-            function closeChart() {
-                document.getElementById("chartBox").style.display = "none";
-            }
+            ramChart = new Chart(document.getElementById("ramChart"), {
+                type: "line",
+                data: {
+                    labels: [],
+                    datasets: [{
+                        data: [],
+                        borderColor: "#3b82f6",
+                        backgroundColor: "rgba(59,130,246,.15)",
+                        fill: true,
+                        tension: .35,
+                        pointRadius: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: {
+                            display: false
+                        },
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            socket.on("history", data => {
+
+                pingData = data.ping || [];
+                ramData = data.ram || [];
+
+                pingChart.data.labels = pingData.map((_, i) => i);
+                pingChart.data.datasets[0].data = pingData;
+                pingChart.update();
+
+                ramChart.data.labels = ramData.map((_, i) => i);
+                ramChart.data.datasets[0].data = ramData;
+                ramChart.update();
+
+            });
             
             socket.on("stats", (data) => {
 
@@ -517,15 +520,14 @@ html.light .loading-spinner{
                 document.getElementById("guilds").innerText = data.guilds;
                 document.getElementById("users").innerText = data.users;
 
-                if (chart) {
-                    const currentData = chart.data.datasets[0].label === "RAM"
-                        ? ramData
-                        : pingData;
+                pingChart.data.labels = pingData.map((_, i) => i);
+                pingChart.data.datasets[0].data = pingData;
+                pingChart.update("none");
 
-                    chart.data.labels = currentData.map((_, i) => i);
-                    chart.data.datasets[0].data = currentData;
-                    chart.update("none");
-                }
+                ramChart.data.labels = ramData.map((_, i) => i);
+                ramChart.data.datasets[0].data = ramData;
+                ramChart.update("none");
+
             });
 
             const themeBtn = document.getElementById("themeBtn");
@@ -552,26 +554,6 @@ html.light .loading-spinner{
                 themeBtn.innerHTML =
                     theme === "light" ? "☀️ Light" : "🌙 Dark";
             }
-            
-            function handleOverlayClick(event) {
-                if (event.target === event.currentTarget) {
-                    closeChart();
-                }
-            }
-
-            function closeChart() {
-                document.getElementById("chartBox").style.display = "none";
-                if (chart) {
-                    chart.destroy();
-                    chart = null;
-                }
-            }
-
-            document.addEventListener("keydown", (event) => {
-                if (event.key === "Escape") {
-                    closeChart();
-                }
-            });
             
             </script>
 
