@@ -533,6 +533,7 @@ body {
 
                 pingData.push(data.ping ?? 0);
                 ramData.push(data.ram);
+                
                 time.innerText = data.time;
 
                 if (ramData.length > 60) ramData.shift();
