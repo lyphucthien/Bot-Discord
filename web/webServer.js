@@ -1,8 +1,10 @@
 const express = require("express");
+const si = require("systeminformation");
 const http = require("http");
 const { Server } = require("socket.io");
 const ramHistory = [];
 const pingHistory = [];
+const cpuHistory = [];
 const MAX_POINTS = 60;
 
 module.exports = (client) => {
@@ -25,28 +27,28 @@ module.exports = (client) => {
 
     let statsCache = null;
 
-    setInterval(() => {
+    setInterval(async () => {
 
         if (!client?.isReady?.()) return;
         if (!client?.ws) return;
 
         const ram = Math.round(process.memoryUsage().rss / 1024 / 1024);
         const ping = client.ws?.ping ?? 0;
+        const cpu = Number((await si.currentLoad()).currentLoad.toFixed(1));
 
         const uptime = formatUptime(Math.floor(process.uptime()));
 
         statsCache = {
             ping,
-            users: client.users.cache.size,
-            guilds: client.guilds.cache.size,
             ram,
+            cpu,
+            guilds: client.guilds.cache.size,
             uptime,
             time: new Date().toLocaleString("vi-VN", {
                 timeZone: "Asia/Ho_Chi_Minh"
             })
         };
 
-        // ===== lưu history =====
         ramHistory.push(ram);
         pingHistory.push(ping ?? 0);
 
@@ -372,18 +374,18 @@ body {
             </div>
 
             <div class="stat">
-             <span>🏠 Servers</span>
-                <span id="guilds">${online ? client.guilds.cache.size : 0}</span>
-            </div>
-
-            <div class="stat">
-             <span>👥 Users</span>
-                <span id="users">${online ? client.users.cache.size : 0}</span>
-            </div>
-
-            <div class="stat">
              <span>💾 RAM</span>
                 <span id="ram" class="loading-spinner"></span>
+            </div>
+
+            <div class="stat">
+                <span>🖥 CPU</span>
+                <span id="cpu" class="loading-spinner"></span>
+            </div>
+
+            <div class="stat">
+             <span>🏠 Servers</span>
+                <span id="guilds">${online ? client.guilds.cache.size : 0}</span>
             </div>
 
             <div class="stat">
@@ -525,11 +527,13 @@ body {
                 const ram = document.getElementById("ram");
                 const time = document.getElementById("time");
                 const uptime = document.getElementById("uptime");
+                const cpu = document.getElementById("cpu");
 
                 ping.classList.remove("loading-spinner");
                 ram.classList.remove("loading-spinner");
                 time.classList.remove("loading-spinner");
                 uptime.classList.remove("loading-spinner");
+                cpu.classList.remove("loading-spinner");
 
                 pingData.push(data.ping ?? 0);
                 ramData.push(data.ram);
@@ -541,10 +545,10 @@ body {
 
                 ping.innerText = data.ping != null ? data.ping + " ms" : "N/A";
                 ram.innerText = data.ram + " MB";
+                cpu.innerText = data.cpu + " %";
                 uptime.innerText = data.uptime;
 
                 document.getElementById("guilds").innerText = data.guilds;
-                document.getElementById("users").innerText = data.users;
 
                 pingChart.data.labels = pingData.map((_, i) => i);
                 pingChart.data.datasets[0].data = pingData;
@@ -601,7 +605,8 @@ body {
 
         socket.emit("history", {
             ram: ramHistory,
-            ping: pingHistory
+            ping: pingHistory,
+            cpu: cpuHistory
         });
 
         if (statsCache)
