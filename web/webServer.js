@@ -4,7 +4,6 @@ const http = require("http");
 const { Server } = require("socket.io");
 const ramHistory = [];
 const pingHistory = [];
-const cpuHistory = [];
 const MAX_POINTS = 60;
 
 module.exports = (client) => {
@@ -34,7 +33,6 @@ module.exports = (client) => {
 
         const ram = Math.round(process.memoryUsage().rss / 1024 / 1024);
         const ping = client.ws?.ping ?? 0;
-        const cpu = Number((await si.currentLoad()).currentLoad.toFixed(1));
 
         const uptime = formatUptime(Math.floor(process.uptime()));
 
@@ -359,11 +357,6 @@ body {
                     <canvas id="pingChart"></canvas>
                 </div>
 
-                <div class="chart-card small">
-                    <h2>🖥 CPU</h2>
-                    <canvas id="cpuChart"></canvas>
-                </div>
-
             </div>
 
         <div class="card">
@@ -428,11 +421,9 @@ body {
 
             let pingChart;
             let ramChart;
-            let cpuChart;
 
             let pingData = [];
             let ramData = [];
-            let cpuData = [];
 
             pingChart = new Chart(document.getElementById("pingChart"), {
                 type: "line",
