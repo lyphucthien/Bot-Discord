@@ -2,9 +2,11 @@ const express = require("express");
 const si = require("systeminformation");
 const http = require("http");
 const { Server } = require("socket.io");
+
 const ramHistory = [];
 const pingHistory = [];
 const cpuHistory = [];
+
 const MAX_POINTS = 60;
 
 module.exports = (client) => {
@@ -26,15 +28,26 @@ module.exports = (client) => {
     }
 
     let statsCache = null;
+    let lastRam = 0;
+    let lastPing = 0;
+    let lastCpu = 0;
 
     setInterval(async () => {
 
         if (!client?.isReady?.()) return;
         if (!client?.ws) return;
 
-        const ram = Math.round(process.memoryUsage().rss / 1024 / 1024);
-        const ping = client.ws?.ping ?? 0;
-        const cpu = Number((await si.currentLoad()).currentLoad.toFixed(1));
+        const ramRaw = process.memoryUsage().rss / 1024 / 1024;
+        const pingRaw = client.ws?.ping ?? 0;
+        const cpuRaw = (await si.currentLoad()).currentLoad;
+
+        const ram = Math.round((ramRaw + lastRam) / 2);
+        const ping = Math.round((pingRaw + lastPing) / 2);
+        const cpu = Number(((cpuRaw + lastCpu) / 2).toFixed(1));
+
+        lastRam = ram;
+        lastPing = ping;
+        lastCpu = cpu;
 
         const uptime = formatUptime(Math.floor(process.uptime()));
 
@@ -57,7 +70,7 @@ module.exports = (client) => {
         if (pingHistory.length > MAX_POINTS) pingHistory.shift();
         if (cpuHistory.length > MAX_POINTS) cpuHistory.shift();
 
-    }, 1000);
+    }, 3000);
 
     app.get("/", (req, res) => {
 
@@ -87,6 +100,11 @@ module.exports = (client) => {
     --danger: #ef4444;
 
     --chart-grid: rgba(255,255,255,0.05);
+}
+
+:root{
+    --chart-height: 600px;
+    --gap: 35px;
 }
 
 [data-theme="light"] {
@@ -158,19 +176,17 @@ body {
     padding:40px;
 }
 
+.left-charts{
+    height: var(--chart-height);
+    display:flex;
+    flex-direction:column;
+    gap: var(--gap);
+}
+
 .chart-card{
-    width:320px;
-    height:600px;
-
-    flex-shrink:0;
-
-    background:var(--card);
-    backdrop-filter:blur(15px);
-    border:1px solid var(--border);
-    border-radius:20px;
-    padding:20px;
-
-    transition:.25s;
+    height: var(--chart-height);
+    display:flex;
+    flex-direction:column;
 }
 
 .chart-card:hover{
@@ -183,8 +199,8 @@ body {
 }
 
 .chart-card canvas{
-    width:100%!important;
-    height:520px!important;
+    flex:1;
+    width:100% !important;
 }
 
 @media(max-width:1400px){
