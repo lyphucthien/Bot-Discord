@@ -2,8 +2,10 @@ const express = require("express");
 const si = require("systeminformation");
 const http = require("http");
 const { Server } = require("socket.io");
+
 const ramHistory = [];
 const pingHistory = [];
+
 const MAX_POINTS = 60;
 
 module.exports = (client) => {
@@ -37,8 +39,7 @@ module.exports = (client) => {
         if (!client?.isReady?.()) return;
         if (!client?.ws) return;
 
-        const mem = await si.mem();
-        const ram = Math.round(mem.active / 1024 / 1024);
+        const ram = Math.round(process.memoryUsage().rss / 1024 / 1024);
         const ping = client.ws?.ping ?? 0;
         const cpu = Math.round((await si.currentLoad()).currentLoad || 0);
 
