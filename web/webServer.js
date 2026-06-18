@@ -2,11 +2,9 @@ const express = require("express");
 const si = require("systeminformation");
 const http = require("http");
 const { Server } = require("socket.io");
-
 const ramHistory = [];
 const pingHistory = [];
 const cpuHistory = [];
-
 const MAX_POINTS = 60;
 
 module.exports = (client) => {
@@ -28,26 +26,15 @@ module.exports = (client) => {
     }
 
     let statsCache = null;
-    let lastRam = 0;
-    let lastPing = 0;
-    let lastCpu = 0;
 
     setInterval(async () => {
 
         if (!client?.isReady?.()) return;
         if (!client?.ws) return;
 
-        const ramRaw = process.memoryUsage().rss / 1024 / 1024;
-        const pingRaw = client.ws?.ping ?? 0;
-        const cpuRaw = (await si.currentLoad()).currentLoad;
-
-        const ram = Math.round((ramRaw + lastRam) / 2);
-        const ping = Math.round((pingRaw + lastPing) / 2);
-        const cpu = Number(((cpuRaw + lastCpu) / 2).toFixed(1));
-
-        lastRam = ram;
-        lastPing = ping;
-        lastCpu = cpu;
+        const ram = Math.round(process.memoryUsage().rss / 1024 / 1024);
+        const ping = client.ws?.ping ?? 0;
+        const cpu = Number((await si.currentLoad()).currentLoad.toFixed(1));
 
         const uptime = formatUptime(Math.floor(process.uptime()));
 
@@ -64,13 +51,11 @@ module.exports = (client) => {
 
         ramHistory.push(ram);
         pingHistory.push(ping ?? 0);
-        cpuHistory.push(cpu);
 
         if (ramHistory.length > MAX_POINTS) ramHistory.shift();
         if (pingHistory.length > MAX_POINTS) pingHistory.shift();
-        if (cpuHistory.length > MAX_POINTS) cpuHistory.shift();
 
-    }, 3000);
+    }, 1000);
 
     app.get("/", (req, res) => {
 
@@ -100,11 +85,6 @@ module.exports = (client) => {
     --danger: #ef4444;
 
     --chart-grid: rgba(255,255,255,0.05);
-}
-
-:root{
-    --chart-height: 600px;
-    --gap: 35px;
 }
 
 [data-theme="light"] {
@@ -176,17 +156,19 @@ body {
     padding:40px;
 }
 
-.left-charts{
-    height: var(--chart-height);
-    display:flex;
-    flex-direction:column;
-    gap: var(--gap);
-}
-
 .chart-card{
-    height: var(--chart-height);
-    display:flex;
-    flex-direction:column;
+    width:320px;
+    height:600px;
+
+    flex-shrink:0;
+
+    background:var(--card);
+    backdrop-filter:blur(15px);
+    border:1px solid var(--border);
+    border-radius:20px;
+    padding:20px;
+
+    transition:.25s;
 }
 
 .chart-card:hover{
@@ -199,8 +181,8 @@ body {
 }
 
 .chart-card canvas{
-    flex:1;
-    width:100% !important;
+    width:100%!important;
+    height:520px!important;
 }
 
 @media(max-width:1400px){
@@ -534,46 +516,10 @@ body {
                 }
             });
 
-            cpuChart = new Chart(document.getElementById("cpuChart"), {
-                type: "line",
-                data: {
-                    labels: [],
-                    datasets: [{
-                        data: [],
-                        borderColor: "#ef4444",
-                        backgroundColor: "rgba(239,68,68,.15)",
-                        fill: true,
-                        tension: .35,
-
-                        pointRadius(ctx) {
-                            const i = ctx.dataIndex;
-                            const d = ctx.dataset.data;
-                            if (i === 0) return 0;
-                            return d[i] !== d[i - 1] ? 4 : 0;
-                        },
-
-                        pointHoverRadius: 6,
-                        pointHitRadius: 15
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false }
-                    },
-                    scales: {
-                        x: { display: false },
-                        y: { beginAtZero: true }
-                    }
-                }
-            });
-
             socket.on("history", data => {
 
                 pingData = data.ping || [];
                 ramData = data.ram || [];
-                cpuData = data.cpu || [];
 
                 pingChart.data.labels = pingData.map((_, i) => i);
                 pingChart.data.datasets[0].data = pingData;
@@ -582,10 +528,6 @@ body {
                 ramChart.data.labels = ramData.map((_, i) => i);
                 ramChart.data.datasets[0].data = ramData;
                 ramChart.update();
-
-                cpuChart.data.labels = cpuData.map((_, i) => i);
-                cpuChart.data.datasets[0].data = cpuData;
-                cpuChart.update();
 
             });
             
@@ -605,14 +547,11 @@ body {
 
                 pingData.push(data.ping ?? 0);
                 ramData.push(data.ram);
-                cpuData.push(data.cpu);
                 
                 time.innerText = data.time;
 
-                const MAX = 60;
-                if (pingData.length > MAX) pingData.shift();
-                if (ramData.length > MAX) ramData.shift();
-                if (cpuData.length > MAX) cpuData.shift();
+                if (ramData.length > 60) ramData.shift();
+                if (pingData.length > 60) pingData.shift();
 
                 ping.innerText = data.ping != null ? data.ping + " ms" : "N/A";
                 ram.innerText = data.ram + " MB";
@@ -628,10 +567,6 @@ body {
                 ramChart.data.labels = ramData.map((_, i) => i);
                 ramChart.data.datasets[0].data = ramData;
                 ramChart.update("none");
-
-                cpuChart.data.labels = cpuData.map((_, i) => i);
-                cpuChart.data.datasets[0].data = cpuData;
-                cpuChart.update("none");
 
             });
 
