@@ -51,7 +51,10 @@ module.exports = (client) => {
 
         ramHistory.push(ram);
         pingHistory.push(ping ?? 0);
+        cpuHistory.push(cpu);
 
+        if(cpuHistory.length > MAX_POINTS)
+            cpuHistory.shift();
         if (ramHistory.length > MAX_POINTS) ramHistory.shift();
         if (pingHistory.length > MAX_POINTS) pingHistory.shift();
 
@@ -149,10 +152,13 @@ body {
     width:100%;
     max-width:1700px;
 
-    display:flex;
+    display:grid;
+    grid-template-columns:320px 620px 320px;
+    gap:30px;
+
+    align-items:stretch;
     justify-content:center;
-    align-items:center;
-    gap:35px;
+
     padding:40px;
 }
 
@@ -188,7 +194,9 @@ body {
 @media(max-width:1400px){
 
 .dashboard{
+    display:flex;
     flex-direction:column;
+    align-items:center;
 }
 
 .card{
@@ -352,9 +360,16 @@ body {
 
         <div class="dashboard">
 
-        <div class="chart-card">
-            <h2>⚡ Ping</h2>
-            <canvas id="pingChart"></canvas>
+        <div class="left-stack">
+            <div class="chart-card small">
+                <h2>⚡ Ping</h2>
+                <canvas id="pingChart"></canvas>
+            </div>
+
+            <div class="chart-card small">
+                <h2>🖥 CPU</h2>
+                <canvas id="cpuChart"></canvas>
+            </div>
         </div>
 
         <div class="card">
@@ -406,7 +421,7 @@ body {
 
         </div>
 
-        <div class="chart-card">
+        <div class="chart-card right-chart">
             <h2>💾 RAM</h2>
             <canvas id="ramChart"></canvas>
         </div>
@@ -420,9 +435,11 @@ body {
 
             let pingChart;
             let ramChart;
+            let cpuChart;
 
             let pingData = [];
             let ramData = [];
+            let cpuData = [];
 
             pingChart = new Chart(document.getElementById("pingChart"), {
                 type: "line",
@@ -506,13 +523,48 @@ body {
                 }
             });
 
+            cpuChart = new Chart(document.getElementById("cpuChart"), {
+                type: "line",
+                data: {
+                    labels: [],
+                    datasets: [{
+                        data: [],
+                        borderColor: "#ef4444",
+                        backgroundColor: "rgba(239,68,68,.15)",
+                        fill: true,
+                        tension: .35,
+
+                        pointRadius(ctx) {
+                            const i = ctx.dataIndex;
+                            const d = ctx.dataset.data;
+                            if (i === 0) return 0;
+                            return d[i] !== d[i - 1] ? 4 : 0;
+                        }
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { display: false },
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+
             socket.on("history", data => {
 
                 pingData = data.ping || [];
                 ramData = data.ram || [];
+                cpuData = data.cpu || [];
 
                 pingChart.data.labels = pingData.map((_, i) => i);
                 pingChart.data.datasets[0].data = pingData;
+                cpuChart.data.labels = cpuData.map((_, i) => i);
+                cpuChart.data.datasets[0].data = cpuData;
+
+                cpuChart.update();
                 pingChart.update();
 
                 ramChart.data.labels = ramData.map((_, i) => i);
@@ -540,8 +592,9 @@ body {
                 
                 time.innerText = data.time;
 
-                if (ramData.length > 60) ramData.shift();
                 if (pingData.length > 60) pingData.shift();
+                if (ramData.length > 60) ramData.shift();
+                if (cpuData.length > 60) cpuData.shift();
 
                 ping.innerText = data.ping != null ? data.ping + " ms" : "N/A";
                 ram.innerText = data.ram + " MB";
@@ -557,6 +610,10 @@ body {
                 ramChart.data.labels = ramData.map((_, i) => i);
                 ramChart.data.datasets[0].data = ramData;
                 ramChart.update("none");
+
+                cpuChart.data.labels = cpuData.map((_, i) => i);
+                cpuChart.data.datasets[0].data = cpuData;
+                cpuChart.update("none");
 
             });
 
