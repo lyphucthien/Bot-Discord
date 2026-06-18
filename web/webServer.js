@@ -57,7 +57,7 @@ module.exports = (client) => {
 
             status: {
                 ping: getLevel(ping, 100, 200),
-                ram: getLevel(ram, 100, 200),
+                ram: getLevel(ram, 300, 400),
                 cpu: getLevel(cpu, 70, 90)
             }
 
