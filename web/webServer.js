@@ -165,9 +165,12 @@ body {
     border:1px solid var(--border);
     border-radius:20px;
     padding:20px;
-    transform:translateY(-5px);
 
     transition:.25s;
+}
+
+.chart-card:hover{
+    transform:translateY(-5px);
 }
 
 .chart-card h2{
@@ -429,7 +432,18 @@ body {
                         backgroundColor: "rgba(34,197,94,.15)",
                         fill: true,
                         tension: .35,
-                        pointRadius: 2
+
+                        pointRadius(ctx) {
+                            const i = ctx.dataIndex;
+                            const d = ctx.dataset.data;
+
+                            if (i === 0) return 0;
+
+                            return d[i] !== d[i - 1] ? 4 : 0;
+                        },
+
+                        pointHoverRadius: 6,
+                        pointHitRadius: 15
                     }]
                 },
                 options: {
@@ -459,7 +473,18 @@ body {
                         backgroundColor: "rgba(59,130,246,.15)",
                         fill: true,
                         tension: .35,
-                        pointRadius: 2
+
+                        pointRadius(ctx) {
+                            const i = ctx.dataIndex;
+                            const d = ctx.dataset.data;
+
+                            if (i === 0) return 0;
+
+                            return d[i] !== d[i - 1] ? 4 : 0;
+                        },
+
+                        pointHoverRadius: 6,
+                        pointHitRadius: 15
                     }]
                 },
                 options: {
@@ -532,8 +557,6 @@ body {
 
             const themeBtn = document.getElementById("themeBtn");
 
-            updateThemeButton();
-
             function setTheme(mode) {
                 document.documentElement.setAttribute("data-theme", mode);
                 localStorage.setItem("theme", mode);
@@ -552,7 +575,9 @@ body {
                 const theme = document.documentElement.getAttribute("data-theme");
 
                 themeBtn.innerHTML =
-                    theme === "light" ? "☀️ Light" : "🌙 Dark";
+                    theme === "light"
+                     ? "☀️ Light Mode"
+                     : "🌙 Dark Mode";
             }
             
             </script>
@@ -578,18 +603,17 @@ body {
             ping: pingHistory
         });
 
-        const interval = setInterval(() => {
-
-            if (statsCache)
-                socket.emit("stats", statsCache);
-
-        }, 1000);
-
-        socket.on("disconnect", () => {
-            clearInterval(interval);
-        });
+        if (statsCache)
+            socket.emit("stats", statsCache);
 
     });
+
+    setInterval(() => {
+
+        if (statsCache)
+            io.emit("stats", statsCache);
+
+    }, 1000);
 
     server.listen(PORT, "0.0.0.0", () => {
         console.log(`🌐 Web Server Chạy Ở Cổng ${PORT}`);
