@@ -377,6 +377,41 @@ body {
     animation: blink 1s infinite;
 }
 
+.shake {
+    animation: shake 0.3s infinite;
+}
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-2px); }
+    50% { transform: translateX(2px); }
+    75% { transform: translateX(-2px); }
+    100% { transform: translateX(0); }
+}
+
+.glow {
+    animation: glow 1.2s infinite alternate;
+}
+
+@keyframes glow {
+    0% {
+        box-shadow: 0 0 5px #22c55e;
+    }
+    100% {
+        box-shadow: 0 0 20px #ef4444;
+    }
+}
+
+.pulse {
+    animation: cpuPulse 1s infinite;
+}
+
+@keyframes cpuPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.03); }
+    100% { transform: scale(1); }
+}
+
 @keyframes blink {
     0% { opacity: 1; }
     50% { opacity: 0.4; }
@@ -398,7 +433,7 @@ body {
                 </div>
 
             </div>
-
+        
         <div class="card">
 
             <h1>
@@ -570,6 +605,10 @@ body {
                 const time = document.getElementById("time");
                 const uptime = document.getElementById("uptime");
 
+                ping.classList.remove("good", "warning", "danger", "shake");
+                ram.classList.remove("good", "warning", "danger", "glow");
+                cpu.classList.remove("good", "warning", "danger", "pulse");
+
                 ping.classList.remove("loading-spinner");
                 ram.classList.remove("loading-spinner");
                 cpu.classList.remove("loading-spinner");
@@ -582,15 +621,17 @@ body {
                 time.innerText = data.time;
                 uptime.innerText = data.uptime;
 
-                document.getElementById("guilds").innerText = data.guilds;
-
-                ping.classList.remove("good", "warning", "danger");
-                ram.classList.remove("good", "warning", "danger");
-                cpu.classList.remove("good", "warning", "danger");
-
                 ping.classList.add(data.status.ping);
+                if (data.status.ping === "danger") ping.classList.add("shake");
+
                 ram.classList.add(data.status.ram);
+                if (data.status.ram === "warning") ram.classList.add("glow");
+                if (data.status.ram === "danger") ram.classList.add("glow");
+
                 cpu.classList.add(data.status.cpu);
+                if (data.status.cpu === "danger") cpu.classList.add("pulse");
+
+                document.getElementById("guilds").innerText = data.guilds;
 
                 pingData.push(data.ping ?? 0);
                 ramData.push(data.ram);
