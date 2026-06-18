@@ -40,6 +40,7 @@ module.exports = (client) => {
         statsCache = {
             ping,
             ram,
+            cpu,
             guilds: client.guilds.cache.size,
             uptime,
             time: new Date().toLocaleString("vi-VN", {
