@@ -24,6 +24,12 @@ module.exports = (client) => {
         return `${d} ngày ${h} giờ ${m} phút ${s} giây`;
     }
 
+    function getLevel(value, warn, danger) {
+        if (value >= danger) return "danger";
+        if (value >= warn) return "warning";
+        return "good";
+    }
+
     let statsCache = null;
 
     setInterval(async () => {
@@ -31,9 +37,10 @@ module.exports = (client) => {
         if (!client?.isReady?.()) return;
         if (!client?.ws) return;
 
-        const ram = Math.round(process.memoryUsage().rss / 1024 / 1024);
+        const mem = await si.mem();
+        const ram = Math.round(mem.active / 1024 / 1024);
         const ping = client.ws?.ping ?? 0;
-        const cpu = Number((await si.currentLoad()).currentLoad.toFixed(1));
+        const cpu = Math.round((await si.currentLoad()).currentLoad || 0);
 
         const uptime = formatUptime(Math.floor(process.uptime()));
 
@@ -45,7 +52,14 @@ module.exports = (client) => {
             uptime,
             time: new Date().toLocaleString("vi-VN", {
                 timeZone: "Asia/Ho_Chi_Minh"
-            })
+            }),
+
+            status: {
+                ping: getLevel(ping, 100, 200),
+                ram: getLevel(ram, 60, 85),
+                cpu: getLevel(cpu, 70, 90)
+            }
+
         };
 
         ramHistory.push(ram);
@@ -343,6 +357,30 @@ body {
         transform:rotate(360deg);
     }
 }
+
+.good {
+    color: #22c55e;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.warning {
+    color: #f59e0b;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.danger {
+    color: #ef4444;
+    font-weight: bold;
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0.4; }
+    100% { opacity: 1; }
+}
         </style>
     </head>
     <body>
@@ -527,30 +565,37 @@ body {
 
                 const ping = document.getElementById("ping");
                 const ram = document.getElementById("ram");
+                const cpu = document.getElementById("cpu");
                 const time = document.getElementById("time");
                 const uptime = document.getElementById("uptime");
-                const cpu = document.getElementById("cpu");
 
                 ping.classList.remove("loading-spinner");
                 ram.classList.remove("loading-spinner");
+                cpu.classList.remove("loading-spinner");
                 time.classList.remove("loading-spinner");
                 uptime.classList.remove("loading-spinner");
-                cpu.classList.remove("loading-spinner");
 
-                pingData.push(data.ping ?? 0);
-                ramData.push(data.ram);
-                
-                time.innerText = data.time;
-
-                if (ramData.length > 60) ramData.shift();
-                if (pingData.length > 60) pingData.shift();
-
-                ping.innerText = data.ping != null ? data.ping + " ms" : "N/A";
+                ping.innerText = data.ping + " ms";
                 ram.innerText = data.ram + " MB";
                 cpu.innerText = data.cpu + " %";
+                time.innerText = data.time;
                 uptime.innerText = data.uptime;
 
                 document.getElementById("guilds").innerText = data.guilds;
+
+                ping.classList.remove("good", "warning", "danger");
+                ram.classList.remove("good", "warning", "danger");
+                cpu.classList.remove("good", "warning", "danger");
+
+                ping.classList.add(data.status.ping);
+                ram.classList.add(data.status.ram);
+                cpu.classList.add(data.status.cpu);
+
+                pingData.push(data.ping ?? 0);
+                ramData.push(data.ram);
+
+                if (ramData.length > 60) ramData.shift();
+                if (pingData.length > 60) pingData.shift();
 
                 pingChart.data.labels = pingData.map((_, i) => i);
                 pingChart.data.datasets[0].data = pingData;
