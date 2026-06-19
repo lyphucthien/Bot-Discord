@@ -49,6 +49,43 @@ module.exports = (client) => {
             }
 
             // ======================
+            // PAYMENT BILL
+            // ======================
+            if (interaction.customId.startsWith("payment_")) {
+
+                const [, billID, amount] = interaction.customId.split("_");
+
+                const qr = `https://img.vietqr.io/image/MB-0123456789-compact2.png?amount=${amount}&addInfo=${billID}`;
+
+                const embed = new EmbedBuilder()
+                    .setTitle("💳 Thanh Toán Hóa Đơn")
+                    .setDescription(
+                        `**Mã Đơn:** ${billID}\n` +
+                        `**Số Tiền:** ${Number(amount).toLocaleString("vi-VN")}đ\n\n` +
+                        `[📱 Bấm Vào Đây để Mở Mã QR](${qr})`
+                    )
+                    .setImage(qr)
+                    .setColor("Green");
+
+                return interaction.reply({
+                    embeds: [embed],
+                    flags: 64
+                });
+            }
+
+            if (interaction.customId.startsWith("bank_")) {
+
+                return interaction.reply({
+                    content:
+                        `🏦 MB Bank
+                        STK: 0123456789
+                        Tên: Lý Phúc Thiện`,
+                    flags: 64
+                });
+
+            }
+
+            // ======================
             // CLOSE TICKET
             // ======================
             if (interaction.customId === 'close_ticket') {
