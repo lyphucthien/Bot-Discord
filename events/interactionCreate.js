@@ -64,8 +64,7 @@ module.exports = (client) => {
                     .setTitle("💳 Thanh Toán Hóa Đơn")
                     .setDescription(
                         `**Mã Đơn:** ${billID}\n` +
-                        `**Số Tiền:** ${Number(amount).toLocaleString("vi-VN")}đ\n\n` +
-                        `[📱 Bấm Vào Đây để Mở Mã QR](${qr})`
+                        `**Số Tiền:** ${Number(amount).toLocaleString("vi-VN")}đ\n\n`
                     )
                     .setImage(qr)
                     .setColor("Green");
