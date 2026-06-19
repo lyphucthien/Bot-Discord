@@ -34,18 +34,23 @@ module.exports = (client) => {
         return "good";
     }
 
-    let statsCache = null;
+    let cpuRunning = false;
 
-    setInterval(async () => {
-        try {
-            const load = await si.currentLoad();
+    setInterval(() => {
+        if (cpuRunning) return;
+        cpuRunning = true;
 
-            systemCache.cpu = Math.round(load.currentLoad || systemCache.cpu || 0);
-
-        } catch (err) {
-            console.error("CPU load error:", err);
-        }
+        si.currentLoad()
+            .then(load => {
+                systemCache.cpu = Math.round(load.currentLoad ?? 0);
+            })
+            .catch(console.error)
+            .finally(() => {
+                cpuRunning = false;
+            });
     }, 5000);
+
+    let statsCache = null;
 
     setInterval(async () => {
 
@@ -77,9 +82,8 @@ module.exports = (client) => {
 
         };
 
-        if (typeof ram === "number") { ramHistory.push(ram); }
-
-        if (typeof ping === "number") { pingHistory.push(ping); }
+        ramHistory.push(ram);
+        pingHistory.push(ping);
 
         if (ramHistory.length > MAX_POINTS) ramHistory.shift();
         if (pingHistory.length > MAX_POINTS) pingHistory.shift();
