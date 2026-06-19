@@ -5,6 +5,7 @@ const { Server } = require("socket.io");
 
 const ramHistory = [];
 const pingHistory = [];
+const cpuHistory = [];
 
 const MAX_POINTS = 60;
 
@@ -65,9 +66,11 @@ module.exports = (client) => {
 
         ramHistory.push(ram);
         pingHistory.push(ping ?? 0);
+        cpuHistory.push(cpu);
 
         if (ramHistory.length > MAX_POINTS) ramHistory.shift();
         if (pingHistory.length > MAX_POINTS) pingHistory.shift();
+        if (cpuHistory.length > MAX_POINTS) cpuHistory.shift();
 
     }, 1000);
 
@@ -142,7 +145,10 @@ body {
 }
 
 .card{
-    width:620px;
+    width:650px;
+
+    min-height:560px;
+
     flex-shrink:0;
 
     background: var(--card);
@@ -159,20 +165,49 @@ body {
     transform:translateY(-5px);
 }
 
-.dashboard {
+.dashboard{
+
     width:100%;
-    max-width:1700px;
+    max-width:1800px;
+
+    display:grid;
+
+    grid-template-columns:
+        330px
+        650px
+        330px;
+
+    gap:40px;
+
+    justify-content:center;
+
+    align-items:center;
+
+    padding:40px;
+
+}
+
+.left-panel{
 
     display:flex;
-    justify-content:center;
-    align-items:center;
-    gap:35px;
-    padding:40px;
+
+    flex-direction:column;
+
+    gap:25px;
+
+}
+
+.right-panel{
+
+    display:flex;
+
+    flex-direction:column;
+
 }
 
 .chart-card{
     width:320px;
-    height:600px;
+    height:270px;
 
     flex-shrink:0;
 
@@ -195,27 +230,43 @@ body {
 }
 
 .chart-card canvas{
+
     width:100%!important;
-    height:520px!important;
+
+    height:200px!important;
+
 }
 
-@media(max-width:1400px){
+@media(max-width:1500px){
 
 .dashboard{
-    flex-direction:column;
+
+    grid-template-columns:1fr;
+
+}
+
+.left-panel{
+
+    width:100%;
+
+}
+
+.right-panel{
+
+    width:100%;
+
 }
 
 .card{
-    width:90%;
+
+    width:100%;
+
 }
 
 .chart-card{
-    width:90%;
-    height:320px;
-}
 
-.chart-card canvas{
-    height:250px!important;
+    height:300px;
+
 }
 
 }
@@ -425,16 +476,21 @@ body {
 
         <div class="dashboard">
 
-            <div class="left-charts">
+            <div class="left-panel">
 
-                <div class="chart-card small">
+                <div class="chart-card">
                     <h2>⚡ Ping</h2>
                     <canvas id="pingChart"></canvas>
                 </div>
 
+                <div class="chart-card">
+                    <h2>🖥 CPU</h2>
+                    <canvas id="cpuChart"></canvas>
+                </div>
+
             </div>
-        
-        <div class="card">
+
+            <div class="card">
 
             <h1>
                 🤖 ${client.user ? client.user.username : "Bot Lâm Đồng"}
@@ -482,9 +538,13 @@ body {
             </div>
         </div>
 
-        <div class="chart-card">
-            <h2>💾 RAM</h2>
-            <canvas id="ramChart"></canvas>
+        <div class="right-panel">
+
+            <div class="chart-card">
+                <h2>💾 RAM</h2>
+                <canvas id="ramChart"></canvas>
+            </div>
+
         </div>
 
     </div>
@@ -496,9 +556,11 @@ body {
 
             let pingChart;
             let ramChart;
+            let cpuChart;
 
             let pingData = [];
             let ramData = [];
+            let cpuData = [];
 
             pingChart = new Chart(document.getElementById("pingChart"), {
                 type: "line",
@@ -582,10 +644,49 @@ body {
                 }
             });
 
+            cpuChart = new Chart( document.getElementById("cpuChart"),{
+                type:"line",
+                data:{
+                    labels:[],
+                    datasets:[
+                    {
+                        data:[],
+                        borderColor:"#f59e0b",
+                        backgroundColor:"rgba(245,158,11,.15)",
+                        fill:true,
+                        tension:.35
+                    }]
+                },
+
+                options:{
+                    responsive:true,
+                    maintainAspectRatio:false,
+
+                    plugins:{
+                        legend:{
+                            display:false
+                        }
+                    },
+
+                    scales:{
+                        x:{
+                            display:false
+                        },
+
+                        y:{
+                            beginAtZero:true,
+                            max:100
+                        }
+                    }
+                }
+
+            });
+
             socket.on("history", data => {
 
                 pingData = data.ping || [];
                 ramData = data.ram || [];
+                cpuData = data.cpu || [];
 
                 pingChart.data.labels = pingData.map((_, i) => i);
                 pingChart.data.datasets[0].data = pingData;
@@ -594,6 +695,10 @@ body {
                 ramChart.data.labels = ramData.map((_, i) => i);
                 ramChart.data.datasets[0].data = ramData;
                 ramChart.update();
+
+                cpuChart.data.labels = cpuData.map((_, i) => i);
+                cpuChart.data.datasets[0].data = cpuData;
+                cpuChart.update();
 
             });
             
@@ -635,9 +740,11 @@ body {
 
                 pingData.push(data.ping ?? 0);
                 ramData.push(data.ram);
+                cpuData.push(data.cpu);
 
-                if (ramData.length > 60) ramData.shift();
                 if (pingData.length > 60) pingData.shift();
+                if (ramData.length > 60) ramData.shift();
+                if (cpuData.length > 60) cpuData.shift();
 
                 pingChart.data.labels = pingData.map((_, i) => i);
                 pingChart.data.datasets[0].data = pingData;
@@ -646,6 +753,10 @@ body {
                 ramChart.data.labels = ramData.map((_, i) => i);
                 ramChart.data.datasets[0].data = ramData;
                 ramChart.update("none");
+
+                cpuChart.data.labels = cpuData.map((_, i) => i);
+                cpuChart.data.datasets[0].data = cpuData;
+                cpuChart.update("none");
 
             });
 
@@ -693,8 +804,11 @@ body {
     io.on("connection", socket => {
 
         socket.emit("history", {
+
             ram: ramHistory,
             ping: pingHistory,
+            cpu:cpuHistory
+            
         });
 
         if (statsCache)
