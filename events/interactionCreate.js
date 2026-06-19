@@ -76,18 +76,6 @@ module.exports = (client) => {
                 });
             }
 
-            if (interaction.customId.startsWith("bank_")) {
-
-                return interaction.reply({
-                    content:
-                        `🏦 MB Bank
-                        STK: 0123456789
-                        Tên: Lý Phúc Thiện`,
-                    flags: 64
-                });
-
-            }
-
             if (interaction.customId.startsWith("paid_")) {
 
                 if (!ADMIN_MARKET.includes(interaction.user.id)) {
