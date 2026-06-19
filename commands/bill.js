@@ -1,6 +1,8 @@
-const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
+const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require("discord.js");
 
-const ADMIN_MARKET = "1330395226933559297";
+const ADMIN_MARKET = [
+    "1330395226933559297"
+];
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -29,7 +31,7 @@ module.exports = {
 
     async execute(interaction) {
 
-        if (interaction.user.id !== ADMIN_MARKET) {
+        if (!ADMIN_MARKET.includes(interaction.user.id)) {
             return interaction.reply({
                 content: "❌ Bạn Không Có Quyền Sử Dụng Lệnh!",
                 flags: 64
@@ -47,29 +49,33 @@ module.exports = {
 
         const billID = "LD-" + Math.floor(Math.random() * 999999);
 
-        const date = new Date().toLocaleDateString("vi-VN");
+        const row = new ActionRowBuilder().addComponents(
+            new ButtonBuilder()
+                .setCustomId(`payment_${billID}_${total}`)
+                .setLabel("💳 Thanh Toán")
+                .setStyle(ButtonStyle.Success),
+
+            new ButtonBuilder()
+                .setCustomId(`bank_${billID}`)
+                .setLabel("📋 Sao Chép STK")
+                .setStyle(ButtonStyle.Secondary)
+        );
 
         const format = n =>
             n.toLocaleString("vi-VN") + "đ";
 
         const embed = new EmbedBuilder()
-            .setColor("#2ECC71")
+            .setColor("#00C853")
+            .setAuthor({
+                name: "LPT MARKET",
+                iconURL: interaction.guild.iconURL() ?? undefined
+            })
             .setTitle("🧾 HÓA ĐƠN THANH TOÁN")
-            .setThumbnail(interaction.guild.iconURL())
+            .setDescription(`## 👤 Khách Hàng: ${user}`)
             .addFields(
                 {
-                    name: "👤 Khách Hàng",
-                    value: `${user}`,
-                    inline: true
-                },
-                {
-                    name: "🧾 Mã Hóa Đơn",
-                    value: `#${billID}`,
-                    inline: true
-                },
-                {
-                    name: "📅 Ngày",
-                    value: date,
+                    name: "🆔 Mã Đơn",
+                    value: `\`${billID}\``,
                     inline: true
                 },
                 {
@@ -98,26 +104,19 @@ module.exports = {
                     inline: true
                 },
                 {
-                    name: "💸 Tổng Cộng",
-                    value: `**${format(total)}**`,
-                    inline: true
-                },
-                {
-                    name: "🏦 Thanh Toán",
-                    value:
-                        `**Ngân hàng:** Lỗ Tèng Ngầy
-                        **STK:** 6767676767
-                        **Chủ TK:** Lý Phúc Thiện`,
+                    name: "✅ Tổng Cộng",
+                    value: `## ${format(total)}`,
                     inline: false
                 }
             )
             .setFooter({
-                text: "Quét mã QR để thanh toán"
+                text: "Cảm Ơn Bạn Đã Tin Tưởng Và Mua Hàng Tại Máy Chủ"
             })
             .setTimestamp();
 
         await interaction.reply({
-            embeds: [embed]
+            embeds: [embed],
+            components: [row]
         });
 
     }
