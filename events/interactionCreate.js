@@ -2,9 +2,12 @@ const config = require('../config.json');
 const ticketStatus = require('../utils/ticketDB');
 const doneCooldown = new Map();
 
-const { ChannelType, PermissionsBitField, EmbedBuilder } = require('discord.js');
+const { ChannelType, PermissionsBitField, EmbedBuilder, ActionRowBuilder, ButtonBuilder } = require("discord.js");
 
 const helperRoles = config.Helper ? [config.Helper] : [];
+const ADMIN_MARKET = [
+    "1330395226933559297"
+];
 
 module.exports = (client) => {
 
@@ -83,6 +86,38 @@ module.exports = (client) => {
                     flags: 64
                 });
 
+            }
+
+            if (interaction.customId.startsWith("paid_")) {
+
+                if (!ADMIN_MARKET.includes(interaction.user.id)) {
+                    return interaction.reply({
+                        content: "❌ Bạn không có quyền xác nhận thanh toán.",
+                        flags: 64
+                    });
+                }
+
+                const embed = EmbedBuilder
+                    .from(interaction.message.embeds[0])
+                    .setColor("Green")
+                    .setTitle("✅ HÓA ĐƠN ĐÃ THANH TOÁN")
+                    .setFooter({
+                        text: `Đã xác nhận bởi ${interaction.user.tag}`
+                    })
+                    .setTimestamp();
+
+                const row = new ActionRowBuilder();
+
+                for (const button of interaction.message.components[0].components) {
+                    row.addComponents(
+                        ButtonBuilder.from(button).setDisabled(true)
+                    );
+                }
+
+                return interaction.update({
+                    embeds: [embed],
+                    components: [row]
+                });
             }
 
             // ======================
