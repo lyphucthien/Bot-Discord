@@ -6,7 +6,6 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName("bill")
         .setDescription("Tạo Hóa Đơn")
-        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
         .addUserOption(o =>
             o.setName("user")
                 .setDescription("Khách Hàng")
