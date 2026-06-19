@@ -58,11 +58,15 @@ module.exports = {
             new ButtonBuilder()
                 .setCustomId(`bank_${billID}`)
                 .setLabel("📋 Sao Chép STK")
-                .setStyle(ButtonStyle.Secondary)
+                .setStyle(ButtonStyle.Secondary),
+
+            new ButtonBuilder()
+                .setCustomId(`paid_${billID}`)
+                .setLabel("✅ Đã Thanh Toán")
+                .setStyle(ButtonStyle.Danger)
         );
 
-        const format = n =>
-            n.toLocaleString("vi-VN") + "đ";
+        const format = n => n.toLocaleString("vi-VN") + "đ";
 
         const embed = new EmbedBuilder()
             .setColor("#00C853")
@@ -71,49 +75,38 @@ module.exports = {
                 iconURL: interaction.guild.iconURL() ?? undefined
             })
             .setTitle("🧾 HÓA ĐƠN THANH TOÁN")
-            .setDescription(`## 👤 Khách Hàng: ${user}`)
-            .addFields(
-                {
-                    name: "🆔 Mã Đơn",
-                    value: `\`${billID}\``,
-                    inline: true
-                },
-                {
-                    name: "📦 Sản Phẩm",
-                    value: item,
-                    inline: true
-                },
-                {
-                    name: "🔢 Số Lượng",
-                    value: `${quantity}`,
-                    inline: true
-                },
-                {
-                    name: "💵 Đơn Giá",
-                    value: format(price),
-                    inline: true
-                },
-                {
-                    name: "💰 Tạm Tính",
-                    value: format(subtotal),
-                    inline: true
-                },
-                {
-                    name: "🎁 Giảm Giá",
-                    value: format(discount),
-                    inline: true
-                },
-                {
-                    name: "✅ Tổng Cộng",
-                    value: `## ${format(total)}`,
-                    inline: false
-                }
+            .setDescription(
+                `👤 **Khách Hàng:** ${user}
+
+                ━━━━━━━━━━━━━━━━━━
+                📦 **MÃ ĐƠN**
+                \`${billID}\`
+
+                📦 **SẢN PHẨM**
+                ${item}
+
+                🔢 **SỐ LƯỢNG**
+                ${quantity}
+
+                💵 **ĐƠN GIÁ**
+                ${format(price)}
+
+                ━━━━━━━━━━━━━━━━━━
+                💰 **TẠM TÍNH**
+                ${format(subtotal)}
+
+                🎁 **GIẢM GIÁ**
+                ${format(discount)}
+
+                ━━━━━━━━━━━━━━━━━━
+                💳 **TỔNG CỘNG**
+                ## ${format(total)}
+                `
             )
             .setFooter({
                 text: "Cảm Ơn Bạn Đã Tin Tưởng Và Mua Hàng Tại Máy Chủ"
             })
             .setTimestamp();
-
         await interaction.reply({
             embeds: [embed],
             components: [row]
