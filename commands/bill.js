@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require("discord.js");
+const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 
 const ADMIN_MARKET = "1330395226933559297";
 
@@ -45,41 +45,79 @@ module.exports = {
         const subtotal = quantity * price;
         const total = subtotal - discount;
 
-        const billID = "BF-" + Math.floor(Math.random() * 999999);
+        const billID = "LD-" + Math.floor(Math.random() * 999999);
 
         const date = new Date().toLocaleDateString("vi-VN");
 
         const format = n =>
             n.toLocaleString("vi-VN") + "đ";
 
-        const bill =
-            `────────────────────────────────────
-         HÓA ĐƠN THANH TOÁN
-
-        🧾 Mã Hóa Đơn : #${billID}
-        👤 Khách Hàng : ${user}
-        📅 Ngày Tạo   : ${date}
-
-        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        ${item.padEnd(30)} x${quantity}
-        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-        Tạm Tính      ${format(subtotal)}
-        Giảm Giá      ${format(discount)}
-        ──────────────────────────
-        TỔNG CỘNG     ${format(total)}
-
-        Ngân hàng : Lỗ Tèng Ngầy
-        STK        : 6767676767
-        Chủ TK     : Lý Phúc Thiện
-
-        [ QR CODE ]
-
-        Quét QR để thanh toán
-        ────────────────────────────────────`;
+        const embed = new EmbedBuilder()
+            .setColor("#2ECC71")
+            .setTitle("🧾 HÓA ĐƠN THANH TOÁN")
+            .setThumbnail(interaction.guild.iconURL())
+            .addFields(
+                {
+                    name: "👤 Khách Hàng",
+                    value: `${user}`,
+                    inline: true
+                },
+                {
+                    name: "🧾 Mã Hóa Đơn",
+                    value: `#${billID}`,
+                    inline: true
+                },
+                {
+                    name: "📅 Ngày",
+                    value: date,
+                    inline: true
+                },
+                {
+                    name: "📦 Sản Phẩm",
+                    value: item,
+                    inline: true
+                },
+                {
+                    name: "🔢 Số Lượng",
+                    value: `${quantity}`,
+                    inline: true
+                },
+                {
+                    name: "💵 Đơn Giá",
+                    value: format(price),
+                    inline: true
+                },
+                {
+                    name: "💰 Tạm Tính",
+                    value: format(subtotal),
+                    inline: true
+                },
+                {
+                    name: "🎁 Giảm Giá",
+                    value: format(discount),
+                    inline: true
+                },
+                {
+                    name: "💸 Tổng Cộng",
+                    value: `**${format(total)}**`,
+                    inline: true
+                },
+                {
+                    name: "🏦 Thanh Toán",
+                    value:
+                        `**Ngân hàng:** Lỗ Tèng Ngầy
+                        **STK:** 6767676767
+                        **Chủ TK:** Lý Phúc Thiện`,
+                    inline: false
+                }
+            )
+            .setFooter({
+                text: "Quét mã QR để thanh toán"
+            })
+            .setTimestamp();
 
         await interaction.reply({
-            content: "```" + bill + "```"
+            embeds: [embed]
         });
 
     }
