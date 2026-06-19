@@ -56,11 +56,6 @@ module.exports = {
                 .setStyle(ButtonStyle.Success),
 
             new ButtonBuilder()
-                .setCustomId(`bank_${billID}`)
-                .setLabel("📋 Sao Chép STK")
-                .setStyle(ButtonStyle.Secondary),
-
-            new ButtonBuilder()
                 .setCustomId(`paid_${billID}`)
                 .setLabel("✅ Đã Thanh Toán")
                 .setStyle(ButtonStyle.Danger)
@@ -76,31 +71,31 @@ module.exports = {
             })
             .setTitle("🧾 HÓA ĐƠN THANH TOÁN")
             .setDescription(
-                `👤 **Khách Hàng:** ${user}
+                `## 👤 Khách Hàng: ${user}
 
-                ━━━━━━━━━━━━━━━━━━
-                📦 **MÃ ĐƠN**
+                ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                📦 **MÃ ĐƠN:**
                 \`${billID}\`
 
-                📦 **SẢN PHẨM**
+                📦 **SẢN PHẨM:**
                 ${item}
 
-                🔢 **SỐ LƯỢNG**
+                🔢 **SỐ LƯỢNG:**
                 ${quantity}
 
-                💵 **ĐƠN GIÁ**
+                💵 **ĐƠN GIÁ:**
                 ${format(price)}
 
-                ━━━━━━━━━━━━━━━━━━
-                💰 **TẠM TÍNH**
+                ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                💰 **TẠM TÍNH:**
                 ${format(subtotal)}
 
-                🎁 **GIẢM GIÁ**
+                🎁 **GIẢM GIÁ:**
                 ${format(discount)}
 
-                ━━━━━━━━━━━━━━━━━━
-                💳 **TỔNG CỘNG**
-                ## ${format(total)}
+                ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                💳 **TỔNG CỘNG:**
+                ${format(total)}
                 `
             )
             .setFooter({
