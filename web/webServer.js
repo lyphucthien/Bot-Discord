@@ -125,7 +125,7 @@ body {
 
     display:flex;
     justify-content:center;
-    align-items:flex-start;
+    align-items:center;
     padding:30px 0;
 
     background: linear-gradient(-45deg, var(--bg), var(--bg2), var(--bg), var(--bg2));
@@ -180,8 +180,7 @@ body {
 
     align-items:start;
     justify-content:center;
-
-    padding:30px;
+    
     box-sizing:border-box;
 }
 
