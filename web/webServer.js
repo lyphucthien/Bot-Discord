@@ -125,7 +125,8 @@ body {
 
     display:flex;
     justify-content:center;
-    align-items:center;
+    align-items:flex-start;
+    padding:30px 0;
 
     background: linear-gradient(-45deg, var(--bg), var(--bg2), var(--bg), var(--bg2));
 
@@ -145,17 +146,16 @@ body {
 }
 
 .card{
-    width:650px;
-
+    width:100%;
+    min-width:0;
     min-height:560px;
 
-    flex-shrink:0;
-
-    background: var(--card);
+    background:var(--card);
     backdrop-filter:blur(15px);
     border:1px solid var(--border);
     border-radius:20px;
     padding:30px;
+    box-sizing:border-box;
     box-shadow:0 0 30px rgba(0,0,0,.4);
 
     transition:.25s;
@@ -166,25 +166,23 @@ body {
 }
 
 .dashboard{
-
     width:100%;
-    max-width:1800px;
+    max-width:1600px;
 
     display:grid;
 
     grid-template-columns:
-        330px
-        650px
-        330px;
+        320px
+        minmax(700px, 1fr)
+        320px;
 
-    gap:40px;
+    gap:30px;
 
+    align-items:start;
     justify-content:center;
 
-    align-items:center;
-
-    padding:40px;
-
+    padding:30px;
+    box-sizing:border-box;
 }
 
 .left-panel{
@@ -206,7 +204,7 @@ body {
 }
 
 .chart-card{
-    width:320px;
+    width:100%;
     height:270px;
 
     flex-shrink:0;
@@ -216,6 +214,7 @@ body {
     border:1px solid var(--border);
     border-radius:20px;
     padding:20px;
+    box-sizing:border-box;
 
     transition:.25s;
 }
@@ -807,8 +806,8 @@ body {
 
             ram: ramHistory,
             ping: pingHistory,
-            cpu:cpuHistory
-            
+            cpu: cpuHistory
+
         });
 
         if (statsCache)
