@@ -167,20 +167,20 @@ body {
 
 .dashboard{
     width:100%;
-    max-width:1600px;
+    max-width:1350px;
 
     display:grid;
 
     grid-template-columns:
-        320px
-        minmax(700px, 1fr)
-        320px;
+        300px
+        480px
+        300px;
 
-    gap:30px;
+    gap:25px;
 
-    align-items:start;
     justify-content:center;
-    
+    align-items:start;
+
     box-sizing:border-box;
 }
 
@@ -255,7 +255,7 @@ body {
 
 }
 
-.card{
+.card {
 
     width:100%;
 
