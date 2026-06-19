@@ -6,6 +6,8 @@ const { Server } = require("socket.io");
 const ramHistory = [];
 const pingHistory = [];
 
+let systemCache = { cpu: 0 };
+
 const MAX_POINTS = 60;
 
 module.exports = (client) => {
@@ -35,13 +37,25 @@ module.exports = (client) => {
     let statsCache = null;
 
     setInterval(async () => {
+        try {
+            const load = await si.currentLoad();
+
+            systemCache.cpu = Math.round(load.currentLoad || systemCache.cpu || 0);
+
+        } catch (err) {
+            console.error("CPU load error:", err);
+        }
+    }, 5000);
+
+    setInterval(async () => {
 
         if (!client?.isReady?.()) return;
         if (!client?.ws) return;
 
         const ram = Math.round(process.memoryUsage().rss / 1024 / 1024);
         const ping = client.ws?.ping ?? 0;
-        const cpu = Math.round((await si.currentLoad()).currentLoad || 0);
+
+        const cpu = systemCache.cpu;
 
         const uptime = formatUptime(Math.floor(process.uptime()));
 
@@ -63,8 +77,9 @@ module.exports = (client) => {
 
         };
 
-        ramHistory.push(ram);
-        pingHistory.push(ping ?? 0);
+        if (typeof ram === "number") { ramHistory.push(ram); }
+
+        if (typeof ping === "number") { pingHistory.push(ping); }
 
         if (ramHistory.length > MAX_POINTS) ramHistory.shift();
         if (pingHistory.length > MAX_POINTS) pingHistory.shift();
@@ -209,7 +224,7 @@ body {
     width:90%;
 }
 
-.chart-card{
+.chart-card {
     width:90%;
     height:320px;
 }
@@ -565,7 +580,7 @@ body {
                         pointHitRadius: 15
                     }]
                 },
-                
+
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
