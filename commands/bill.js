@@ -113,39 +113,37 @@ module.exports = {
             .setTitle("🧾 HÓA ĐƠN THANH TOÁN")
             .setDescription(
                 `## 👤 Khách Hàng: ${user}
-                📌 **TRẠNG THÁI**
+                ## 📌 **TRẠNG THÁI:** ${status}
 
-                ${status}
-
-                ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-                📦 **MÃ ĐƠN:**
-                \`${billID}\`
-
-                📦 **SẢN PHẨM:**
-                ${item}
-
-                🔢 **SỐ LƯỢNG:**
-                ${quantity}
-
-                💵 **ĐƠN GIÁ:**
-                ${format(price)}
-                ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-                💰 **TẠM TÍNH:** ${format(subtotal)}
-
-                🎁 **GIẢM GIÁ:** ${format(discount)}
-                ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-                💳 **TỔNG CỘNG:** ${format(total)}
-                ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-                📝 **GHI CHÚ**
-
-                ${note}
-                ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-                🕒 **THỜI GIAN TẠO**
-
-                <t:${createdAt}:F>
-
-                ⏳ **HẠN THANH TOÁN:** <t:${expireAt}:R>`)
+                ├────────────────────────────────────┤
+                │📦 **MÃ ĐƠN:**
+                │\`${billID}\`
+                │
+                │📦 **SẢN PHẨM:**
+                │${item}
+                │
+                │🔢 **SỐ LƯỢNG:**
+                │${quantity}
+                │
+                │💵 **ĐƠN GIÁ:**
+                │${format(price)}
+                ├────────────────────────────────────┤
+                │💰 **TẠM TÍNH:** ${format(subtotal)}
+                │
+                │🎁 **GIẢM GIÁ:** ${format(discount)}
+                ├────────────────────────────────────┤
+                │💳 **TỔNG CỘNG:** ${format(total)}
+                ├────────────────────────────────────┤
+                │📝 **GHI CHÚ**
+                │
+                │${note}
+                ├────────────────────────────────────┤
+                │
+                │🕒 **THỜI GIAN TẠO**
+                │
+                │<t:${createdAt}:F>
+                │
+                │⏳ **HẠN THANH TOÁN:** <t:${expireAt}:R>`)
 
             .setFooter({
                 text: "Cảm Ơn Bạn Đã Tin Tưởng Và Mua Hàng Tại Máy Chủ"
