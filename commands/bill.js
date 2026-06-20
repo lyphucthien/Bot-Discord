@@ -25,6 +25,10 @@ module.exports = {
             o.setName("price")
                 .setDescription("Đơn Giá")
                 .setRequired(true))
+        .addStringOption(o =>
+            o.setName("note")
+                .setDescription("Ghi chú")
+                .setRequired(false))
         .addIntegerOption(o =>
             o.setName("discount")
                 .setDescription("Giảm Giá")
@@ -44,6 +48,12 @@ module.exports = {
         const quantity = interaction.options.getInteger("quantity");
         const price = interaction.options.getInteger("price");
         const discount = interaction.options.getInteger("discount") || 0;
+        const note = interaction.options.getString("note") || "Không Có";
+
+        const status = "🟡 Chưa Thanh Toán";
+
+        const createdAt = Math.floor(Date.now() / 1000);
+        const expireAt = createdAt + (15 * 60);
 
         if (quantity <= 0) {
             return interaction.reply({
@@ -96,27 +106,55 @@ module.exports = {
         const embed = new EmbedBuilder()
             .setColor("#00C853")
             .setAuthor({
-                name: "LPT MARKET",
+                name: `## LPT MARKET`,
                 iconURL: interaction.guild.iconURL() ?? undefined
             })
             .setThumbnail(user.displayAvatarURL({ size: 256 }))
             .setTitle("🧾 HÓA ĐƠN THANH TOÁN")
             .setDescription(
                 `## 👤 Khách Hàng: ${user}
+                🟡 **TRẠNG THÁI**
+
+                ${status}
 
                 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-                📦 **MÃ ĐƠN:** \`${billID}\`
-                📦 **SẢN PHẨM:** ${item}
-                🔢 **SỐ LƯỢNG:** ${quantity}
-                💵 **ĐƠN GIÁ:** ${format(price)}
+                📦 **MÃ ĐƠN:**
+                \`${billID}\`
+
+                📦 **SẢN PHẨM:**
+                ${item}
+
+                🔢 **SỐ LƯỢNG:**
+                ${quantity}
+
+                💵 **ĐƠN GIÁ:**
+                ${format(price)}
 
                 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
                 💰 **TẠM TÍNH:** ${format(subtotal)}
+
                 🎁 **GIẢM GIÁ:** ${format(discount)}
 
                 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-                💳 **TỔNG CỘNG:** ${format(total)}`
-            )
+                💳 **TỔNG CỘNG:** ${format(total)}
+
+                ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+                📝 **GHI CHÚ**
+
+                ${note}
+
+                ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+                🕒 **THỜI GIAN TẠO**
+
+                <t:${createdAt}:F>
+
+                ⏳ **HẠN THANH TOÁN**
+
+                <t:${expireAt}:R>
+                `)
+
             .setFooter({
                 text: "Cảm Ơn Bạn Đã Tin Tưởng Và Mua Hàng Tại Máy Chủ"
             })
