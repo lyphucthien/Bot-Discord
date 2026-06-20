@@ -109,10 +109,6 @@ module.exports = {
 
         const embed = new EmbedBuilder()
             .setColor("#00C853")
-            .setAuthor({
-                name: `## LPT MARKET`,
-                iconURL: interaction.guild.iconURL() ?? undefined
-            })
             .setThumbnail(user.displayAvatarURL({ size: 256 }))
             .setTitle("🧾 HÓA ĐƠN THANH TOÁN")
             .setDescription(
@@ -140,7 +136,7 @@ module.exports = {
                 🎁 **GIẢM GIÁ:** ${format(discount)}
 
                 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-                > 💳 **TỔNG CỘNG:** ${format(total)}
+                💳 **TỔNG CỘNG:** ${format(total)}
 
                 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
