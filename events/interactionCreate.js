@@ -79,17 +79,78 @@ module.exports = (client) => {
 
                 if (!ADMIN_MARKET.includes(interaction.user.id)) {
                     return interaction.reply({
-                        content: "❌ Bạn không có quyền xác nhận thanh toán.",
+                        content: "❌ Bạn Không Có Quyền.",
                         flags: 64
                     });
                 }
 
-                const embed = EmbedBuilder
-                    .from(interaction.message.embeds[0])
+                const oldEmbed = interaction.message.embeds[0];
+
+                if (
+                    oldEmbed.description.includes("🟢 Đã Thanh Toán") ||
+                    oldEmbed.description.includes("🔴 Đã Hết Hạn") ||
+                    oldEmbed.description.includes("🔴 Đã Hủy")
+                ) {
+                    return interaction.reply({
+                        content: "❌ Hóa đơn này không thể xác nhận.",
+                        flags: 64
+                    });
+                }
+
+                const newDescription = oldEmbed.description.replace(
+                    "🟡 Chưa Thanh Toán",
+                    "🟢 Đã Thanh Toán"
+                );
+
+                const embed = EmbedBuilder.from(oldEmbed)
                     .setColor("Green")
-                    .setTitle("✅ HÓA ĐƠN ĐÃ THANH TOÁN")
+                    .setDescription(newDescription)
                     .setFooter({
                         text: `Đã xác nhận bởi ${interaction.user.tag}`
+                    })
+                    .setTimestamp();
+
+                const row = new ActionRowBuilder();
+
+                for (const button of interaction.message.components[0].components) {
+                    row.addComponents(
+                        ButtonBuilder.from(button).setDisabled(true)
+                    );
+                }
+            }
+
+            if (interaction.customId.startsWith("cancel_")) {
+
+                if (!ADMIN_MARKET.includes(interaction.user.id)) {
+                    return interaction.reply({
+                        content: "❌ Bạn Không Có Quyền.",
+                        flags: 64
+                    });
+                }
+
+                const oldEmbed = interaction.message.embeds[0];
+
+                if (
+                    oldEmbed.description.includes("🟢 Đã Thanh Toán") ||
+                    oldEmbed.description.includes("🔴 Đã Hết Hạn") ||
+                    oldEmbed.description.includes("🔴 Đã Hủy")
+                ) {
+                    return interaction.reply({
+                        content: "❌ Hóa đơn này không thể hủy.",
+                        flags: 64
+                    });
+                }
+
+                const newDescription = oldEmbed.description.replace(
+                    "🟡 Chưa Thanh Toán",
+                    "🔴 Đã Hủy"
+                );
+
+                const embed = EmbedBuilder.from(oldEmbed)
+                    .setColor("Red")
+                    .setDescription(newDescription)
+                    .setFooter({
+                        text: `Đã hủy bởi ${interaction.user.tag}`
                     })
                     .setTimestamp();
 
