@@ -48,7 +48,7 @@ module.exports = {
         const quantity = interaction.options.getInteger("quantity");
         const price = interaction.options.getInteger("price");
         const discount = interaction.options.getInteger("discount") || 0;
-        const note = interaction.options.getString("note") || "Không Có";
+        const note = interaction.options.getString("note") || "Không Có Ghi Chú Từ Người Tạo.";
 
         const status = "🟡 Chưa Thanh Toán";
 
