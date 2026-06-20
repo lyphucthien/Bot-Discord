@@ -2,7 +2,7 @@ const config = require('../config.json');
 const ticketStatus = require('../utils/ticketDB');
 const doneCooldown = new Map();
 
-const { ChannelType, PermissionsBitField, EmbedBuilder, ActionRowBuilder, ButtonBuilder } = require("discord.js");
+const { ChannelType, PermissionsBitField, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require("discord.js");
 
 const helperRoles = config.Helper ? [config.Helper] : [];
 const ADMIN_MARKET = [
@@ -56,7 +56,9 @@ module.exports = (client) => {
             // ======================
             if (interaction.customId.startsWith("payment_")) {
 
-                const [, billID, amount] = interaction.customId.split("_");
+                const parts = interaction.customId.split("_");
+                const billID = parts[1];
+                const amount = parts[2];
 
                 const qr = `https://img.vietqr.io/image/MB-0123456789-compact2.png?amount=${amount}&addInfo=${billID}`;
 
@@ -117,6 +119,10 @@ module.exports = (client) => {
                         ButtonBuilder.from(button).setDisabled(true)
                     );
                 }
+                return interaction.update({
+                    embeds: [embed],
+                    components: [row]
+                });
             }
 
             if (interaction.customId.startsWith("cancel_")) {
