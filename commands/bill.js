@@ -93,12 +93,12 @@ module.exports = {
             new ButtonBuilder()
                 .setCustomId(`payment_${billID}_${total}`)
                 .setLabel("💳 Thanh Toán")
-                .setStyle(ButtonStyle.Success),
+                .setStyle(ButtonStyle.Primary),
 
             new ButtonBuilder()
                 .setCustomId(`paid_${billID}`)
                 .setLabel("✅ Đã Thanh Toán")
-                .setStyle(ButtonStyle.Danger),
+                .setStyle(ButtonStyle.Success),
             new ButtonBuilder()
                 .setCustomId(`cancel_${billID}`)
                 .setLabel("❌ Hủy Hóa Đơn")
@@ -136,14 +136,18 @@ module.exports = {
                 📝 **GHI CHÚ**
                 
                 ${note}
+
+                ━━━━━━━━━━━━━━━━━━━━━━
+                📢 **LƯU Ý**:
                 
-                • Vui lòng chuyển đúng số tiền.
-                • Nội dung chuyển khoản không được thay đổi.
-                • Sau khi thanh toán, vui lòng chờ Admin xác nhận.
-                • Bảo hành 30 ngày.
-                • Nếu quá 15 phút, hóa đơn sẽ tự hủy.
+                • Vui Lòng Chuyển Đúng Số Tiền Và Đúng Nội Dung Chuyển Khoản.
+                • Không Hoàn Tiền Sau Khi Giao Dịch Hoàn Tất, Trừ Khi Có Lỗi Từ Phía Admin.
+                • Hóa Đơn Sẽ Tự Động Hết Hạn Sau 15 Phút Nếu Chưa Thanh Toán.
+                • Sau Khi Thanh Toán, Vui Lòng Nhấn Nút 💳 Thanh Toán Và Chờ Admin Xác Nhận.
+                • Không Spam Hoặc Tạo Nhiều Hóa Đơn Cùng Lúc.
+                • Mọi Hành Vi Gian Lận Sẽ Bị Cấm Khỏi máy chủ. (VD: Fake Bill Chuyển Tiền, Scam,...)
+                • Nếu Gặp Sự Cố, Hãy Mở Ticket Để Được Admin Hỗ Trợ Kịp Thời.
                 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-                
                 🕒 **THỜI GIAN TẠO**
                 
                 <t:${createdAt}:F>
