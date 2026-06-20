@@ -115,41 +115,40 @@ module.exports = {
                 `## 👤 Khách Hàng: ${user}
                 ## 📌 **TRẠNG THÁI:** ${status}
 
-                ├────────────────────────────────────┤
-                │📦 **MÃ ĐƠN:**
-                │\`${billID}\`
-                │
-                │📦 **SẢN PHẨM:**
-                │${item}
-                │
-                │🔢 **SỐ LƯỢNG:**
-                │${quantity}
-                │
-                │💵 **ĐƠN GIÁ:**
-                │${format(price)}
-                ├────────────────────────────────────┤
-                │💰 **TẠM TÍNH:** ${format(subtotal)}
-                │
-                │🎁 **GIẢM GIÁ:** ${format(discount)}
-                ├────────────────────────────────────┤
-                │💳 **TỔNG CỘNG:** ${format(total)}
-                ├────────────────────────────────────┤
-                │📝 **GHI CHÚ**
-                │
-                │${note}
-                │
-                │• Vui lòng chuyển đúng số tiền.
-                │• Nội dung chuyển khoản không được thay đổi.
-                │• Sau khi thanh toán, vui lòng chờ Admin xác nhận.
-                │• Bảo hành 30 ngày.
-                │• Nếu quá 15 phút, hóa đơn sẽ tự hủy.
-                ├────────────────────────────────────┤
-                │
-                │🕒 **THỜI GIAN TẠO**
-                │
-                │<t:${createdAt}:F>
-                │
-                │⏳ **HẠN THANH TOÁN:** <t:${expireAt}:R>`)
+                ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                📦 **MÃ ĐƠN:** \`${billID}\`
+                
+                📦 **SẢN PHẨM:**
+                ${item}
+                
+                🔢 **SỐ LƯỢNG:**
+                ${quantity}
+                
+                💵 **ĐƠN GIÁ:**
+                ${format(price)}
+                ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                💰 **TẠM TÍNH:** ${format(subtotal)}
+                
+                🎁 **GIẢM GIÁ:** ${format(discount)}
+                ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                💳 **TỔNG CỘNG:** ${format(total)}
+                ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                📝 **GHI CHÚ**
+                
+                ${note}
+                
+                • Vui lòng chuyển đúng số tiền.
+                • Nội dung chuyển khoản không được thay đổi.
+                • Sau khi thanh toán, vui lòng chờ Admin xác nhận.
+                • Bảo hành 30 ngày.
+                • Nếu quá 15 phút, hóa đơn sẽ tự hủy.
+                ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                
+                🕒 **THỜI GIAN TẠO**
+                
+                <t:${createdAt}:F>
+                
+                ⏳ **HẠN THANH TOÁN:** <t:${expireAt}:R>`)
 
             .setFooter({
                 text: "Cảm Ơn Bạn Đã Tin Tưởng Và Mua Hàng Tại Máy Chủ"
