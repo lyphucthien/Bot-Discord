@@ -1,3 +1,4 @@
+const { randomUUID } = require("crypto");
 const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require("discord.js");
 
 const ADMIN_MARKET = [
@@ -44,10 +45,39 @@ module.exports = {
         const price = interaction.options.getInteger("price");
         const discount = interaction.options.getInteger("discount") || 0;
 
+        if (quantity <= 0) {
+            return interaction.reply({
+                content: "❌ Số lượng phải lớn hơn 0!",
+                flags: 64
+            });
+        }
+
+        if (price <= 0) {
+            return interaction.reply({
+                content: "❌ Đơn giá phải lớn hơn 0!",
+                flags: 64
+            });
+        }
+
+        if (discount < 0) {
+            return interaction.reply({
+                content: "❌ Giảm giá không hợp lệ!",
+                flags: 64
+            });
+        }
+
         const subtotal = quantity * price;
+
+        if (discount > subtotal) {
+            return interaction.reply({
+                content: "❌ Giảm giá không được lớn hơn tạm tính!",
+                flags: 64
+            });
+        }
+
         const total = subtotal - discount;
 
-        const billID = "LD-" + Math.floor(Math.random() * 999999);
+        const billID = `LD-${randomUUID().slice(0, 8).toUpperCase()}`;
 
         const row = new ActionRowBuilder().addComponents(
             new ButtonBuilder()
@@ -61,7 +91,7 @@ module.exports = {
                 .setStyle(ButtonStyle.Danger)
         );
 
-        const format = n => n.toLocaleString("vi-VN") + "đ";
+        const format = n => `${n.toLocaleString("vi-VN")} ₫`;
 
         const embed = new EmbedBuilder()
             .setColor("#00C853")
@@ -69,39 +99,29 @@ module.exports = {
                 name: "LPT MARKET",
                 iconURL: interaction.guild.iconURL() ?? undefined
             })
+            .setThumbnail(user.displayAvatarURL({ size: 256 }))
             .setTitle("🧾 HÓA ĐƠN THANH TOÁN")
             .setDescription(
                 `## 👤 Khách Hàng: ${user}
 
                 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-                📦 **MÃ ĐƠN:**
-                \`${billID}\`
-
-                📦 **SẢN PHẨM:**
-                ${item}
-
-                🔢 **SỐ LƯỢNG:**
-                ${quantity}
-
-                💵 **ĐƠN GIÁ:**
-                ${format(price)}
+                📦 **MÃ ĐƠN:** \`${billID}\`
+                📦 **SẢN PHẨM:** ${item}
+                🔢 **SỐ LƯỢNG:** ${quantity}
+                💵 **ĐƠN GIÁ:** ${format(price)}
 
                 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-                💰 **TẠM TÍNH:**
-                ${format(subtotal)}
-
-                🎁 **GIẢM GIÁ:**
-                ${format(discount)}
+                💰 **TẠM TÍNH:** ${format(subtotal)}
+                🎁 **GIẢM GIÁ:** ${format(discount)}
 
                 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-                💳 **TỔNG CỘNG:**
-                ${format(total)}
-                `
+                💳 **TỔNG CỘNG:** ${format(total)}`
             )
             .setFooter({
                 text: "Cảm Ơn Bạn Đã Tin Tưởng Và Mua Hàng Tại Máy Chủ"
             })
             .setTimestamp();
+
         await interaction.reply({
             embeds: [embed],
             components: [row]
