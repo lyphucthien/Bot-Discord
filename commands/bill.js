@@ -98,6 +98,10 @@ module.exports = {
             new ButtonBuilder()
                 .setCustomId(`paid_${billID}`)
                 .setLabel("✅ Đã Thanh Toán")
+                .setStyle(ButtonStyle.Danger),
+            new ButtonBuilder()
+                .setCustomId(`cancel_${billID}`)
+                .setLabel("❌ Hủy Hóa Đơn")
                 .setStyle(ButtonStyle.Danger)
         );
 
@@ -113,7 +117,7 @@ module.exports = {
             .setTitle("🧾 HÓA ĐƠN THANH TOÁN")
             .setDescription(
                 `## 👤 Khách Hàng: ${user}
-                🟡 **TRẠNG THÁI**
+                📌 **TRẠNG THÁI**
 
                 ${status}
 
@@ -136,7 +140,7 @@ module.exports = {
                 🎁 **GIẢM GIÁ:** ${format(discount)}
 
                 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-                💳 **TỔNG CỘNG:** ${format(total)}
+                > 💳 **TỔNG CỘNG:** ${format(total)}
 
                 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -165,5 +169,46 @@ module.exports = {
             components: [row]
         });
 
+        const message = await interaction.fetchReply();
+
+        setTimeout(async () => {
+
+            try {
+
+                const msg = await interaction.channel.messages.fetch(message.id);
+
+                if (!msg) return;
+
+                const old = msg.embeds[0];
+
+                if (!old.description.includes("🟡 Chưa Thanh Toán"))
+                    return;
+
+                const newEmbed = EmbedBuilder
+                    .from(old)
+                    .setColor("Red")
+                    .setDescription(
+                        old.description.replace(
+                            "🟡 Chưa Thanh Toán",
+                            "🔴 Đã Hết Hạn"
+                        )
+                    );
+
+                const row = new ActionRowBuilder();
+
+                for (const btn of msg.components[0].components) {
+                    row.addComponents(
+                        ButtonBuilder.from(btn).setDisabled(true)
+                    );
+                }
+
+                await msg.edit({
+                    embeds: [newEmbed],
+                    components: [row]
+                });
+
+            } catch { }
+
+        }, 15 * 60 * 1000);
     }
 };
