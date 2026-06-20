@@ -129,15 +129,12 @@ module.exports = {
 
                 💵 **ĐƠN GIÁ:**
                 ${format(price)}
-
                 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
                 💰 **TẠM TÍNH:** ${format(subtotal)}
 
                 🎁 **GIẢM GIÁ:** ${format(discount)}
-
                 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
                 💳 **TỔNG CỘNG:** ${format(total)}
-
                 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
                 📝 **GHI CHÚ**
@@ -150,10 +147,7 @@ module.exports = {
 
                 <t:${createdAt}:F>
 
-                ⏳ **HẠN THANH TOÁN**
-
-                <t:${expireAt}:R>
-                `)
+                ⏳ **HẠN THANH TOÁN:** <t:${expireAt}:R>`)
 
             .setFooter({
                 text: "Cảm Ơn Bạn Đã Tin Tưởng Và Mua Hàng Tại Máy Chủ"
