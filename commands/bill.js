@@ -137,6 +137,12 @@ module.exports = {
                 │📝 **GHI CHÚ**
                 │
                 │${note}
+                │
+                │• Vui lòng chuyển đúng số tiền.
+                │• Nội dung chuyển khoản không được thay đổi.
+                │• Sau khi thanh toán, vui lòng chờ Admin xác nhận.
+                │• Bảo hành 30 ngày.
+                │• Nếu quá 15 phút, hóa đơn sẽ tự hủy.
                 ├────────────────────────────────────┤
                 │
                 │🕒 **THỜI GIAN TẠO**
