@@ -159,7 +159,9 @@ module.exports = {
             })
             .setTimestamp();
 
-        await interaction.reply({
+        await interaction.deferReply();
+
+        await interaction.editReply({
             embeds: [embed],
             components: [row]
         });
