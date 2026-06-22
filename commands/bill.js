@@ -48,7 +48,7 @@ module.exports = {
         const quantity = interaction.options.getInteger("quantity");
         const price = interaction.options.getInteger("price");
         const discount = interaction.options.getInteger("discount") || 0;
-        const note = interaction.options.getString("note") || "Không Có Ghi Chú Từ Người Tạo.";
+        const note = interaction.options.getString("note") || "Vui Lòng Đọc Kỹ Lưu Ý.";
 
         const status = "🟡 Chưa Thanh Toán";
 
@@ -57,21 +57,21 @@ module.exports = {
 
         if (quantity <= 0) {
             return interaction.reply({
-                content: "❌ Số lượng phải lớn hơn 0!",
+                content: "❌ Số Lượng Phải Lớn Hơn 0",
                 flags: 64
             });
         }
 
         if (price <= 0) {
             return interaction.reply({
-                content: "❌ Đơn giá phải lớn hơn 0!",
+                content: "❌ Đơn Giá Phải Lớn Hơn 0",
                 flags: 64
             });
         }
 
         if (discount < 0) {
             return interaction.reply({
-                content: "❌ Giảm giá không hợp lệ!",
+                content: "❌ Giảm Giá Không Hợp Lệ",
                 flags: 64
             });
         }
@@ -113,7 +113,7 @@ module.exports = {
             .setTitle("🧾 HÓA ĐƠN THANH TOÁN")
             .setDescription(
                 `## 👤 Khách Hàng: ${user}
-                ## 📌 **TRẠNG THÁI:** ${status}
+                ## 📌 TRẠNG THÁI: ${status}
 
                 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
                 📦 **MÃ ĐƠN:** \`${billID}\`
@@ -137,13 +137,13 @@ module.exports = {
                 
                 ${note}
 
-                ━━━━━━━━━━━━━━━━━━━━━━
+                ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
                 📢 **LƯU Ý**:
                 
                 • Vui Lòng Chuyển Đúng Số Tiền Và Đúng Nội Dung Chuyển Khoản.
                 • Không Hoàn Tiền Sau Khi Giao Dịch Hoàn Tất, Trừ Khi Có Lỗi Từ Phía Admin.
                 • Hóa Đơn Sẽ Tự Động Hết Hạn Sau 15 Phút Nếu Chưa Thanh Toán.
-                • Sau Khi Thanh Toán, Vui Lòng Nhấn Nút 💳 Thanh Toán Và Chờ Admin Xác Nhận.
+                • Sau Khi Thanh Toán, Vui Lòng Nhấn Nút **💳 Thanh Toán** Và Chờ Admin Xác Nhận.
                 • Không Spam Hoặc Tạo Nhiều Hóa Đơn Cùng Lúc.
                 • Mọi Hành Vi Gian Lận Sẽ Bị Cấm Khỏi máy chủ. (VD: Fake Bill Chuyển Tiền, Scam,...)
                 • Nếu Gặp Sự Cố, Hãy Mở Ticket Để Được Admin Hỗ Trợ Kịp Thời.
