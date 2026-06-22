@@ -131,7 +131,7 @@ module.exports = {
                 
                 🎁 **GIẢM GIÁ:** ${format(discount)}
                 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-                💳 **TỔNG CỘNG:** ${format(total)}
+                ## 💳 TỔNG CỘNG: ${format(total)}
                 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
                 📝 **GHI CHÚ**
                 
