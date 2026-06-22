@@ -310,7 +310,7 @@ module.exports = (client) => {
                 await interaction.deferReply({ flags: 64 });
 
                 const channel = await interaction.guild.channels.create({
-                    name: `ticket-${type}-${interaction.user.id}`,
+                    name: `LâmĐồng-${type}-${interaction.user.id}`,
                     type: ChannelType.GuildText,
                     permissionOverwrites: [
                         {
