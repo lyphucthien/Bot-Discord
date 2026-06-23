@@ -97,12 +97,12 @@ module.exports = (client) => {
 
                 setChannelName(
                     onlineIdleChannel,
-                    `🟢 𝗢𝗡𝗟𝗜𝗡𝗘:${online} | 🌙 𝗜𝗗𝗟𝗘:${idle}`
+                    `🟢 𝗢𝗡𝗟𝗜𝗡𝗘: ${online} | 🌙 𝗜𝗗𝗟𝗘: ${idle}`
                 ),
 
                 setChannelName(
                     dndOfflineChannel,
-                    `⛔ 𝗗𝗡𝗗:${dnd} | ⚫ 𝗢𝗙𝗙𝗟𝗜𝗡𝗘:${offline}`
+                    `⛔ 𝗗𝗡𝗗: ${dnd} | ⚫ 𝗢𝗙𝗙𝗟𝗜𝗡𝗘: ${offline}`
                 )
             ]);
 
