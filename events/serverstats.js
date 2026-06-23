@@ -5,8 +5,10 @@ module.exports = (client) => {
 
     const CHANNELS = {
         owner: "1514454494119858206",
+
         boosts: "1514454605998592110",
         members: "1514454436905353326",
+
         onlineIdle: "1515573448192167948",
         dndOffline: "1515581678897070115"
     };
@@ -95,12 +97,12 @@ module.exports = (client) => {
 
                 setChannelName(
                     onlineIdleChannel,
-                    `🟢 𝗢𝗡:${online} • 🌙 𝗜𝗗:${idle}`
+                    `🟢 𝗢𝗡𝗟𝗜𝗡𝗘:${online} | 🌙 𝗜𝗗𝗟𝗘:${idle}`
                 ),
 
                 setChannelName(
                     dndOfflineChannel,
-                    `⛔ 𝗗𝗡𝗗:${dnd} • ⚫ 𝗢𝗙𝗙:${offline}`
+                    `⛔ 𝗗𝗡𝗗:${dnd} | ⚫ 𝗢𝗙𝗙𝗟𝗜𝗡𝗘:${offline}`
                 )
             ]);
 
