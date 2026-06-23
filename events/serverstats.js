@@ -121,15 +121,17 @@ module.exports = (client) => {
 
     client.once("clientReady", async () => {
 
-        console.log("📊 Stats Channel Loaded");
-
         await updateStats();
 
         setInterval(updateStats, 30000);
 
     });
 
-    client.on("presenceUpdate", scheduleUpdate);
+    client.on("presenceUpdate", (_, newPresence) => {
+        if (newPresence.userId === OWNER_ID) {
+            scheduleUpdate();
+        }
+    });
 
     client.on("guildMemberAdd", scheduleUpdate);
 
