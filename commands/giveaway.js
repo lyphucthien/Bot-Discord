@@ -19,6 +19,18 @@ function parseDuration(input) {
     }
 }
 
+function buildGiveawayEmbed(gw) {
+    return new EmbedBuilder()
+        .setTitle("🎁 GIVEAWAY")
+        .setColor("Gold")
+        .setDescription(
+            `🏆 Prize: **${gw.prize}**
+            ⏳ Ends in: <t:${Math.floor(gw.endAt / 1000)}:R>
+            👥 Entries: **${gw.users.size}**
+            🏅 Winners: **${gw.winnerCount}**`
+        );
+}
+
 async function endGiveaway(interaction, messageId) {
     const client = interaction.client;
     const data = client.giveaways.get(messageId);
@@ -231,21 +243,11 @@ module.exports = {
 
                 interaction.client.giveaways.set(messageId, gw);
 
-                const msg = await i.message.fetch().catch(() => null);
+                const msg = await interaction.channel.messages.fetch(messageId);
 
-                if (msg) {
-                    const embed = new EmbedBuilder()
-                        .setTitle("🎁 GIVEAWAY")
-                        .setColor("Gold")
-                        .setDescription(
-                            `🏆 Prize: **${gw.prize}**
-                            ⏳ Ends in: <t:${Math.floor(gw.endAt / 1000)}:R>
-                            👥 Entries: **${gw.users.size}**
-                            🏅 Winners: **${gw.winnerCount}**`
-                        );
-
-                    await msg.edit({ embeds: [embed] }).catch(() => { });
-                }
+                await msg.edit({
+                    embeds: [buildGiveawayEmbed(gw)]
+                });
 
                 return i.reply({
                     content: "🎉 Bạn Đã Tham Gia!",
