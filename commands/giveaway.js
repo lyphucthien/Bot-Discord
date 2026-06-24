@@ -220,9 +220,6 @@ module.exports = {
                 content: role ? `🎉 <@&${role.id}> Có Giveaway Mới!` : "🎉 Có Giveaway Mới!",
                 embeds: [buildEmbed()],
                 components: [row],
-                allowedMentions: {
-                    roles: [role.id]
-                }
             });
 
             const messageId = msg.id;
