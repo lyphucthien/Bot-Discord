@@ -38,7 +38,8 @@ function buildGiveawayEmbed(gw) {
             `🏆 Prize: **${gw.prize}**
             ⏳ Ends in: <t:${Math.floor(gw.endAt / 1000)}:R>
             👥 Entries: **${totalEntries}**
-            🏅 Winners: **${gw.winnerCount}**`
+            🏅 Winners: **${gw.winnerCount}**
+            📢 Ping: ${gw.roleId ? `<@&${gw.roleId}>` : "Không có"}`
         );
 }
 
@@ -201,7 +202,7 @@ module.exports = {
                     ⏳ Ends in: <t:${Math.floor(Date.now() / 1000 + duration)}:R>
                     👥 Entries: **${users.size}**
                     🏅 Winners: **${winnerCount}**
-                    📢 Host:${role ? `<@&${role.id}>` : "Không có"}`
+                    📢 Ping: ${role ? `<@&${role.id}>` : "Không có"}`
                 );
 
             const row = new ActionRowBuilder().addComponents(
@@ -217,8 +218,6 @@ module.exports = {
                 flags: 64
             });
 
-            const role = interaction.options.getRole('role');
-
             const msg = await interaction.channel.send({
                 content: role ? `<@&${role.id}>` : null,
                 embeds: [buildEmbed()],
@@ -232,6 +231,7 @@ module.exports = {
                 users: new Map(),
                 prize,
                 winnerCount,
+                roleId: role?.id ?? null,
                 messageId,
                 channelId: msg.channel.id,
 
