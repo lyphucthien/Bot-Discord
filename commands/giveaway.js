@@ -38,8 +38,7 @@ function buildGiveawayEmbed(gw) {
             `🏆 Prize: **${gw.prize}**
             ⏳ Ends in: <t:${Math.floor(gw.endAt / 1000)}:R>
             👥 Entries: **${totalEntries}**
-            🏅 Winners: **${gw.winnerCount}**
-            🔔 Ping: ${gw.roleId ? `<@&${gw.roleId}>` : "Không có"}`
+            🏅 Winners: **${gw.winnerCount}**`
         );
 }
 
@@ -201,8 +200,7 @@ module.exports = {
                     `🏆 Prize: **${prize}**
                     ⏳ Ends in: <t:${Math.floor(Date.now() / 1000 + duration)}:R>
                     👥 Entries: **${users.size}**
-                    🏅 Winners: **${winnerCount}**
-                    🔔 Ping: ${role ? `<@&${role.id}>` : "Không có"}`
+                    🏅 Winners: **${winnerCount}**`
                 );
 
             const row = new ActionRowBuilder().addComponents(
@@ -219,8 +217,12 @@ module.exports = {
             });
 
             const msg = await interaction.channel.send({
+                content: role ? `🎉 <@&${role.id}> Có Giveaway Mới!` : "🎉 Có Giveaway Mới!",
                 embeds: [buildEmbed()],
-                components: [row]
+                components: [row],
+                allowedMentions: {
+                    roles: [role.id]
+                }
             });
 
             const messageId = msg.id;
