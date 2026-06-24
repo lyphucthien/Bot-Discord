@@ -30,13 +30,14 @@ function parseDuration(input) {
 }
 
 function buildGiveawayEmbed(gw) {
+    const totalEntries = [...gw.users.values()].reduce((a, b) => a + b, 0) || 0;
     return new EmbedBuilder()
         .setTitle("🎁 GIVEAWAY")
         .setColor("Gold")
         .setDescription(
             `🏆 Prize: **${gw.prize}**
             ⏳ Ends in: <t:${Math.floor(gw.endAt / 1000)}:R>
-            👥 Entries: **${Array.from(gw.users.values()).reduce((a, b) => a + b, 0)}**
+            👥 Entries: **${totalEntries}**
             🏅 Winners: **${gw.winnerCount}**`
         );
 }
