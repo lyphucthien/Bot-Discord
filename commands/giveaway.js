@@ -1,5 +1,6 @@
 const { SlashCommandBuilder, PermissionFlagsBits, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType } = require('discord.js');
 const endingGiveaways = new Set();
+const giveawayLocks = new Map();
 
 function parseDuration(input) {
     const match = input.toLowerCase().match(/^(\d+)(s|m|h|d|w)$/);
@@ -20,32 +21,31 @@ function parseDuration(input) {
 
 async function endGiveaway(interaction, messageId) {
     const client = interaction.client;
-
     const data = client.giveaways.get(messageId);
+
     if (!data) return "notfound";
+    if (giveawayLocks.has(messageId)) return "already";
+    if (data.ended || data._processingEnd) return "already";
 
-    // LOCK chống end 2 lần
-    if (endingGiveaways.has(messageId) || data.locked) {
-        return "already";
-    }
-
-    endingGiveaways.add(messageId);
+    data._processingEnd = true;
     data.locked = true;
     client.giveaways.set(messageId, data);
+
+    let release;
+    const lockPromise = new Promise(res => release = res);
+    giveawayLocks.set(messageId, lockPromise);
 
     try {
         const msg = await interaction.channel.messages.fetch(messageId).catch(() => null);
         if (!msg) return "missing";
 
-        const users = [...data.users];
-
+        const users = Array.from(data.users ?? []);
         if (!users.length) {
             data.ended = true;
             client.giveaways.set(messageId, data);
             return "empty";
         }
 
-        // shuffle Fisher-Yates
         for (let i = users.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [users[i], users[j]] = [users[j], users[i]];
@@ -53,16 +53,19 @@ async function endGiveaway(interaction, messageId) {
 
         const winners = users.slice(0, data.winnerCount);
 
-        const embed = new EmbedBuilder()
-            .setTitle("🎊 GIVEAWAY ENDED")
-            .setColor("Red")
-            .setDescription(
-                winners.length
-                    ? winners.map(x => `• <@${x}>`).join("\n")
-                    : "❌ Không Có Người Tham Gia"
-            );
-
-        await msg.edit({ embeds: [embed], components: [] }).catch(() => { });
+        await msg.edit({
+            embeds: [
+                new EmbedBuilder()
+                    .setTitle("🎊 GIVEAWAY ENDED")
+                    .setColor("Red")
+                    .setDescription(
+                        winners.length
+                            ? winners.map(x => `• <@${x}>`).join("\n")
+                            : "❌ Không Có Người Tham Gia"
+                    )
+            ],
+            components: []
+        }).catch(() => { });
 
         data.ended = true;
         data.lastWinners = winners;
@@ -71,14 +74,14 @@ async function endGiveaway(interaction, messageId) {
 
         return "ok";
 
-    }
-    finally {
-        endingGiveaways.delete(messageId);
+    } finally {
+        data.locked = false;
+        data._processingEnd = false;
 
-        if (data) {
-            data.locked = false;
-            client.giveaways.set(messageId, data);
-        }
+        client.giveaways.set(messageId, data);
+
+        giveawayLocks.delete(messageId);
+        release?.();
     }
 }
 
@@ -231,6 +234,10 @@ module.exports = {
 
             // ================= END =================
             collector.on("end", async () => {
+                const data = interaction.client.giveaways.get(messageId);
+
+                if (!data || data.ended) return;
+
                 await endGiveaway(interaction, messageId);
             });
         }
