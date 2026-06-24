@@ -238,7 +238,10 @@ module.exports = {
                         .setTitle("🎁 GIVEAWAY")
                         .setColor("Gold")
                         .setDescription(
-                            `👥 Entries: **${gw.users.size}**\n🏅 Winners: **${gw.winnerCount}**`
+                            `🏆 Prize: **${gw.prize}**
+                            ⏳ Ends in: <t:${Math.floor(gw.endAt / 1000)}:R>
+                            👥 Entries: **${gw.users.size}**
+                            🏅 Winners: **${gw.winnerCount}**`
                         );
 
                     await msg.edit({ embeds: [embed] }).catch(() => { });
