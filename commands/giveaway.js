@@ -206,7 +206,7 @@ module.exports = {
             );
 
             await interaction.reply({
-                content: "✅ Giveaway created",
+                content: "✅ Giveaway Đã Được Tạo",
                 flags: 64
             });
 
@@ -239,46 +239,81 @@ module.exports = {
             });
 
             collector.on("collect", async i => {
-                if (i.customId !== "join") return;
+                if (i.customId === "join") {
+                    const gw = interaction.client.giveaways.get(messageId);
 
-                const gw = interaction.client.giveaways.get(messageId);
-
-                if (!gw || gw.ended || gw.locked) {
-                    return i.reply({
-                        content: "Giveaway Đã Kết Thúc",
-                        flags: 64
-                    });
-                }
-
-                if (gw.users.has(i.user.id)) {
-                    return i.reply({
-                        content: "Bạn Đã Tham Gia Rồi",
-                        flags: 64
-                    });
-                }
-
-                let bonus = 1;
-
-                for (const [roleId, value] of Object.entries(BONUS_ROLES)) {
-                    if (i.member.roles.cache.has(roleId)) {
-                        bonus = Math.max(bonus, value);
+                    if (!gw || gw.ended || gw.locked) {
+                        return i.reply({
+                            content: "Giveaway Đã Kết Thúc",
+                            flags: 64
+                        });
                     }
+
+                    if (gw.users.has(i.user.id)) {
+                        return i.reply({
+                            content: "Bạn Đã Tham Gia Rồi",
+                            flags: 64
+                        });
+                    }
+
+                    let bonus = 1;
+
+                    for (const [roleId, value] of Object.entries(BONUS_ROLES)) {
+                        if (i.member.roles.cache.has(roleId)) {
+                            bonus += value;
+                        }
+                    }
+
+                    gw.users.set(i.user.id, bonus);
+                    interaction.client.giveaways.set(messageId, gw);
+
+                    await i.message.edit({
+                        embeds: [buildGiveawayEmbed(gw)]
+                    }).catch(() => { });
+
+                    const leaveRow = new ActionRowBuilder().addComponents(
+                        new ButtonBuilder()
+                            .setCustomId(`leave_${messageId}`)
+                            .setLabel("Thoát Giveaway")
+                            .setStyle(ButtonStyle.Danger)
+                            .setEmoji("🚪")
+                    );
+
+                    return i.reply({
+                        content: "🎉 Bạn Đã Tham Gia Giveaway!",
+                        flags: 64,
+                        components: [leaveRow]
+                    });
                 }
+                if (i.customId.startsWith("leave_")) {
+                    const gw = interaction.client.giveaways.get(messageId);
 
-                gw.users.set(i.user.id, bonus);
+                    if (!gw || gw.ended || gw.locked) {
+                        return i.reply({
+                            content: "Giveaway Đã Kết Thúc",
+                            flags: 64
+                        });
+                    }
 
-                interaction.client.giveaways.set(messageId, gw);
+                    if (!gw.users.has(i.user.id)) {
+                        return i.reply({
+                            content: "Bạn Chưa Tham Gia Giveaway",
+                            flags: 64
+                        });
+                    }
 
-                const msg = i.message;
+                    gw.users.delete(i.user.id);
+                    interaction.client.giveaways.set(messageId, gw);
 
-                await msg.edit({
-                    embeds: [buildGiveawayEmbed(gw)]
-                }).catch(() => { });
+                    await i.message.edit({
+                        embeds: [buildGiveawayEmbed(gw)]
+                    }).catch(() => { });
 
-                return i.reply({
-                    content: "🎉 Bạn Đã Tham Gia!",
-                    flags: 64
-                });
+                    return i.update({
+                        content: "🚪 Bạn Đã Rời Giveaway",
+                        components: []
+                    });
+                }
             });
 
             // ================= END =================
