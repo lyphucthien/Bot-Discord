@@ -115,7 +115,7 @@ module.exports = {
                 .setDescription('Kết Thúc Giveaway')
                 .addStringOption(o =>
                     o.setName('messageid')
-                        .setDescription('ID Tin Nhắn giveaway')
+                        .setDescription('ID Tin Nhắn Giveaway')
                         .setRequired(true)
                 )
         )
@@ -125,7 +125,7 @@ module.exports = {
                 .setDescription('Random Lại Người Thắng')
                 .addStringOption(o =>
                     o.setName('messageid')
-                        .setDescription('ID Tin Nhắn giveaway')
+                        .setDescription('ID Tin Nhắn Giveaway')
                         .setRequired(true)
                 )
         )
