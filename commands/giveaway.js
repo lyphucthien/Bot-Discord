@@ -2,6 +2,16 @@ const { SlashCommandBuilder, PermissionFlagsBits, EmbedBuilder, ActionRowBuilder
 const endingGiveaways = new Set();
 const giveawayLocks = new Map();
 
+const BONUS_ROLES = {
+    "1516045762360774696": 2,
+    "1516045778089410700": 3,
+    "1516045780228640778": 4,
+    "1516045781164101722": 5,
+    "1516045781881196595": 6,
+    "1516045782858465381": 7,
+    "1516045783865233579": 8
+};
+
 function parseDuration(input) {
     const match = input.toLowerCase().match(/^(\d+)(s|m|h|d|w)$/);
     if (!match) return null;
@@ -26,7 +36,7 @@ function buildGiveawayEmbed(gw) {
         .setDescription(
             `🏆 Prize: **${gw.prize}**
             ⏳ Ends in: <t:${Math.floor(gw.endAt / 1000)}:R>
-            👥 Entries: **${gw.users.size}**
+            👥 Entries: **${Array.from(gw.users.values()).reduce((a, b) => a + b, 0)}**
             🏅 Winners: **${gw.winnerCount}**`
         );
 }
@@ -51,19 +61,26 @@ async function endGiveaway(interaction, messageId) {
         const msg = await interaction.channel.messages.fetch(messageId).catch(() => null);
         if (!msg) return "missing";
 
-        const users = Array.from(data.users ?? []);
-        if (!users.length) {
+        const pool = [];
+
+        for (const [userId, count] of data.users.entries()) {
+            for (let i = 0; i < count; i++) {
+                pool.push(userId);
+            }
+        }
+
+        if (!pool.length) {
             data.ended = true;
             client.giveaways.set(messageId, data);
             return "empty";
         }
 
-        for (let i = users.length - 1; i > 0; i--) {
+        for (let i = pool.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
-            [users[i], users[j]] = [users[j], users[i]];
+            [pool[i], pool[j]] = [pool[j], pool[i]];
         }
 
-        const winners = users.slice(0, data.winnerCount);
+        const winners = pool.slice(0, data.winnerCount);
 
         await msg.edit({
             embeds: [
@@ -72,7 +89,7 @@ async function endGiveaway(interaction, messageId) {
                     .setColor("Red")
                     .setDescription(
                         winners.length
-                            ? winners.map(x => `• <@${x}>`).join("\n")
+                            ? winners.map(x => `Người Thắng: <@${x}>`).join("\n")
                             : "❌ Không Có Người Tham Gia"
                     )
             ],
@@ -201,7 +218,7 @@ module.exports = {
 
             // ================= SAVE =================
             interaction.client.giveaways.set(messageId, {
-                users: new Set(),
+                users: new Map(),
                 prize,
                 winnerCount,
                 messageId,
@@ -239,7 +256,15 @@ module.exports = {
                     });
                 }
 
-                gw.users.add(i.user.id);
+                let bonus = 1;
+
+                for (const [roleId, value] of Object.entries(BONUS_ROLES)) {
+                    if (i.member.roles.cache.has(roleId)) {
+                        bonus = Math.max(bonus, value);
+                    }
+                }
+
+                gw.users.set(i.user.id, bonus);
 
                 interaction.client.giveaways.set(messageId, gw);
 
