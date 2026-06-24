@@ -264,7 +264,7 @@ module.exports = {
                     }).catch(() => { });
 
                     return i.update({
-                        content: "🚪 Bạn Đã Rời Riveaway",
+                        content: "🚪 Bạn Đã Rời Giveaway",
                         components: []
                     });
                 }
@@ -312,6 +312,7 @@ module.exports = {
                     return i.reply({
                         content: "🎉 Bạn đã tham gia giveaway!",
                         flags: 64,
+                        components: [leaveBtn]
                     });
                 }
             });
