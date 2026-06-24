@@ -130,13 +130,18 @@ module.exports = {
                 )
                 .addIntegerOption(o =>
                     o.setName('winners')
-                        .setDescription('Số người thắng')
+                        .setDescription('Số Người Thắng')
                         .setRequired(true)
                 )
                 .addStringOption(o =>
                     o.setName('prize')
                         .setDescription('Phần Thưởng')
                         .setRequired(true)
+                )
+                .addRoleOption(o =>
+                    o.setName('role')
+                        .setDescription('Role Sẽ Được Ping Khi Tạo')
+                        .setRequired(false)
                 )
         )
 
@@ -173,6 +178,7 @@ module.exports = {
 
             const durationInput = interaction.options.getString('duration');
             const duration = parseDuration(durationInput);
+            const role = interaction.options.getRole('role');
 
             if (!duration) {
                 return interaction.reply({
@@ -211,6 +217,7 @@ module.exports = {
             });
 
             const msg = await interaction.channel.send({
+                content: role ? `🎉 <@&${role.id}> Có Giveaway` : null,
                 embeds: [buildEmbed()],
                 components: [row]
             });
