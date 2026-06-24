@@ -39,7 +39,7 @@ function buildGiveawayEmbed(gw) {
             ⏳ Ends in: <t:${Math.floor(gw.endAt / 1000)}:R>
             👥 Entries: **${totalEntries}**
             🏅 Winners: **${gw.winnerCount}**
-            📢 Ping: ${gw.roleId ? `<@&${gw.roleId}>` : "Không có"}`
+            🔔 Ping: ${gw.roleId ? `<@&${gw.roleId}>` : "Không có"}`
         );
 }
 
@@ -202,7 +202,7 @@ module.exports = {
                     ⏳ Ends in: <t:${Math.floor(Date.now() / 1000 + duration)}:R>
                     👥 Entries: **${users.size}**
                     🏅 Winners: **${winnerCount}**
-                    📢 Ping: ${role ? `<@&${role.id}>` : "Không có"}`
+                    🔔 Ping: ${role ? `<@&${role.id}>` : "Không có"}`
                 );
 
             const row = new ActionRowBuilder().addComponents(
