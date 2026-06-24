@@ -1,12 +1,5 @@
-const {
-    SlashCommandBuilder,
-    PermissionFlagsBits,
-    EmbedBuilder,
-    ActionRowBuilder,
-    ButtonBuilder,
-    ButtonStyle,
-    ComponentType
-} = require('discord.js');
+const { SlashCommandBuilder, PermissionFlagsBits, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType } = require('discord.js');
+const endingGiveaways = new Set();
 
 function parseDuration(input) {
     const match = input.toLowerCase().match(/^(\d+)(s|m|h|d|w)$/);
@@ -25,10 +18,74 @@ function parseDuration(input) {
     }
 }
 
+async function endGiveaway(interaction, messageId) {
+    const client = interaction.client;
+
+    const data = client.giveaways.get(messageId);
+    if (!data) return "notfound";
+
+    // LOCK chống end 2 lần
+    if (endingGiveaways.has(messageId) || data.locked) {
+        return "already";
+    }
+
+    endingGiveaways.add(messageId);
+    data.locked = true;
+    client.giveaways.set(messageId, data);
+
+    try {
+        const msg = await interaction.channel.messages.fetch(messageId).catch(() => null);
+        if (!msg) return "missing";
+
+        const users = [...data.users];
+
+        if (!users.length) {
+            data.ended = true;
+            client.giveaways.set(messageId, data);
+            return "empty";
+        }
+
+        // shuffle Fisher-Yates
+        for (let i = users.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [users[i], users[j]] = [users[j], users[i]];
+        }
+
+        const winners = users.slice(0, data.winnerCount);
+
+        const embed = new EmbedBuilder()
+            .setTitle("🎊 GIVEAWAY ENDED")
+            .setColor("Red")
+            .setDescription(
+                winners.length
+                    ? winners.map(x => `• <@${x}>`).join("\n")
+                    : "❌ Không Có Người Tham Gia"
+            );
+
+        await msg.edit({ embeds: [embed], components: [] }).catch(() => { });
+
+        data.ended = true;
+        data.lastWinners = winners;
+
+        client.giveaways.set(messageId, data);
+
+        return "ok";
+
+    }
+    finally {
+        endingGiveaways.delete(messageId);
+
+        if (data) {
+            data.locked = false;
+            client.giveaways.set(messageId, data);
+        }
+    }
+}
+
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('giveaway')
-        .setDescription('Giveaway system')
+        .setDescription('Giveaway')
 
         .addSubcommand(sub =>
             sub.setName('create')
@@ -58,7 +115,7 @@ module.exports = {
 
         .addSubcommand(sub =>
             sub.setName('reroll')
-                .setDescription('Random lại người thắng')
+                .setDescription('Random Lại Người Thắng')
                 .addStringOption(o =>
                     o.setName('messageid')
                         .setRequired(true)
@@ -90,7 +147,6 @@ module.exports = {
             const prize = interaction.options.getString('prize');
 
             const users = new Set();
-            let timeLeft = duration;
             let winnersCache = [];
 
             const buildEmbed = () => new EmbedBuilder()
@@ -98,7 +154,7 @@ module.exports = {
                 .setColor("Gold")
                 .setDescription(
                     `🏆 Prize: **${prize}**
-                    ⏳ Time: **${timeLeft}s**
+                    ⏳ Ends in: <t:${Math.floor(Date.now() / 1000 + duration)}:R>
                     👥 Entries: **${users.size}**
                     🏅 Winners: **${winnerCount}**`
                 );
@@ -125,11 +181,16 @@ module.exports = {
 
             // ================= SAVE =================
             interaction.client.giveaways.set(messageId, {
-                users,
+                users: new Set(),
                 prize,
                 winnerCount,
                 messageId,
+                channelId: msg.channel.id,
+
+                endAt: Date.now() + duration * 1000,
+
                 ended: false,
+                locked: false,
                 lastWinners: []
             });
 
@@ -142,18 +203,25 @@ module.exports = {
             collector.on("collect", async i => {
                 if (i.customId !== "join") return;
 
-                if (users.has(i.user.id)) {
+                const gw = interaction.client.giveaways.get(messageId);
+
+                if (!gw || gw.ended || gw.locked) {
                     return i.reply({
-                        content: "⚠️ Bạn Đã Tham Gia Rồi",
+                        content: "Giveaway Đã Kết Thúc",
                         flags: 64
                     });
                 }
 
-                users.add(i.user.id);
+                if (gw.users.has(i.user.id)) {
+                    return i.reply({
+                        content: "Bạn Đã Tham Gia Rồi",
+                        flags: 64
+                    });
+                }
 
-                try {
-                    await msg.edit({ embeds: [buildEmbed()] });
-                } catch { }
+                gw.users.add(i.user.id);
+
+                interaction.client.giveaways.set(messageId, gw);
 
                 return i.reply({
                     content: "🎉 Bạn Đã Tham Gia!",
@@ -163,100 +231,43 @@ module.exports = {
 
             // ================= END =================
             collector.on("end", async () => {
-
-                const data = interaction.client.giveaways.get(messageId);
-                if (!data) return;
-
-                const participants = [...users];
-
-                if (participants.length > 0) {
-                    for (let i = participants.length - 1; i > 0; i--) {
-                        const j = Math.floor(Math.random() * (i + 1));
-                        [participants[i], participants[j]] = [participants[j], participants[i]];
-                    }
-
-                    winnersCache = participants.slice(0, Math.min(winnerCount, participants.length));
-                }
-
-                const endEmbed = new EmbedBuilder()
-                    .setTitle("🎊 GIVEAWAY ENDED")
-                    .setColor("Red")
-                    .setDescription(
-                        winnersCache.length
-                            ? winnersCache.map(x => `• <@${x}>`).join("\n")
-                            : "❌ Không Có Người Tham Gia"
-                    );
-
-                try {
-                    await msg.edit({
-                        embeds: [endEmbed],
-                        components: []
-                    });
-                } catch { }
-
-                data.ended = true;
-                data.lastWinners = winnersCache;
-
-                interaction.client.giveaways.set(messageId, data);
+                await endGiveaway(interaction, messageId);
             });
         }
 
         // ================= END =================
         if (sub === "end") {
-
             const messageId = interaction.options.getString("messageid");
 
-            const data = interaction.client.giveaways.get(messageId);
+            const result = await endGiveaway(interaction, messageId);
 
-            if (!data) {
+            if (result === "notfound") {
                 return interaction.reply({
-                    content: "❌ Không Tìm Thấy Giveaway",
+                    content: "❌ Không tìm thấy giveaway",
                     flags: 64
                 });
             }
 
-            const msg = await interaction.channel.messages.fetch(messageId).catch(() => null);
-
-            if (!msg) {
+            if (result === "missing") {
                 return interaction.reply({
-                    content: "❌ Message Không Tồn Tại",
+                    content: "❌ Message không tồn tại",
                     flags: 64
                 });
             }
 
-            const users = [...data.users];
-
-            if (!users.length) {
+            if (result === "already") {
                 return interaction.reply({
-                    content: "❌ Không Có Người Tham Gia",
+                    content: "❌ Giveaway đang xử lý hoặc đã kết thúc",
                     flags: 64
                 });
             }
 
-            for (let i = users.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [users[i], users[j]] = [users[j], users[i]];
+            if (result === "empty") {
+                return interaction.reply({
+                    content: "❌ Không có người tham gia",
+                    flags: 64
+                });
             }
-
-            const winners = users.slice(0, data.winnerCount);
-
-            const embed = new EmbedBuilder()
-                .setTitle("🎊 GIVEAWAY ENDED")
-                .setColor("Red")
-                .setDescription(
-                    winners.length
-                        ? winners.map(x => `• <@${x}>`).join("\n")
-                        : "❌ Không Có Người Tham Gia"
-                );
-
-            try {
-                await msg.edit({ embeds: [embed], components: [] });
-            } catch { }
-
-            data.ended = true;
-            data.lastWinners = winners;
-
-            interaction.client.giveaways.set(messageId, data);
 
             return interaction.reply({
                 content: "✅ Đã kết thúc giveaway",
