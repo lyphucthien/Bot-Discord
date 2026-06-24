@@ -231,6 +231,19 @@ module.exports = {
 
                 interaction.client.giveaways.set(messageId, gw);
 
+                const msg = await i.message.fetch().catch(() => null);
+
+                if (msg) {
+                    const embed = new EmbedBuilder()
+                        .setTitle("🎁 GIVEAWAY")
+                        .setColor("Gold")
+                        .setDescription(
+                            `👥 Entries: **${gw.users.size}**\n🏅 Winners: **${gw.winnerCount}**`
+                        );
+
+                    await msg.edit({ embeds: [embed] }).catch(() => { });
+                }
+
                 return i.reply({
                     content: "🎉 Bạn Đã Tham Gia!",
                     flags: 64
