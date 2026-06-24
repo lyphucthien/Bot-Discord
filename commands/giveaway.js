@@ -243,11 +243,11 @@ module.exports = {
 
                 interaction.client.giveaways.set(messageId, gw);
 
-                const msg = await interaction.channel.messages.fetch(messageId);
+                const msg = i.message;
 
                 await msg.edit({
                     embeds: [buildGiveawayEmbed(gw)]
-                });
+                }).catch(() => { });
 
                 return i.reply({
                     content: "🎉 Bạn Đã Tham Gia!",
