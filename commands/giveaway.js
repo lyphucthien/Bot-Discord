@@ -220,6 +220,7 @@ module.exports = {
             const role = interaction.options.getRole('role');
 
             const msg = await interaction.channel.send({
+                content: role ? `<@&${role.id}>` : null,
                 embeds: [buildEmbed()],
                 components: [row]
             });
