@@ -239,6 +239,36 @@ module.exports = {
             });
 
             collector.on("collect", async i => {
+                if (i.customId.startsWith("leave_")) {
+                    const gw = interaction.client.giveaways.get(messageId);
+
+                    if (!gw || gw.ended || gw.locked) {
+                        return i.reply({
+                            content: "Giveaway Đã Kết Thúc",
+                            flags: 64
+                        });
+                    }
+
+                    if (!gw.users.has(i.user.id)) {
+                        return i.reply({
+                            content: "Bạn Chưa Tham Gia Giveaway",
+                            flags: 64
+                        });
+                    }
+
+                    gw.users.delete(i.user.id);
+                    interaction.client.giveaways.set(messageId, gw);
+
+                    await i.message.edit({
+                        embeds: [buildGiveawayEmbed(gw)]
+                    }).catch(() => { });
+
+                    return i.update({
+                        content: "🚪 Bạn Đã Rời Giveaway",
+                        components: []
+                    });
+                }
+
                 if (i.customId === "join") {
                     const gw = interaction.client.giveaways.get(messageId);
 
@@ -283,35 +313,6 @@ module.exports = {
                         content: "🎉 Bạn Đã Tham Gia Giveaway!",
                         flags: 64,
                         components: [leaveRow]
-                    });
-                }
-                if (i.customId.startsWith("leave_")) {
-                    const gw = interaction.client.giveaways.get(messageId);
-
-                    if (!gw || gw.ended || gw.locked) {
-                        return i.reply({
-                            content: "Giveaway Đã Kết Thúc",
-                            flags: 64
-                        });
-                    }
-
-                    if (!gw.users.has(i.user.id)) {
-                        return i.reply({
-                            content: "Bạn Chưa Tham Gia Giveaway",
-                            flags: 64
-                        });
-                    }
-
-                    gw.users.delete(i.user.id);
-                    interaction.client.giveaways.set(messageId, gw);
-
-                    await i.message.edit({
-                        embeds: [buildGiveawayEmbed(gw)]
-                    }).catch(() => { });
-
-                    return i.update({
-                        content: "🚪 Bạn Đã Rời Giveaway",
-                        components: []
                     });
                 }
             });
