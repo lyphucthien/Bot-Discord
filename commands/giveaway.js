@@ -95,14 +95,17 @@ module.exports = {
                 .setDescription('Tạo Giveaway')
                 .addStringOption(o =>
                     o.setName('duration')
+                        .setDescription('Thời Gian (vd: 10s, 5m, 2h)')
                         .setRequired(true)
                 )
                 .addIntegerOption(o =>
                     o.setName('winners')
+                        .setDescription('Số người thắng')
                         .setRequired(true)
                 )
                 .addStringOption(o =>
                     o.setName('prize')
+                        .setDescription('Phần Thưởng')
                         .setRequired(true)
                 )
         )
@@ -112,6 +115,7 @@ module.exports = {
                 .setDescription('Kết Thúc Giveaway')
                 .addStringOption(o =>
                     o.setName('messageid')
+                        .setDescription('ID Tin Nhắn giveaway')
                         .setRequired(true)
                 )
         )
@@ -121,6 +125,7 @@ module.exports = {
                 .setDescription('Random Lại Người Thắng')
                 .addStringOption(o =>
                     o.setName('messageid')
+                        .setDescription('ID Tin Nhắn giveaway')
                         .setRequired(true)
                 )
         )
@@ -234,10 +239,6 @@ module.exports = {
 
             // ================= END =================
             collector.on("end", async () => {
-                const data = interaction.client.giveaways.get(messageId);
-
-                if (!data || data.ended) return;
-
                 await endGiveaway(interaction, messageId);
             });
         }
