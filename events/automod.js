@@ -56,12 +56,43 @@ module.exports = (client) => {
 
             await message.delete().catch(() => { });
 
+            warnDB.add(
+                userId,
+                client.user.id,
+                'Spam Tin Nhắn'
+            );
+
+            const warnCount = warnDB.count(userId);
+
             try {
                 await message.author.send(
-                    `⚠️ Bạn đang spam trong #${message.channel.name}\n` +
-                    `Vui lòng gửi tin nhắn chậm hơn.`
+                    `⚠️ Bạn đang spam trong #${message.channel.name}\n\n` +
+                    `📌 Lý Do: Spam Tin Nhắn\n` +
+                    `📊 Số Warn Hiện Tại: ${warnCount}/5`
                 );
             } catch { }
+
+            if (warnCount >= 5) {
+
+                try {
+
+                    await message.member.timeout(
+                        10 * 60 * 1000,
+                        'AutoMod: Spam quá nhiều'
+                    );
+
+                    warnDB.clear(userId);
+
+                    try {
+                        await message.author.send(
+                            '🔇 Bạn Đã Bị Hạn Chế 10 Phút Do Vi Phạm 5 Lần.'
+                        );
+                    } catch { }
+
+                } catch (err) {
+                    console.error(err);
+                }
+            }
 
             return;
         }
@@ -81,13 +112,46 @@ module.exports = (client) => {
             content.includes('discord.gg/') ||
             content.includes('discord.com/invite/');
 
-        if (!hasBadWord && !hasInvite) return;
+        const hasLink =
+            /(https?:\/\/|www\.)/i.test(content);
+
+        const blockedDomains = [
+            "facebook.com",
+            "fb.com",
+            "youtube.com",
+            "youtu.be",
+            "tiktok.com",
+            "instagram.com"
+        ];
+
+        const hasBlockedSocial =
+            blockedDomains.some(domain =>
+                content.includes(domain)
+            );
+
+        if (
+            !hasBadWord &&
+            !hasInvite &&
+            !hasLink &&
+            !hasBlockedSocial
+        ) return;
 
         await message.delete().catch(() => { });
 
-        const reason = hasInvite
-            ? 'Gửi Link Discord Invite'
-            : `Sử Dụng Từ Ngữ Bị Cấm (${detectedWord})`;
+        let reason;
+
+        if (hasInvite) {
+            reason = 'Gửi Link Mời Discord';
+        }
+        else if (hasBlockedSocial) {
+            reason = 'Gửi Link Mạng Xã Hội';
+        }
+        else if (hasLink) {
+            reason = 'Gửi Link Website';
+        }
+        else {
+            reason = `Sử Dụng Từ Ngữ Bị Cấm (${detectedWord})`;
+        }
 
         warnDB.add(
             userId,
