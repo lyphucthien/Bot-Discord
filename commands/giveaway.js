@@ -239,20 +239,20 @@ module.exports = {
             });
 
             collector.on("collect", async i => {
-                if (i.customId.startsWith("leave_")) {
+                if (i.customId === `leave_${messageId}`) {
                     const gw = interaction.client.giveaways.get(messageId);
 
                     if (!gw || gw.ended || gw.locked) {
-                        return i.reply({
-                            content: "Giveaway Đã Kết Thúc",
-                            flags: 64
+                        return i.update({
+                            content: "Giveaway Đã Kết Thúc.",
+                            components: []
                         });
                     }
 
                     if (!gw.users.has(i.user.id)) {
-                        return i.reply({
-                            content: "Bạn Chưa Tham Gia Giveaway",
-                            flags: 64
+                        return i.update({
+                            content: "Bạn Chưa Tham Gia Giveaway.",
+                            components: []
                         });
                     }
 
@@ -264,7 +264,7 @@ module.exports = {
                     }).catch(() => { });
 
                     return i.update({
-                        content: "🚪 Bạn Đã Rời Giveaway",
+                        content: "🚪 Bạn Đã Rời Riveaway",
                         components: []
                     });
                 }
@@ -290,7 +290,7 @@ module.exports = {
 
                     for (const [roleId, value] of Object.entries(BONUS_ROLES)) {
                         if (i.member.roles.cache.has(roleId)) {
-                            bonus += value;
+                            bonus = Math.max(bonus, value);
                         }
                     }
 
@@ -301,7 +301,7 @@ module.exports = {
                         embeds: [buildGiveawayEmbed(gw)]
                     }).catch(() => { });
 
-                    const leaveRow = new ActionRowBuilder().addComponents(
+                    const leaveBtn = new ActionRowBuilder().addComponents(
                         new ButtonBuilder()
                             .setCustomId(`leave_${messageId}`)
                             .setLabel("Thoát Giveaway")
@@ -310,9 +310,8 @@ module.exports = {
                     );
 
                     return i.reply({
-                        content: "🎉 Bạn Đã Tham Gia Giveaway!",
+                        content: "🎉 Bạn đã tham gia giveaway!",
                         flags: 64,
-                        components: [leaveRow]
                     });
                 }
             });
