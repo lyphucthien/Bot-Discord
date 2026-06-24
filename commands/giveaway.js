@@ -200,7 +200,8 @@ module.exports = {
                     `🏆 Prize: **${prize}**
                     ⏳ Ends in: <t:${Math.floor(Date.now() / 1000 + duration)}:R>
                     👥 Entries: **${users.size}**
-                    🏅 Winners: **${winnerCount}**`
+                    🏅 Winners: **${winnerCount}**
+                    📢 Host:${role ? `<@&${role.id}>` : "Không có"}`
                 );
 
             const row = new ActionRowBuilder().addComponents(
@@ -216,8 +217,9 @@ module.exports = {
                 flags: 64
             });
 
+            const role = interaction.options.getRole('role');
+
             const msg = await interaction.channel.send({
-                content: role ? `🎉 <@&${role.id}> Có Giveaway` : null,
                 embeds: [buildEmbed()],
                 components: [row]
             });
