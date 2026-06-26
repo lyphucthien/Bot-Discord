@@ -3,6 +3,10 @@ const si = require("systeminformation");
 const http = require("http");
 const { Server } = require("socket.io");
 
+const packageJson = require("../package.json");
+const expressVersion = require("express/package.json").version;
+const discordVersion = require("discord.js").version;
+
 const ramHistory = [];
 const pingHistory = [];
 const uptimeHistory = [];
@@ -144,9 +148,47 @@ module.exports = (client) => {
     <head>
 
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <title>🤖 Bot Dashboard</title>
+        <title>🤖 Bot Dashboard - Xem Trạng Thái Bot Discord Của Bot Lâm Đồng</title>
 
         <style>
+.top-bar{
+    width:100%;
+    max-width:920px;
+
+    margin:0 auto 35px;
+
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+
+    background:var(--card);
+    backdrop-filter:blur(15px);
+
+    border:1px solid var(--border);
+    border-radius:20px;
+
+    overflow:hidden;
+}
+
+.top-item{
+    padding:18px 12px;
+    text-align:center;
+}
+
+.top-item:not(:last-child){
+    border-right:1px solid var(--border);
+}
+
+.top-title{
+    font-size:13px;
+    opacity:.7;
+    margin-bottom:8px;
+}
+
+.top-value{
+    font-size:20px;
+    font-weight:bold;
+}
+
 .modal{
 
     display:none;
@@ -621,6 +663,35 @@ body {
         
         <button id="themeBtn">🌙 Dark</button>
 
+        <div class="top-bar">
+
+            <div class="top-item">
+                <div class="top-title">🤖 Phiên Bản</div>
+                <div class="top-value" id="version"></div>
+            </div>
+
+            <div class="top-item">
+                <div class="top-title">🟢 Node</div>
+                <div class="top-value" id="node.js"></div>
+            </div>
+
+            <div class="top-item">
+                <div class="top-title">📦 discord.js</div>
+                <div class="top-value" id="discordjs"></div>
+            </div>
+
+            <div class="top-item">
+                <div class="top-title">⚡ Express</div>
+                <div class="top-value" id="express"></div>
+            </div>
+
+            <div class="top-item">
+                <div class="top-title">🌐 Máy Chủ</div>
+                <div class="top-value" id="host"></div>
+            </div>
+
+        </div>
+
         <div class="dashboard">
 
             <div class="left-charts">
@@ -881,6 +952,11 @@ body {
                 ramChart.data.datasets[0].data = ramData;
                 ramChart.update("none");
 
+                document.getElementById("version").innerText = "v" + data.version;
+                document.getElementById("node").innerText = data.node;
+                document.getElementById("discordjs").innerText = data.discordjs;
+                document.getElementById("express").innerText = data.express;
+                document.getElementById("host").innerText = data.host;
             });
 
             document.addEventListener("DOMContentLoaded", () => {
