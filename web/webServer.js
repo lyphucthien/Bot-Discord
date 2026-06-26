@@ -98,7 +98,7 @@ module.exports = (client) => {
             onlinePercent,
             disconnectCount
         };
-    }, 1000);
+    }, 2000);
 
     app.get("/", (req, res) => {
 
