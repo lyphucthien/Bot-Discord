@@ -93,7 +93,7 @@ module.exports = (client) => {
                 time: currentBlock.start
             });
 
-            io.emit("uptimeBlock", newBlock);
+            io.emit("uptimeBlock", currentBlock);
 
             currentBlock = {
                 start: now,
