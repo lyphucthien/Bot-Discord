@@ -423,8 +423,8 @@ body {
     display:flex;
     justify-content:center;
     align-items:center;
-    gap:35px;
-    padding:40px;
+    gap: 35px;
+    padding: 20px;
 }
 
 .chart-card{
