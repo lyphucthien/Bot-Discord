@@ -5,6 +5,7 @@ const { Server } = require("socket.io");
 
 const ramHistory = [];
 const pingHistory = [];
+const uptimeHistory = [];
 
 let systemCache = { cpu: 0 };
 
@@ -59,10 +60,24 @@ module.exports = (client) => {
 
         const ram = Math.round(process.memoryUsage().rss / 1024 / 1024);
         const ping = client.ws?.ping ?? 0;
-
         const cpu = systemCache.cpu;
-
         const uptime = formatUptime(Math.floor(process.uptime()));
+
+        ramHistory.push(ram);
+        pingHistory.push(ping);
+        uptimeHistory.push(client.isReady() ? 1 : 0);
+
+        if (uptimeHistory.length > MAX_POINTS) uptimeHistory.shift();
+        if (ramHistory.length > MAX_POINTS) ramHistory.shift();
+        if (pingHistory.length > MAX_POINTS) pingHistory.shift();
+
+        const onlineSeconds = uptimeHistory.filter(v => v === 1).length;
+
+        const onlinePercent =
+            ((onlineSeconds / Math.max(1, uptimeHistory.length)) * 100).toFixed(2);
+
+        const disconnectCount =
+            uptimeHistory.filter((v, i) => i > 0 && v === 0 && uptimeHistory[i - 1] === 1).length;
 
         statsCache = {
             ping,
@@ -78,16 +93,11 @@ module.exports = (client) => {
                 ping: getLevel(ping, 100, 200),
                 ram: getLevel(ram, 300, 400),
                 cpu: getLevel(cpu, 70, 90)
-            }
+            },
 
+            onlinePercent,
+            disconnectCount
         };
-
-        ramHistory.push(ram);
-        pingHistory.push(ping);
-
-        if (ramHistory.length > MAX_POINTS) ramHistory.shift();
-        if (pingHistory.length > MAX_POINTS) pingHistory.shift();
-
     }, 1000);
 
     app.get("/", (req, res) => {
@@ -104,6 +114,142 @@ module.exports = (client) => {
         <title>🤖 Bot Dashboard</title>
 
         <style>
+.modal{
+
+    display:none;
+
+    position:fixed;
+
+    inset:0;
+
+    justify-content:center;
+    align-items:center;
+
+    background:rgba(0,0,0,.65);
+
+    backdrop-filter:blur(8px);
+
+    z-index:9999;
+
+}
+
+.modal.show{
+
+    display:flex;
+
+    animation:fade .25s;
+
+}
+
+@keyframes fade{
+
+    from{
+        opacity:0;
+        transform:scale(.95);
+    }
+
+    to{
+        opacity:1;
+        transform:scale(1);
+    }
+
+}
+
+.modal-content{
+
+    width:700px;
+    max-width:95%;
+
+    background:var(--card);
+
+    border:1px solid var(--border);
+
+    border-radius:20px;
+
+    padding:25px;
+
+}
+
+.modal-header{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    margin-bottom:20px;
+
+}
+
+#closeModal{
+
+    cursor:pointer;
+
+    font-size:30px;
+
+}
+
+#closeModal:hover{
+
+    color:#ef4444;
+
+}
+
+#uptimeBlocks{
+
+    display:grid;
+
+    grid-template-columns:repeat(30,18px);
+
+    gap:5px;
+
+    margin-bottom:25px;
+
+}
+
+.block{
+
+    width:18px;
+    height:18px;
+
+    border-radius:5px;
+
+}
+
+.onlineBlock{
+
+    background:#22c55e;
+
+}
+
+.offlineBlock{
+
+    background:#ef4444;
+
+}
+
+.uptime-info{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:12px;
+
+}
+
+.info-row{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    background:var(--stat);
+
+    padding:12px 16px;
+
+    border-radius:10px;
+
+}
 
 :root {
     --bg: #0f172a;
@@ -489,8 +635,8 @@ body {
                 <span id="time" class="loading-spinner"></span>
             </div>
 
-            <div class="stat">
-             <span>🕒 Uptime</span>
+            <div class="stat" id="uptimeStat">
+                <span>🕒 Uptime</span>
                 <span id="uptime" class="loading-spinner"></span>
             </div>
 
@@ -615,6 +761,21 @@ body {
                 ramChart.data.datasets[0].data = ramData;
                 ramChart.update();
 
+                const blocks=document.getElementById("uptimeBlocks");
+
+                blocks.innerHTML="";
+
+                (data.uptime || []).forEach(v=>{
+
+                    const div=document.createElement("div");
+
+                    div.className="block "+(v?"onlineBlock":"offlineBlock");
+
+                    div.title=v?"Online":"Offline";
+
+                    blocks.appendChild(div);
+
+                });
             });
             
             socket.on("stats", (data) => {
@@ -653,6 +814,11 @@ body {
 
                 document.getElementById("guilds").innerText = data.guilds;
 
+                document.getElementById("onlinePercent").innerText = data.onlinePercent+"%";
+                document.getElementById("disconnectCount").innerText = data.disconnectCount;
+                document.getElementById("longestUptime").innerText = data.uptime;
+                document.getElementById("lastRestart").innerText = data.time;
+
                 pingData.push(data.ping ?? 0);
                 ramData.push(data.ram);
 
@@ -670,6 +836,7 @@ body {
             });
 
             const themeBtn = document.getElementById("themeBtn");
+            const modal = document.getElementById("uptimeModal");
 
             function setTheme(mode) {
                 document.documentElement.setAttribute("data-theme", mode);
@@ -694,8 +861,69 @@ body {
                      : "🌙 Dark Mode";
             }
             
-            </script>
 
+            document.getElementById("uptimeStat").onclick = () => {
+
+                modal.classList.add("show");
+
+            }
+
+            document.getElementById("closeModal").onclick = () => {
+
+                modal.classList.remove("show");
+
+            }
+
+            window.onclick = e => {
+
+                if(e.target === modal){
+
+                    modal.classList.remove("show");
+
+                }
+
+            }
+            </script>
+            <div id="uptimeModal" class="modal">
+
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <h2>🕒 Uptime History</h2>
+                        <span id="closeModal">&times;</span>
+                    </div>
+
+                    <div class="uptime-bar">
+                        <div id="uptimeBlocks"></div>
+                    </div>
+
+                    <div class="uptime-info">
+
+                        <div class="info-row">
+                            <span>🟢 Online</span>
+                            <span id="onlinePercent">0%</span>
+                        </div>
+
+                        <div class="info-row">
+                            <span>🔴 Disconnect</span>
+                            <span id="disconnectCount">0</span>
+                        </div>
+
+                        <div class="info-row">
+                            <span>⏱ Longest Uptime</span>
+                            <span id="longestUptime">0 phút</span>
+                        </div>
+
+                        <div class="info-row">
+                            <span>🔄 Last Restart</span>
+                            <span id="lastRestart">--</span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
         </body>
     </html>
     `);
@@ -715,6 +943,7 @@ body {
         socket.emit("history", {
             ram: ramHistory,
             ping: pingHistory,
+            uptime: uptimeHistory
         });
 
         if (statsCache)
@@ -736,10 +965,7 @@ body {
     const https = require("https");
 
     setInterval(() => {
-
         https.get(URL, () => { }).on("error", () => { });
-
-        console.log("🔄 Đã Gửi Tín Hiệu Giữ Kết Nối");
 
     }, 4 * 60 * 1000);
 
