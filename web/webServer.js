@@ -720,7 +720,7 @@ body {
             </div>
 
             <div class="top-item">
-                <div class="top-title">🌐 Host</div>
+                <div class="top-title">😎 LPT</div>
                 <div class="top-value" id="host"></div>
             </div>
 
