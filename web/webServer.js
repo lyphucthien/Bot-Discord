@@ -372,6 +372,11 @@ module.exports = (client) => {
     --chart-grid: rgba(0,0,0,0.08);
 }
 
+html, body {
+    height: 100vh;
+    overflow: hidden;
+}
+
 body {
     margin:0;
     min-height:100vh;
