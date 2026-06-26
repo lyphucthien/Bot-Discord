@@ -162,7 +162,7 @@ module.exports = (client) => {
     width:100%;
     max-width:920px;
 
-    margin:0 auto 35px;
+    margin:0 auto 10px;
 
     display:grid;
     grid-template-columns:repeat(5,1fr);
@@ -396,7 +396,7 @@ body {
 
     display:flex;
     flex-direction:column;
-    gap:30px;
+    gap:12px;
 }
 
 .card{
