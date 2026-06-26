@@ -8,6 +8,8 @@ const pingHistory = [];
 const uptimeHistory = [];
 
 let systemCache = { cpu: 0 };
+let startTime = Date.now();
+let longestUptime = 0;
 
 const MAX_POINTS = 60;
 
@@ -54,6 +56,8 @@ module.exports = (client) => {
     let statsCache = null;
 
     setInterval(async () => {
+        const currentUptime = Date.now() - startTime;
+        if (currentUptime > longestUptime) { longestUptime = currentUptime; }
 
         if (!client?.isReady?.()) return;
         if (!client?.ws) return;
@@ -74,17 +78,10 @@ module.exports = (client) => {
         if (ramHistory.length > MAX_POINTS) ramHistory.shift();
         if (pingHistory.length > MAX_POINTS) pingHistory.shift();
 
-        const now = Date.now();
-        const onlineTime = uptimeHistory.reduce((sum, v, i) => {
-            if (v.online && uptimeHistory[i - 1]) {
-                sum += (v.time - uptimeHistory[i - 1].time);
-            }
-            return sum;
-        }, 0);
+        const onlineSeconds = uptimeHistory.filter(v => v.online).length;
 
-        const onlinePercent = uptimeHistory.length
-            ? ((onlineCount / uptimeHistory.length) * 100).toFixed(2)
-            : "0.00";
+        const onlinePercent =
+            ((onlineSeconds / Math.max(1, uptimeHistory.length)) * 100).toFixed(2);
 
         const disconnectCount = uptimeHistory.filter((v, i) =>
             i > 0 &&
@@ -98,6 +95,7 @@ module.exports = (client) => {
             cpu,
             guilds: client.guilds.cache.size,
             uptime,
+            longestUptime: formatUptime(Math.floor(longestUptime / 1000)),
             time: new Date().toLocaleString("vi-VN", {
                 timeZone: "Asia/Ho_Chi_Minh"
             }),
@@ -844,7 +842,7 @@ body {
 
                 document.getElementById("onlinePercent").innerText = data.onlinePercent+"%";
                 document.getElementById("disconnectCount").innerText = data.disconnectCount;
-                document.getElementById("longestUptime").innerText = data.uptime;
+                document.getElementById("longestUptime").innerText = data.longestUptime;
                 document.getElementById("lastRestart").innerText = data.time;
 
                 pingData.push(data.ping ?? 0);
