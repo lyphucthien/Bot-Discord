@@ -839,6 +839,7 @@ body {
 
             const themeBtn = document.getElementById("themeBtn");
             const modal = document.getElementById("uptimeModal");
+            const closeBtn = document.getElementById("closeModal");
 
             function setTheme(mode) {
                 document.documentElement.setAttribute("data-theme", mode);
@@ -865,16 +866,15 @@ body {
             
 
             document.getElementById("uptimeStat").onclick = () => {
+                const modal = document.getElementById("uptimeModal");
                 if (!modal) return;
 
                 modal.classList.add("show");
             };
 
-            document.getElementById("closeModal").onclick = () => {
-
+            closeBtn.addEventListener("click", () => {
                 modal.classList.remove("show");
-
-            }
+            });
 
             window.onclick = e => {
 
