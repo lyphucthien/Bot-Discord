@@ -380,7 +380,7 @@ body {
     justify-content:center;
     align-items:flex-start;
 
-    padding: 12px 40px 40px;
+    padding: 15px 40px 40px;
 
     background: linear-gradient(-45deg, var(--bg), var(--bg2), var(--bg), var(--bg2));
 
