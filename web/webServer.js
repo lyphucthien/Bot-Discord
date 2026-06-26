@@ -121,6 +121,13 @@ module.exports = (client) => {
             cpu,
             guilds: client.guilds.cache.size,
             uptime,
+
+            version: packageJson.version,
+            node: process.version,
+            discordjs: discordVersion,
+            express: expressVersion,
+            host: "Render",
+
             longestUptime: formatUptime(Math.floor(longestUptime / 1000)),
             time: new Date().toLocaleString("vi-VN", {
                 timeZone: "Asia/Ho_Chi_Minh"
@@ -362,7 +369,9 @@ body {
 
     display:flex;
     justify-content:center;
-    align-items:center;
+    align-items:flex-start;
+
+    padding:40px;
 
     background: linear-gradient(-45deg, var(--bg), var(--bg2), var(--bg), var(--bg2));
 
@@ -379,6 +388,15 @@ body {
     0%{background-position:0% 50%;}
     50%{background-position:100% 50%;}
     100%{background-position:0% 50%;}
+}
+
+.page{
+    width:100%;
+    max-width:1700px;
+
+    display:flex;
+    flex-direction:column;
+    gap:30px;
 }
 
 .card{
@@ -401,7 +419,6 @@ body {
 
 .dashboard {
     width:100%;
-    max-width:1700px;
 
     display:flex;
     justify-content:center;
@@ -662,17 +679,18 @@ body {
     <body>
         
         <button id="themeBtn">🌙 Dark</button>
+        <div class="page">
 
         <div class="top-bar">
 
             <div class="top-item">
-                <div class="top-title">🤖 Phiên Bản</div>
+                <div class="top-title">🤖 Version</div>
                 <div class="top-value" id="version"></div>
             </div>
 
             <div class="top-item">
                 <div class="top-title">🟢 Node</div>
-                <div class="top-value" id="node.js"></div>
+                <div class="top-value" id="node"></div>
             </div>
 
             <div class="top-item">
@@ -686,7 +704,7 @@ body {
             </div>
 
             <div class="top-item">
-                <div class="top-title">🌐 Máy Chủ</div>
+                <div class="top-title">🌐 Host</div>
                 <div class="top-value" id="host"></div>
             </div>
 
@@ -952,11 +970,13 @@ body {
                 ramChart.data.datasets[0].data = ramData;
                 ramChart.update("none");
 
-                document.getElementById("version").innerText = "v" + data.version;
-                document.getElementById("node").innerText = data.node;
-                document.getElementById("discordjs").innerText = data.discordjs;
-                document.getElementById("express").innerText = data.express;
-                document.getElementById("host").innerText = data.host;
+                if (data.version) {
+                    document.getElementById("version").textContent = "v" + data.version;
+                    document.getElementById("node").textContent = data.node;
+                    document.getElementById("discordjs").textContent = "v" + data.discordjs;
+                    document.getElementById("express").textContent = "v" + data.express;
+                    document.getElementById("host").textContent = data.host;
+                }
             });
 
             document.addEventListener("DOMContentLoaded", () => {
