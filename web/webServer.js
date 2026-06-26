@@ -58,7 +58,7 @@ module.exports = (client) => {
     }, 5000);
 
     let statsCache = null;
-    let BLOCK_TIME = 60 * 1000;
+    let BLOCK_TIME = 30 * 60 * 1000;
     let currentBlock = {
         start: Date.now(),
         online: true
@@ -92,6 +92,8 @@ module.exports = (client) => {
                 online: currentBlock.online,
                 time: currentBlock.start
             });
+
+            io.emit("uptimeBlock", newBlock);
 
             currentBlock = {
                 start: now,
@@ -205,6 +207,15 @@ module.exports = (client) => {
     gap: 8px;
 }
 
+.block {
+    animation: pop .3s ease;
+}
+
+@keyframes pop {
+    from { transform: scale(0); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+    
 .modal{
 
     display:none;
@@ -689,7 +700,7 @@ body {
         <div class="top-bar">
 
             <div class="top-item">
-                <div class="top-title">🤖 Version</div>
+                <div class="top-title">🤖 Phiên Bản</div>
                 <div class="top-value" id="version"></div>
             </div>
 
@@ -873,6 +884,26 @@ body {
                         }
                     }
                 }
+            });
+
+            socket.on("uptimeBlock", (v) => {
+                const blocks = document.getElementById("uptimeBlocks");
+                if (!blocks) return;
+
+                const div = document.createElement("div");
+
+                div.className = "block " + (v.online ? "onlineBlock" : "offlineBlock");
+
+                const date = new Date(v.time);
+
+                div.title =
+                    (v.online ? "Online" : "Offline") +
+                    " • " +
+                    date.toLocaleString("vi-VN", {
+                        timeZone: "Asia/Ho_Chi_Minh"
+                    });
+
+                blocks.appendChild(div);
             });
 
             socket.on("history", data => {
