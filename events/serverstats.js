@@ -58,20 +58,20 @@ module.exports = (client) => {
 
             const owner = guild.members.cache.get(OWNER_ID);
 
-            let ownerStatus = "⚫ OWNER • Offline";
+            let ownerStatus = "⚫ 𝗢W𝗡𝗘𝗥 • Offline";
 
             if (owner?.presence) {
                 switch (owner.presence.status) {
                     case "online":
-                        ownerStatus = "🟢 OWNER • Online";
+                        ownerStatus = "🟢 𝗢W𝗡𝗘𝗥 • Online";
                         break;
 
                     case "idle":
-                        ownerStatus = "🌙 OWNER • Idle";
+                        ownerStatus = "🌙 𝗢W𝗡𝗘𝗥 • Idle";
                         break;
 
                     case "dnd":
-                        ownerStatus = "⛔ OWNER • DND";
+                        ownerStatus = "⛔ 𝗢W𝗡𝗘𝗥 • DND";
                         break;
                 }
             }
@@ -97,12 +97,12 @@ module.exports = (client) => {
 
                 setChannelName(
                     onlineIdleChannel,
-                    `🟢 𝗢𝗡𝗟𝗜𝗡𝗘: ${online} | 🌙 𝗜𝗗𝗟𝗘: ${idle}`
+                    `🟢 𝗢𝗡𝗟𝗜𝗡𝗘: ${online}  | 🌙 𝗜𝗗𝗟𝗘: ${idle}`
                 ),
 
                 setChannelName(
                     dndOfflineChannel,
-                    `⛔ 𝗗𝗡𝗗: ${dnd} | ⚫ 𝗢𝗙𝗙𝗟𝗜𝗡𝗘: ${offline}`
+                    `⛔ 𝗗𝗡𝗗: ${dnd}  | ⚫ 𝗢𝗙𝗙𝗟𝗜𝗡𝗘: ${offline}`
                 )
             ]);
 
