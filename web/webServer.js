@@ -793,7 +793,7 @@ body {
                             year: "numeric"
                         });
 
-                    div.title = `${ isOnline? "Online": "Offline" } • ${ formatted }`;
+                    div.title = (isOnline ? "Online" : "Offline") + " • " + formatted;
 
                     blocks.appendChild(div);
                 });
