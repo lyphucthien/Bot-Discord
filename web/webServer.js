@@ -837,9 +837,25 @@ body {
 
             });
 
-            const themeBtn = document.getElementById("themeBtn");
-            const modal = document.getElementById("uptimeModal");
-            const closeBtn = document.getElementById("closeModal");
+            document.addEventListener("DOMContentLoaded", () => {
+                const modal = document.getElementById("uptimeModal");
+                const closeBtn = document.getElementById("closeModal");
+                const uptimeBtn = document.getElementById("uptimeStat");
+
+                uptimeBtn.addEventListener("click", () => {
+                    modal.classList.add("show");
+                });
+
+                closeBtn.addEventListener("click", () => {
+                    modal.classList.remove("show");
+                });
+
+                window.addEventListener("click", (e) => {
+                    if (e.target === modal) {
+                        modal.classList.remove("show");
+                    }
+                });
+            });
 
             function setTheme(mode) {
                 document.documentElement.setAttribute("data-theme", mode);
@@ -863,28 +879,7 @@ body {
                      ? "☀️ Light Mode"
                      : "🌙 Dark Mode";
             }
-            
 
-            document.getElementById("uptimeStat").onclick = () => {
-                const modal = document.getElementById("uptimeModal");
-                if (!modal) return;
-
-                modal.classList.add("show");
-            };
-
-            closeBtn.addEventListener("click", () => {
-                modal.classList.remove("show");
-            });
-
-            window.onclick = e => {
-
-                if(e.target === modal){
-
-                    modal.classList.remove("show");
-
-                }
-
-            }
             </script>
             <div id="uptimeModal" class="modal">
 
