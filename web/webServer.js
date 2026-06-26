@@ -865,7 +865,6 @@ body {
             
 
             document.getElementById("uptimeStat").onclick = () => {
-                const modal = document.getElementById("uptimeModal");
                 if (!modal) return;
 
                 modal.classList.add("show");
@@ -968,7 +967,13 @@ body {
     const https = require("https");
 
     setInterval(() => {
-        https.get(URL, () => { }).on("error", () => { });
+        https.get(URL, res => {
+            if (res.statusCode !== 200) {
+                console.log("⚠️ Ping fail:", res.statusCode);
+            }
+        }).on("error", err => {
+            console.log("❌ Lỗi Duy Trì Kkết Nối:", err.message);
+        });
 
     }, 4 * 60 * 1000);
 
