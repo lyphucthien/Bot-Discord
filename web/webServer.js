@@ -66,11 +66,12 @@ module.exports = (client) => {
         const ping = client.ws?.ping ?? 0;
         const cpu = systemCache.cpu;
         const uptime = formatUptime(Math.floor(process.uptime()));
+        const online = client.isReady();
 
         ramHistory.push(ram);
         pingHistory.push(ping);
         uptimeHistory.push({
-            online: client.isReady(),
+            online,
             time: Date.now()
         });
 
@@ -78,16 +79,21 @@ module.exports = (client) => {
         if (ramHistory.length > MAX_POINTS) ramHistory.shift();
         if (pingHistory.length > MAX_POINTS) pingHistory.shift();
 
-        const onlineSeconds = uptimeHistory.filter(v => v.online).length;
+        const total = uptimeHistory.length || 1;
 
-        const onlinePercent =
-            ((onlineSeconds / Math.max(1, uptimeHistory.length)) * 100).toFixed(2);
+        const onlineCount = uptimeHistory.reduce((acc, v) => {
+            return acc + (v.online ? 1 : 0);
+        }, 0);
 
-        const disconnectCount = uptimeHistory.filter((v, i) =>
-            i > 0 &&
-            !v.online &&
-            uptimeHistory[i - 1]?.online
-        ).length;
+        const onlinePercent = ((onlineCount / total) * 100).toFixed(2);
+
+        let disconnectCount = 0;
+
+        for (let i = 1; i < uptimeHistory.length; i++) {
+            if (!uptimeHistory[i].online && uptimeHistory[i - 1].online) {
+                disconnectCount++;
+            }
+        }
 
         statsCache = {
             ping,
