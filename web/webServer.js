@@ -58,7 +58,7 @@ module.exports = (client) => {
     }, 5000);
 
     let statsCache = null;
-    let BLOCK_TIME = 30 * 60 * 1000;
+    let BLOCK_TIME = 1 * 60 * 1000;
     let currentBlock = {
         start: Date.now(),
         online: true
@@ -215,7 +215,7 @@ module.exports = (client) => {
     from { transform: scale(0); opacity: 0; }
     to { transform: scale(1); opacity: 1; }
 }
-    
+
 .modal{
 
     display:none;
