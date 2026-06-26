@@ -196,6 +196,15 @@ module.exports = (client) => {
     font-weight:bold;
 }
 
+.page{
+    width:100%;
+    max-width:1700px;
+
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+
 .modal{
 
     display:none;
@@ -371,7 +380,7 @@ body {
     justify-content:center;
     align-items:flex-start;
 
-    padding:40px;
+    padding: 12px 40px 40px;
 
     background: linear-gradient(-45deg, var(--bg), var(--bg2), var(--bg), var(--bg2));
 
@@ -388,15 +397,6 @@ body {
     0%{background-position:0% 50%;}
     50%{background-position:100% 50%;}
     100%{background-position:0% 50%;}
-}
-
-.page{
-    width:100%;
-    max-width:1700px;
-
-    display:flex;
-    flex-direction:column;
-    gap:12px;
 }
 
 .card{
