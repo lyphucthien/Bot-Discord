@@ -162,7 +162,7 @@ module.exports = (client) => {
     width:100%;
     max-width:920px;
 
-    margin:0 auto 10px;
+    margin:0 auto 7px;
 
     display:grid;
     grid-template-columns:repeat(5,1fr);
