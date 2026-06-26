@@ -763,6 +763,8 @@ body {
 
                 const blocks=document.getElementById("uptimeBlocks");
 
+                if (!blocks) return;
+
                 blocks.innerHTML="";
 
                 (data.uptime || []).forEach(v=>{
@@ -863,10 +865,11 @@ body {
             
 
             document.getElementById("uptimeStat").onclick = () => {
+                const modal = document.getElementById("uptimeModal");
+                if (!modal) return;
 
                 modal.classList.add("show");
-
-            }
+            };
 
             document.getElementById("closeModal").onclick = () => {
 
@@ -910,12 +913,12 @@ body {
                         </div>
 
                         <div class="info-row">
-                            <span>⏱ Longest Uptime</span>
+                            <span>⏱ Uptime Lâu Nhất</span>
                             <span id="longestUptime">0 phút</span>
                         </div>
 
                         <div class="info-row">
-                            <span>🔄 Last Restart</span>
+                            <span>🔄 Khởi Động Lại Lần Cuối</span>
                             <span id="lastRestart">--</span>
                         </div>
 
