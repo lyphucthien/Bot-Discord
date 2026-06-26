@@ -74,16 +74,23 @@ module.exports = (client) => {
         if (ramHistory.length > MAX_POINTS) ramHistory.shift();
         if (pingHistory.length > MAX_POINTS) pingHistory.shift();
 
-        const onlineSeconds = uptimeHistory.filter(v => v.online).length;
+        const now = Date.now();
+        const onlineTime = uptimeHistory.reduce((sum, v, i) => {
+            if (v.online && uptimeHistory[i - 1]) {
+                sum += (v.time - uptimeHistory[i - 1].time);
+            }
+            return sum;
+        }, 0);
 
-        const onlinePercent =
-            ((onlineSeconds / Math.max(1, uptimeHistory.length)) * 100).toFixed(2);
+        const onlinePercent = uptimeHistory.length
+            ? ((onlineCount / uptimeHistory.length) * 100).toFixed(2)
+            : "0.00";
 
         const disconnectCount = uptimeHistory.filter((v, i) =>
-                i > 0 &&
-                !v.online &&
-                uptimeHistory[i - 1]?.online
-            ).length;
+            i > 0 &&
+            !v.online &&
+            uptimeHistory[i - 1]?.online
+        ).length;
 
         statsCache = {
             ping,
@@ -860,6 +867,7 @@ body {
                 const modal = document.getElementById("uptimeModal");
                 const closeBtn = document.getElementById("closeModal");
                 const uptimeBtn = document.getElementById("uptimeStat");
+                const themeBtn = document.getElementById("themeBtn");
 
                 uptimeBtn.addEventListener("click", () => {
                     modal.classList.add("show");
