@@ -54,11 +54,17 @@ module.exports = (client) => {
     }, 5000);
 
     let statsCache = null;
+    let BLOCK_TIME = 60 * 1000;
+    let currentBlock = {
+        start: Date.now(),
+        online: true
+    };
 
     setInterval(async () => {
+        const now = Date.now();
         const currentUptime = Date.now() - startTime;
-        if (currentUptime > longestUptime) { longestUptime = currentUptime; }
 
+        if (currentUptime > longestUptime) { longestUptime = currentUptime; }
         if (!client?.isReady?.()) return;
         if (!client?.ws) return;
 
@@ -70,14 +76,24 @@ module.exports = (client) => {
 
         ramHistory.push(ram);
         pingHistory.push(ping);
-        uptimeHistory.push({
-            online,
-            time: Date.now()
-        });
 
         if (uptimeHistory.length > MAX_POINTS) uptimeHistory.shift();
         if (ramHistory.length > MAX_POINTS) ramHistory.shift();
         if (pingHistory.length > MAX_POINTS) pingHistory.shift();
+
+        currentBlock.online = online;
+        if (now - currentBlock.start >= BLOCK_TIME) {
+
+            uptimeHistory.push({
+                online: currentBlock.online,
+                time: currentBlock.start
+            });
+
+            currentBlock = {
+                start: now,
+                online: online
+            };
+        }
 
         const total = uptimeHistory.length || 1;
 
