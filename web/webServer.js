@@ -128,7 +128,7 @@ module.exports = (client) => {
             node: process.version,
             discordjs: discordVersion,
             express: expressVersion,
-            host: "Render",
+            host: "Hề Dung",
 
             longestUptime: formatUptime(Math.floor(longestUptime / 1000)),
             time: new Date().toLocaleString("vi-VN", {
