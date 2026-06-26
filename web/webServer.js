@@ -162,7 +162,7 @@ module.exports = (client) => {
     width:100%;
     max-width:920px;
 
-    margin:0 auto 7px;
+    margin: 0 auto 5px;
 
     display:grid;
     grid-template-columns:repeat(5,1fr);
@@ -188,7 +188,7 @@ module.exports = (client) => {
 .top-title{
     font-size:13px;
     opacity:.7;
-    margin-bottom:8px;
+    margin-bottom: 8px;
 }
 
 .top-value{
@@ -202,7 +202,7 @@ module.exports = (client) => {
 
     display:flex;
     flex-direction:column;
-    gap:12px;
+    gap: 8px;
 }
 
 .modal{
