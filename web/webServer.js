@@ -65,19 +65,25 @@ module.exports = (client) => {
 
         ramHistory.push(ram);
         pingHistory.push(ping);
-        uptimeHistory.push(client.isReady() ? 1 : 0);
+        uptimeHistory.push({
+            online: client.isReady(),
+            time: Date.now()
+        });
 
         if (uptimeHistory.length > MAX_POINTS) uptimeHistory.shift();
         if (ramHistory.length > MAX_POINTS) ramHistory.shift();
         if (pingHistory.length > MAX_POINTS) pingHistory.shift();
 
-        const onlineSeconds = uptimeHistory.filter(v => v === 1).length;
+        const onlineSeconds = uptimeHistory.filter(v => v.online).length;
 
         const onlinePercent =
             ((onlineSeconds / Math.max(1, uptimeHistory.length)) * 100).toFixed(2);
 
-        const disconnectCount =
-            uptimeHistory.filter((v, i) => i > 0 && v === 0 && uptimeHistory[i - 1] === 1).length;
+        const disconnectCount = uptimeHistory.filter((v, i) =>
+                i > 0 &&
+                !v.online &&
+                uptimeHistory[i - 1]?.online
+            ).length;
 
         statsCache = {
             ping,
@@ -98,7 +104,7 @@ module.exports = (client) => {
             onlinePercent,
             disconnectCount
         };
-    }, 2000);
+    }, 1000);
 
     app.get("/", (req, res) => {
 
@@ -767,16 +773,29 @@ body {
 
                 blocks.innerHTML="";
 
-                (data.uptime || []).forEach(v=>{
+                (data.uptime || []).forEach(v => {
+                    const div = document.createElement("div");
 
-                    const div=document.createElement("div");
+                    const isOnline = v.online;
 
-                    div.className="block "+(v?"onlineBlock":"offlineBlock");
+                    div.className = "block " + (isOnline ? "onlineBlock" : "offlineBlock");
 
-                    div.title=v?"Online":"Offline";
+                    const date = new Date(v.time);
+
+                    const formatted =
+                        date.toLocaleString("vi-VN", {
+                            timeZone: "Asia/Ho_Chi_Minh",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            second: "2-digit",
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric"
+                        });
+
+                    div.title = `${ isOnline? "Online": "Offline" } • ${ formatted }`;
 
                     blocks.appendChild(div);
-
                 });
             });
             
