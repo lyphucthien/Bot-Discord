@@ -1014,7 +1014,7 @@ body {
                 console.log("⚠️ Ping fail:", res.statusCode);
             }
         }).on("error", err => {
-            console.log("❌ Lỗi Duy Trì Kkết Nối:", err.message);
+            console.log("❌ Lỗi Duy Trì Kết Nối:", err.message);
         });
 
     }, 4 * 60 * 1000);
