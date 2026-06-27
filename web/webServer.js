@@ -163,7 +163,23 @@ module.exports = (client) => {
 * {
     box-sizing: border-box;
 }
-    
+
+.menu-item {
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    background: var(--stat);
+    transition: 0.2s;
+    font-size: 16px;
+}
+
+.menu-item:hover {
+    background: var(--card);
+    transform: translateX(5px);
+    filter: brightness(1.1);
+}
+
 @media (max-width: 1024px) {
 
     .dashboard {
@@ -922,7 +938,15 @@ body {
             </div>
 
             <div class="menu-content">
-                🚧 Sẽ cập nhật sau...
+
+                <div class="menu-item" onclick="openLink('https://discord.gg/gyZ27Hw9qu')">
+                    🔗 Discord Invite
+                </div>
+
+                <div class="menu-item" onclick="openLink('https://beacons.ai/lyphucthien')">
+                    🌐 Nền Tảng MXH
+                </div>
+
             </div>
 
         </div>
@@ -1028,6 +1052,12 @@ body {
             <script src="/socket.io/socket.io.js"></script>
 
             <script>
+            function openLink(url) {
+                if (confirm("Bạn muốn mở link này?")) {
+                    window.open(url, "_blank");
+                }
+            }
+
             const socket = io();
 
             let pingChart;
