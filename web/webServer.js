@@ -167,7 +167,7 @@ module.exports = (client) => {
             document.documentElement.setAttribute("data-theme", theme);
         })();
         </script>
-        
+
             <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
             <title>🤖 Bot Dashboard - Xem Trạng Thái Bot Discord Của Bot Lâm Đồng</title>
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
@@ -177,6 +177,16 @@ module.exports = (client) => {
     box-sizing: border-box;
 }
 
+#settingsModal .menu-item {
+    cursor: pointer;
+    transition: .2s;
+}
+
+#settingsModal .menu-item:hover {
+    transform: translateX(6px);
+    background: var(--card);
+}
+    
 .menu-item {
     padding: 12px 14px;
     margin-bottom: 10px;
@@ -986,6 +996,10 @@ body {
 
             <div class="menu-content">
 
+                <div class="menu-item" id="settingsBtn">
+                    ⚙️ Settings
+                </div>
+
                 <div class="menu-item" onclick="openLink('https://discord.gg/gyZ27Hw9qu')">
                     <i class="fa-brands fa-discord"></i> Discord Invite
                 </div>
@@ -1090,6 +1104,22 @@ body {
             <div style="opacity:.7">
              💻 Created By Lý Phúc Thiện
              
+            </div>
+        </div>
+        
+        <div id="settingsModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>⚙️ Settings</h2>
+                    <span id="closeSettings">&times;</span>
+                </div>
+
+                <div class="menu-content">
+                    <div class="menu-item">🎨 Theme</div>
+                    <div class="menu-item">⏱ Auto Refresh</div>
+                    <div class="menu-item">📊 Chart Settings</div>
+                    <div class="menu-item">🔔 Notifications</div>
+                </div>
             </div>
         </div>
 
@@ -1408,6 +1438,24 @@ body {
 
                 themeBtn.innerHTML = map[theme] || "🌙 Dark";
             }
+
+            const settingsBtn = document.getElementById("settingsBtn");
+            const settingsModal = document.getElementById("settingsModal");
+            const closeSettings = document.getElementById("closeSettings");
+
+            settingsBtn.addEventListener("click", () => {
+                settingsModal.classList.add("show");
+            });
+
+            closeSettings.addEventListener("click", () => {
+                settingsModal.classList.remove("show");
+            });
+
+            window.addEventListener("click", (e) => {
+                if (e.target === settingsModal) {
+                    settingsModal.classList.remove("show");
+                }
+            });
 
             </script>
             <div id="uptimeModal" class="modal">
