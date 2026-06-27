@@ -501,6 +501,15 @@ module.exports = (client) => {
     --chart-grid: rgba(0,0,0,0.08);
 }
 
+[data-theme="oled"] {
+    --bg: #000000;
+    --bg2: #000000;
+    --card: rgba(255,255,255,0.05);
+    --text: #ffffff;
+    --border: rgba(255,255,255,0.12);
+    --stat: rgba(255,255,255,0.03);
+}
+
 html, body {
     height: 100vh;
     overflow: hidden;
@@ -1185,7 +1194,14 @@ body {
 
                 themeBtn.addEventListener("click", () => {
                     const current = document.documentElement.getAttribute("data-theme");
-                    setTheme(current === "dark" ? "light" : "dark");
+
+                    let next;
+
+                    if (current === "dark") next = "light";
+                    else if (current === "light") next = "oled";
+                    else next = "dark";
+
+                    setTheme(next);
                 });
 
                 uptimeBtn.addEventListener("click", () => {
@@ -1216,10 +1232,13 @@ body {
             function updateThemeButton() {
                 const theme = document.documentElement.getAttribute("data-theme");
 
-                themeBtn.innerHTML =
-                    theme === "light"
-                     ? "☀️ Light Mode"
-                     : "🌙 Dark Mode";
+                if (theme === "light") {
+                    themeBtn.innerHTML = "☀️ Light";
+                } else if (theme === "oled") {
+                    themeBtn.innerHTML = "⚫ OLED";
+                } else {
+                    themeBtn.innerHTML = "🌙 Dark";
+                }
             }
 
             </script>
