@@ -573,43 +573,60 @@ module.exports = (client) => {
 
 }
 
-:root {
-    --bg: #0f172a;
-    --bg2: #1e293b;
-    --card: rgba(255,255,255,.08);
+[data-theme="dark"] {
+    --bg: #0b1120;
+    --bg2: #111827;
+
+    --card: rgba(17,24,39,.65);
     --text: #ffffff;
-    --border: rgba(255,255,255,.15);
+    --border: rgba(255,255,255,.08);
     --stat: rgba(255,255,255,.05);
 
     --primary: #3b82f6;
     --success: #22c55e;
     --danger: #ef4444;
 
-    --chart-grid: rgba(255,255,255,0.05);
+    --shadow: 0 20px 45px rgba(0,0,0,.45);
 }
 
 [data-theme="light"] {
-    --bg: #f8fafc;
-    --bg2: #e2e8f0;
-    --card: rgba(255,255,255,.9);
-    --text: #111827;
-    --border: #d1d5db;
-    --stat: #f3f4f6;
 
-    --primary: #2563eb;
-    --success: #16a34a;
-    --danger: #dc2626;
+    --bg:#f5f7fb;
+    --bg2:#e9eef7;
 
-    --chart-grid: rgba(0,0,0,0.08);
+    --card:rgba(255,255,255,.92);
+
+    --text:#111827;
+
+    --border:#dbe4ef;
+
+    --stat:#f8fafc;
+
+    --primary:#2563eb;
+    --success:#16a34a;
+    --danger:#dc2626;
+
+    --shadow:0 15px 40px rgba(0,0,0,.08);
 }
 
-[data-theme="oled"] {
-    --bg: #000000;
-    --bg2: #000000;
-    --card: rgba(255,255,255,0.03);
-    --text: #ffffff;
-    --border: rgba(255,255,255,0.08);
-    --stat: rgba(255,255,255,0.02);
+[data-theme="oled"]{
+
+    --bg:#000000;
+    --bg2:#000000;
+
+    --card:rgba(255,255,255,.03);
+
+    --text:#ffffff;
+
+    --border:rgba(255,255,255,.05);
+
+    --stat:rgba(255,255,255,.02);
+
+    --primary:#00e5ff;
+    --success:#00ff99;
+    --danger:#ff3355;
+
+    --shadow:0 0 25px rgba(0,255,255,.08);
 }
 
 html, body {
@@ -940,7 +957,7 @@ body {
             <div class="menu-content">
 
                 <div class="menu-item" onclick="openLink('https://discord.gg/gyZ27Hw9qu')">
-                    <i class="fa-brands fa-discord"></i> 🔗 Discord Invite
+                    <i class="fa-brands fa-discord"></i> Discord Invite
                 </div>
 
                 <div class="menu-item" onclick="openLink('https://beacons.ai/lyphucthien')">
@@ -961,7 +978,7 @@ body {
         <div class="top-bar">
 
             <div class="top-item">
-                <div class="top-title">🤖 Phiên Bản</div>
+                <div class="top-title">🤖 Version</div>
                 <div class="top-value" id="version"></div>
             </div>
 
