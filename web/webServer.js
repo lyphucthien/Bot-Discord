@@ -155,9 +155,9 @@ module.exports = (client) => {
         res.send(`
     <html>
     <head>
-
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <title>🤖 Bot Dashboard - Xem Trạng Thái Bot Discord Của Bot Lâm Đồng</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
         <style>
 * {
@@ -940,7 +940,7 @@ body {
             <div class="menu-content">
 
                 <div class="menu-item" onclick="openLink('https://discord.gg/gyZ27Hw9qu')">
-                    🔗 Discord Invite
+                    <i class="fa-brands fa-discord"></i> 🔗 Discord Invite
                 </div>
 
                 <div class="menu-item" onclick="openLink('https://beacons.ai/lyphucthien')">
@@ -948,7 +948,7 @@ body {
                 </div>
 
                 <div class="menu-content">
-                    🚧 Mình Sẽ Cập Nhật Tiếp...
+                    🚧 Sẽ Có Cập Nhật Tiếp Theo...
                 </div>
 
             </div>
@@ -1057,9 +1057,7 @@ body {
 
             <script>
             function openLink(url) {
-                if (confirm("Bạn muốn mở link này?")) {
-                    window.open(url, "_blank");
-                }
+                window.open(url, "_blank", "noopener,noreferrer");
             }
 
             const socket = io();
