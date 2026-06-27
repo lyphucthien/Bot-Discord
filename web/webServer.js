@@ -104,18 +104,21 @@ module.exports = (client) => {
             };
         }
 
-        const total = uptimeHistory.length || 1;
+        const history = [
+            ...uptimeHistory,
+            currentBlock
+        ];
 
-        const onlineCount = uptimeHistory.reduce((acc, v) => {
-            return acc + (v.online ? 1 : 0);
-        }, 0);
+        const total = history.length || 1;
+
+        const onlineCount = history.filter(v => v.online).length;
 
         const onlinePercent = ((onlineCount / total) * 100).toFixed(2);
 
         let disconnectCount = 0;
 
-        for (let i = 1; i < uptimeHistory.length; i++) {
-            if (!uptimeHistory[i].online && uptimeHistory[i - 1].online) {
+        for (let i = 1; i < history.length; i++) {
+            if (!history[i].online && history[i - 1].online) {
                 disconnectCount++;
             }
         }
