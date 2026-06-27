@@ -160,6 +160,124 @@ module.exports = (client) => {
         <title>🤖 Bot Dashboard - Xem Trạng Thái Bot Discord Của Bot Lâm Đồng</title>
 
         <style>
+#menuBtn{
+    position:fixed;
+    top:20px;
+    left:20px;
+
+    width:52px;
+    height:52px;
+
+    border:none;
+    border-radius:14px;
+
+    cursor:pointer;
+
+    font-size:28px;
+
+    background:var(--card);
+    color:var(--text);
+
+    border:1px solid var(--border);
+
+    backdrop-filter:blur(15px);
+
+    transition:.25s;
+
+    z-index:10001;
+}
+
+#menuBtn:hover{
+    transform:scale(1.08);
+}
+
+#menuOverlay{
+
+    position:fixed;
+    inset:0;
+
+    background:rgba(0,0,0,.45);
+
+    backdrop-filter:blur(4px);
+
+    opacity:0;
+    visibility:hidden;
+
+    transition:.3s;
+
+    z-index:9998;
+
+}
+
+#menuOverlay.show{
+    opacity:1;
+    visibility:visible;
+}
+
+#sideMenu{
+
+    position:fixed;
+
+    top:0;
+    left:-420px;
+
+    width:380px;
+    max-width:90%;
+
+    height:100%;
+
+    background:var(--card);
+
+    backdrop-filter:blur(18px);
+
+    border-right:1px solid var(--border);
+
+    transition:left .35s ease;
+
+    z-index:9999;
+
+    display:flex;
+    flex-direction:column;
+
+}
+
+#sideMenu.show{
+    left:0;
+}
+
+.menu-header{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    padding:22px;
+
+    border-bottom:1px solid var(--border);
+
+}
+
+.menu-header h2{
+    margin:0;
+}
+
+#closeMenu{
+
+    cursor:pointer;
+    font-size:28px;
+
+}
+
+.menu-content{
+
+    padding:25px;
+
+    font-size:18px;
+
+    opacity:.9;
+
+}
+
 .top-bar{
     width:100%;
     max-width:920px;
@@ -604,6 +722,7 @@ body {
 #themeBtn:active{
     transform:scale(0.95);
 }
+
 .loading-spinner{
     width:18px;
     height:18px;
@@ -693,7 +812,23 @@ body {
         </style>
     </head>
     <body>
-        
+        <button id="menuBtn">☰</button>
+
+        <div id="menuOverlay"></div>
+
+        <div id="sideMenu">
+
+            <div class="menu-header">
+                <h2>📋 Menu</h2>
+                <span id="closeMenu">&times;</span>
+            </div>
+
+            <div class="menu-content">
+                🚧 Sẽ cập nhật sau...
+            </div>
+
+        </div>
+
         <button id="themeBtn">🌙 Dark</button>
         <div class="page">
 
@@ -1015,11 +1150,37 @@ body {
                 }
             });
 
+            const themeBtn = document.getElementById("themeBtn");
+
             document.addEventListener("DOMContentLoaded", () => {
                 const modal = document.getElementById("uptimeModal");
                 const closeBtn = document.getElementById("closeModal");
                 const uptimeBtn = document.getElementById("uptimeStat");
-                const themeBtn = document.getElementById("themeBtn");
+
+                const menuBtn = document.getElementById("menuBtn");
+                const sideMenu = document.getElementById("sideMenu");
+                const menuOverlay = document.getElementById("menuOverlay");
+                const closeMenu = document.getElementById("closeMenu");
+
+                menuBtn.addEventListener("click", () => {
+                    sideMenu.classList.add("show");
+                    menuOverlay.classList.add("show");
+                });
+
+                closeMenu.addEventListener("click", () => {
+                    sideMenu.classList.remove("show");
+                    menuOverlay.classList.remove("show");
+                });
+
+                menuOverlay.addEventListener("click", () => {
+                    sideMenu.classList.remove("show");
+                    menuOverlay.classList.remove("show");
+                });
+
+                themeBtn.addEventListener("click", () => {
+                    const current = document.documentElement.getAttribute("data-theme");
+                    setTheme(current === "dark" ? "light" : "dark");
+                });
 
                 uptimeBtn.addEventListener("click", () => {
                     modal.classList.add("show");
@@ -1034,6 +1195,7 @@ body {
                         modal.classList.remove("show");
                     }
                 });
+
             });
 
             function setTheme(mode) {
@@ -1044,11 +1206,6 @@ body {
 
             const saved = localStorage.getItem("theme") || "dark";
             setTheme(saved);
-
-            themeBtn.addEventListener("click", () => {
-                const current = document.documentElement.getAttribute("data-theme");
-                setTheme(current === "dark" ? "light" : "dark");
-            });
 
             function updateThemeButton() {
                 const theme = document.documentElement.getAttribute("data-theme");
