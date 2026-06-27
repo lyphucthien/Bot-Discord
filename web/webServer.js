@@ -23,12 +23,6 @@ module.exports = (client) => {
     const server = http.createServer(app);
     const io = new Server(server);
 
-    const sessionSetup = require("./login-admin/session");
-    const adminRoutes = require("./login-admin/routes");
-
-    sessionSetup(app);
-    app.use("/", adminRoutes);
-
     const PORT = process.env.PORT || 3000;
     const URL = "https://my-discord-bot-mfu0.onrender.com";
 
@@ -166,28 +160,6 @@ module.exports = (client) => {
         <title>🤖 Bot Dashboard - Xem Trạng Thái Bot Discord Của Bot Lâm Đồng</title>
 
         <style>
-#adminBtn{
-    position:fixed;
-    top:20px;
-    right:120px;
-
-    padding:12px 18px;
-    border-radius:14px;
-
-    background:#ef4444;
-    color:white;
-
-    text-decoration:none;
-    font-weight:bold;
-
-    box-shadow:0 10px 25px rgba(239,68,68,.4);
-    transition:0.25s;
-}
-
-#adminBtn:hover{
-    transform:scale(1.08);
-}
-    
 #menuBtn{
     position:fixed;
     top:20px;
@@ -858,7 +830,6 @@ body {
         </div>
 
         <button id="themeBtn">🌙 Dark</button>
-        <a href="/login" id="adminBtn">🔒 Admin</a>
         <div class="page">
 
         <div class="top-bar">
