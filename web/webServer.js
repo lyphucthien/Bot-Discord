@@ -160,6 +160,10 @@ module.exports = (client) => {
         <title>🤖 Bot Dashboard - Xem Trạng Thái Bot Discord Của Bot Lâm Đồng</title>
 
         <style>
+* {
+    box-sizing: border-box;
+}
+    
 @media (max-width: 1024px) {
 
     .dashboard {
@@ -242,10 +246,6 @@ module.exports = (client) => {
     }
 }
 
-    {
-    box-sizing: border-box;
-}
-    
 #menuBtn{
     position:fixed;
     top:20px;
@@ -655,6 +655,7 @@ body {
     align-items:center;
     gap: 35px;
     padding: 20px;
+    flex-wrap: wrap;
 }
 
 .chart-card{
