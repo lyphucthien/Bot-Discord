@@ -161,9 +161,16 @@ module.exports = (client) => {
         res.send(`
     <html>
     <head>
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <title>🤖 Bot Dashboard - Xem Trạng Thái Bot Discord Của Bot Lâm Đồng</title>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+        <script>
+        (() => {
+            const theme = localStorage.getItem("theme") || "dark";
+            document.documentElement.setAttribute("data-theme", theme);
+        })();
+        </script>
+        
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <title>🤖 Bot Dashboard - Xem Trạng Thái Bot Discord Của Bot Lâm Đồng</title>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
         <style>
 * {
