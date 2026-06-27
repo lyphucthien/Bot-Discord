@@ -1,9 +1,3 @@
-const sessionSetup = require("./login-admin/session");
-const adminRoutes = require("./login-admin/routes");
-
-sessionSetup(app);
-app.use("/", adminRoutes);
-
 const express = require("express");
 const si = require("systeminformation");
 const http = require("http");
@@ -16,6 +10,12 @@ const discordVersion = require("discord.js").version;
 const ramHistory = [];
 const pingHistory = [];
 const uptimeHistory = [];
+
+const sessionSetup = require("./login-admin/session");
+const adminRoutes = require("./login-admin/routes");
+
+sessionSetup(app);
+app.use("/", adminRoutes);
 
 let systemCache = { cpu: 0 };
 let startTime = Date.now();
