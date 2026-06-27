@@ -182,7 +182,7 @@ module.exports = (client) => {
 
     backdrop-filter:blur(15px);
 
-    transition:.25s;
+    transition:opacity .25s, transform .25s;
 
     z-index:10001;
 }
@@ -1165,17 +1165,23 @@ body {
                 menuBtn.addEventListener("click", () => {
                     sideMenu.classList.add("show");
                     menuOverlay.classList.add("show");
+
+                    menuBtn.style.opacity = "0";
+                    menuBtn.style.transform = "scale(.8)";
+                    menuBtn.style.pointerEvents = "none";
                 });
 
-                closeMenu.addEventListener("click", () => {
+                function closeSideMenu() {
                     sideMenu.classList.remove("show");
                     menuOverlay.classList.remove("show");
-                });
 
-                menuOverlay.addEventListener("click", () => {
-                    sideMenu.classList.remove("show");
-                    menuOverlay.classList.remove("show");
-                });
+                    menuBtn.style.opacity = "1";
+                    menuBtn.style.transform = "scale(1)";
+                    menuBtn.style.pointerEvents = "auto";
+                }
+
+                closeMenu.addEventListener("click", closeSideMenu);
+                menuOverlay.addEventListener("click", closeSideMenu);
 
                 themeBtn.addEventListener("click", () => {
                     const current = document.documentElement.getAttribute("data-theme");
