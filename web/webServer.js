@@ -160,6 +160,92 @@ module.exports = (client) => {
         <title>🤖 Bot Dashboard - Xem Trạng Thái Bot Discord Của Bot Lâm Đồng</title>
 
         <style>
+@media (max-width: 1024px) {
+
+    .dashboard {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .card,
+    .chart-card {
+        width: 95%;
+    }
+
+    .chart-card {
+        height: 320px;
+    }
+}
+
+@media (max-width: 768px) {
+
+    body {
+        padding: 10px;
+    }
+
+    .top-bar {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .top-value {
+        font-size: 16px;
+    }
+
+    #menuBtn {
+        width: 45px;
+        height: 45px;
+        font-size: 22px;
+    }
+
+    #themeBtn {
+        font-size: 12px;
+        padding: 10px 14px;
+    }
+
+    .card {
+        padding: 20px;
+    }
+
+    .status {
+        font-size: 22px;
+    }
+}
+
+@media (max-width: 480px) {
+
+    .top-bar {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard {
+        gap: 15px;
+    }
+
+    .chart-card {
+        height: 260px;
+    }
+
+    .stat {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+        font-size: 14px;
+    }
+
+    h1 {
+        font-size: 20px;
+    }
+
+    .top-value {
+        font-size: 14px;
+    }
+}
+
+    {
+    box-sizing: border-box;
+}
+    
 #menuBtn{
     position:fixed;
     top:20px;
@@ -504,15 +590,16 @@ module.exports = (client) => {
 [data-theme="oled"] {
     --bg: #000000;
     --bg2: #000000;
-    --card: rgba(255,255,255,0.05);
+    --card: rgba(255,255,255,0.03);
     --text: #ffffff;
-    --border: rgba(255,255,255,0.12);
-    --stat: rgba(255,255,255,0.03);
+    --border: rgba(255,255,255,0.08);
+    --stat: rgba(255,255,255,0.02);
 }
 
 html, body {
-    height: 100vh;
-    overflow: hidden;
+    min-height: 100vh;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 body {
@@ -818,6 +905,7 @@ body {
     50% { opacity: 0.4; }
     100% { opacity: 1; }
 }
+
         </style>
     </head>
     <body>
@@ -1232,13 +1320,13 @@ body {
             function updateThemeButton() {
                 const theme = document.documentElement.getAttribute("data-theme");
 
-                if (theme === "light") {
-                    themeBtn.innerHTML = "☀️ Light";
-                } else if (theme === "oled") {
-                    themeBtn.innerHTML = "⚫ OLED";
-                } else {
-                    themeBtn.innerHTML = "🌙 Dark";
-                }
+                const map = {
+                    dark: "🌙 Dark Mode",
+                    light: "☀️ Light Mode",
+                    oled: "⚫ OLED Mode"
+                };
+
+                themeBtn.innerHTML = map[theme] || "🌙 Dark";
             }
 
             </script>
