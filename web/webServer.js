@@ -11,12 +11,6 @@ const ramHistory = [];
 const pingHistory = [];
 const uptimeHistory = [];
 
-const sessionSetup = require("./login-admin/session");
-const adminRoutes = require("./login-admin/routes");
-
-sessionSetup(app);
-app.use("/", adminRoutes);
-
 let systemCache = { cpu: 0 };
 let startTime = Date.now();
 let longestUptime = 0;
@@ -28,6 +22,12 @@ module.exports = (client) => {
     const app = express();
     const server = http.createServer(app);
     const io = new Server(server);
+
+    const sessionSetup = require("./login-admin/session");
+    const adminRoutes = require("./login-admin/routes");
+
+    sessionSetup(app);
+    app.use("/", adminRoutes);
 
     const PORT = process.env.PORT || 3000;
     const URL = "https://my-discord-bot-mfu0.onrender.com";
