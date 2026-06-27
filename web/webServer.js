@@ -79,11 +79,14 @@ module.exports = (client) => {
         const online = client.isReady();
 
         ramHistory.push(ram);
+        if (ramHistory.length > MAX_POINTS)
+            ramHistory.shift();
+
         pingHistory.push(ping);
+        if (pingHistory.length > MAX_POINTS)
+            pingHistory.shift();
 
         if (uptimeHistory.length > MAX_POINTS) uptimeHistory.shift();
-        if (ramHistory.length > MAX_POINTS) ramHistory.shift();
-        if (pingHistory.length > MAX_POINTS) pingHistory.shift();
 
         currentBlock.online = online;
         if (now - currentBlock.start >= BLOCK_TIME) {
@@ -174,10 +177,13 @@ module.exports = (client) => {
     font-size: 16px;
 }
 
-.menu-item:hover {
-    background: var(--card);
-    transform: translateX(5px);
-    filter: brightness(1.1);
+.menu-item:hover{
+
+    transform: translateX(8px)
+        scale(1.03);
+
+    box-shadow: 0 8px 20px rgba(0,0,0,.2);
+
 }
 
 @media (max-width: 1024px) {
@@ -341,6 +347,7 @@ module.exports = (client) => {
     display:flex;
     flex-direction:column;
 
+    box-shadow: 15px 0 40px rgba(0,0,0,.4);
 }
 
 #sideMenu.show{
@@ -385,6 +392,7 @@ module.exports = (client) => {
     max-width:920px;
 
     margin: 0 auto 5px;
+    box-shadow:var(--shadow);
 
     display:grid;
     grid-template-columns:repeat(5,1fr);
@@ -645,13 +653,19 @@ body {
 
     padding: 15px 40px 40px;
 
-    background: linear-gradient(-45deg, var(--bg), var(--bg2), var(--bg), var(--bg2));
+    background: radial-gradient(circle at top left,#1d4ed8 0%,transparent 35%), radial-gradient(circle at bottom right,#7c3aed 0%,transparent 35%),
+    linear-gradient( 135deg, var(--bg), var(--bg2));
 
     background-size: 400% 400%;
     animation: gradient 15s ease infinite;
 
     color: var(--text);
-    font-family: Arial;
+    font-family:
+    Inter,
+    Segoe UI,
+    Roboto,
+    Arial,
+    sans-serif;
 
     transition: background .4s ease, color .3s ease;
 }
@@ -671,13 +685,18 @@ body {
     border:1px solid var(--border);
     border-radius:20px;
     padding:30px;
-    box-shadow:0 0 30px rgba(0,0,0,.4);
+    box-shadow: var(--shadow);
 
     transition:.25s;
 }
 
 .card:hover{
-    transform:translateY(-5px);
+
+    transform: translateY(-8px)
+        scale(1.01);
+
+    border-color:rgba(59,130,246,.3);
+
 }
 
 .dashboard {
@@ -698,7 +717,8 @@ body {
     flex-shrink:0;
 
     background:var(--card);
-    backdrop-filter:blur(15px);
+    backdrop-filter:blur(25px);
+    box-shadow:var(--shadow);
     border:1px solid var(--border);
     border-radius:20px;
     padding:20px;
@@ -1462,7 +1482,7 @@ body {
 
     setInterval(() => {
         https.get(URL, res => {
-            if (res.statusCode !== 200) {
+            if (res.statusCode >= 400) {
                 console.log("⚠️ Ping fail:", res.statusCode);
             }
         }).on("error", err => {
