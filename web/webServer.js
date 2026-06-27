@@ -110,7 +110,9 @@ module.exports = (client) => {
             return acc + (v.online ? 1 : 0);
         }, 0);
 
-        const onlinePercent = ((onlineCount / total) * 100).toFixed(2);
+        const onlinePercent = history.length
+            ? ((onlineCount / history.length) * 100).toFixed(2)
+            : "100.00";
 
         let disconnectCount = 0;
 
