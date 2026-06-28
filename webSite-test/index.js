@@ -1,8 +1,8 @@
-const { createApp } = require("./webSite-test/app");
-const { startStats, systemCache } = require("./webSite-test/stats");
-const { startUptime } = require("./webSite-test/uptime");
-const { ramHistory, pingHistory, uptimeHistory } = require("./webSite-test/cache");
-const { formatUptime, getLevel } = require("./webSite-test/utils");
+const { createApp } = require("./app");
+const { startStats, systemCache } = require("./stats");
+const { startUptime } = require("./uptime");
+const { ramHistory, pingHistory, uptimeHistory } = require("./cache");
+const { formatUptime, getLevel } = require("./utils");
 
 const packageJson = require("../package.json");
 const expressVersion = require("express/package.json").version;
