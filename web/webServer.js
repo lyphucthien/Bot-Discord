@@ -69,7 +69,7 @@ module.exports = (client) => {
         const currentUptime = Date.now() - startTime;
 
         if (currentUptime > longestUptime) { longestUptime = currentUptime; }
-       if (!client?.isReady()) return;
+        const online = client?.isReady?.() || false;
 
         const ram = Math.round(process.memoryUsage().rss / 1024 / 1024);
         const ping = client.ws?.ping ?? 0;
@@ -1506,9 +1506,6 @@ body {
             
             socket.on("stats", (data) => {
                 if (!data) return;
-                const ping = document.getElementById("ping");
-                if (!ping) return;
-                
                 if (!settings.autoRefresh) return;
 
                 const ping = document.getElementById("ping");
