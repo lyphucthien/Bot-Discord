@@ -980,6 +980,67 @@ body {
     100% { opacity: 1; }
 }
 
+.setting-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin:18px 0;
+}
+
+.setting-row label{
+    font-weight:bold;
+}
+
+.setting-row select{
+    padding:8px;
+    border-radius:8px;
+    background:var(--card);
+    color:var(--text);
+    border:1px solid var(--border);
+}
+
+.setting-row input[type="color"]{
+    width:60px;
+    height:35px;
+    border:none;
+    background:none;
+    cursor:pointer;
+}
+
+#saveSettings{
+    margin-top:20px;
+    width:100%;
+    padding:14px;
+
+    border:none;
+    border-radius:12px;
+    cursor:pointer;
+    font-size:16px;
+    font-weight:bold;
+
+    background:linear-gradient(135deg,#2563eb,#60a5fa);
+    color:white;
+    transition:.25s;
+}
+
+#saveSettings:hover{
+    transform:translateY(-2px);
+}
+
+.no-animation *,
+.no-animation *::before,
+.no-animation *::after{
+    animation:none !important;
+    transition:none !important;
+}
+
+.no-blur .card,
+.no-blur .chart-card,
+.no-blur #sideMenu,
+.no-blur .top-bar,
+.no-blur .modal-content{
+    backdrop-filter:none !important;
+}
         </style>
     </head>
     <body>
@@ -1114,11 +1175,67 @@ body {
                     <span id="closeSettings">&times;</span>
                 </div>
 
-                <div class="menu-content">
-                    <div class="menu-item">🎨 Theme</div>
-                    <div class="menu-item">⏱ Auto Refresh</div>
-                    <div class="menu-item">📊 Chart Settings</div>
-                    <div class="menu-item">🔔 Notifications</div>
+                    <div class="menu-content">
+
+                    <h3>🎨 Appearance</h3>
+
+                    <div class="setting-row">
+
+                    <label>Theme</label>
+
+                    <select id="themeSelect">
+
+                    <option value="dark">Dark</option>
+
+                    <option value="light">Light</option>
+
+                    <option value="oled">OLED</option>
+
+                    </select>
+
+                    </div>
+
+                    <div class="setting-row">
+
+                    <label>Animation</label>
+
+                    <input
+                    type="checkbox"
+                    id="animationToggle"
+                    checked>
+
+                    </div>
+
+                    <div class="setting-row">
+
+                    <label>Blur Effect</label>
+
+                    <input
+                    type="checkbox"
+                    id="blurToggle"
+                    checked>
+
+                    </div>
+
+                    <div class="setting-row">
+
+                    <label>Accent Color</label>
+
+                    <input
+                    type="color"
+                    id="accentPicker"
+                    value="#3b82f6">
+
+                    </div>
+
+                    <br>
+
+                    <button id="saveSettings">
+
+                    💾 Save Settings
+
+                    </button>
+
                 </div>
             </div>
         </div>
@@ -1138,6 +1255,29 @@ body {
             }
 
             const socket = io();
+
+                const defaultSettings = {
+
+                theme: "dark",
+
+                animation: true,
+
+                blur: true,
+
+                accent: "#3b82f6"
+
+            };
+
+            let settings = JSON.parse(localStorage.getItem("dashboardSettings")) || defaultSettings;
+
+            function saveSettings(){
+
+                localStorage.setItem(
+                    "dashboardSettings",
+                    JSON.stringify(settings)
+                );
+
+            }
 
             let pingChart;
             let ramChart;
@@ -1424,8 +1564,31 @@ body {
                 updateThemeButton();
             }
 
+            function applySettings() {
+                setTheme(settings.theme);
+
+                document.documentElement.style.setProperty(
+                    "--primary",
+                    settings.accent
+                );
+
+                if (settings.animation) {
+                    document.body.classList.remove("no-animation");
+                } else {
+                    document.body.classList.add("no-animation");
+                }
+
+                if (settings.blur) {
+                    document.body.classList.remove("no-blur");
+                } else {
+                    document.body.classList.add("no-blur");
+                }
+
+            }
+
             const saved = localStorage.getItem("theme") || "dark";
             setTheme(saved);
+            applySettings();
 
             function updateThemeButton() {
                 const theme = document.documentElement.getAttribute("data-theme");
@@ -1443,7 +1606,17 @@ body {
             const settingsModal = document.getElementById("settingsModal");
             const closeSettings = document.getElementById("closeSettings");
 
-            settingsBtn.addEventListener("click", () => {
+            const themeSelect = document.getElementById("themeSelect");
+            const animationToggle = document.getElementById("animationToggle");
+            const blurToggle = document.getElementById("blurToggle");
+            const accentPicker = document.getElementById("accentPicker");
+            const saveBtn = document.getElementById("saveSettings");
+
+            settingsBtn.addEventListener("click",()=>{
+                themeSelect.value=settings.theme;
+                animationToggle.checked=settings.animation;
+                blurToggle.checked=settings.blur;
+                accentPicker.value=settings.accent;
                 settingsModal.classList.add("show");
             });
 
@@ -1456,6 +1629,16 @@ body {
                     settingsModal.classList.remove("show");
                 }
             });
+
+            saveBtn.onclick=()=>{
+                settings.theme=themeSelect.value;
+                settings.animation=animationToggle.checked;
+                settings.blur=blurToggle.checked;
+                settings.accent=accentPicker.value;
+                saveSettings();
+                applySettings();
+                settingsModal.classList.remove("show");
+            };
 
             </script>
             <div id="uptimeModal" class="modal">
