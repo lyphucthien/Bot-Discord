@@ -103,9 +103,9 @@ module.exports = (client) => {
     if (statsCache) io.emit("stats", statsCache);
   }, 1000);
 
-  server.listen(PORT, () => {
-    console.log("🌐 Web Server Chạy Ở Cổng", PORT);
-  });
+server.listen(PORT, "0.0.0.0", () => {
+  console.log("🌐 Web Server Chạy Ở Cổng", PORT);
+});
 
   const https = require("https");
 
