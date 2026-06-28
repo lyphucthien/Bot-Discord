@@ -1248,11 +1248,6 @@ body {
                     <h3>📊 Dashboard</h3>
 
                     <div class="setting-row">
-                        <label>Auto Refresh</label>
-                        <input type="checkbox" id="refreshToggle" checked>
-                    </div>
-
-                    <div class="setting-row">
                         <label>Show Ping Chart</label>
                         <input type="checkbox" id="pingChartToggle" checked>
                     </div>
@@ -1328,7 +1323,6 @@ body {
                     blur: true,
                     accent: "#3b82f6",
 
-                    autoRefresh: true,
                     showPingChart: true,
                     showRamChart: true,
                     music: false,
@@ -1505,7 +1499,6 @@ body {
             
             socket.on("stats", (data) => {
                 if (!data) return;
-                if (!settings.autoRefresh) return;
 
                 const ping = document.getElementById("ping");
                 const ram = document.getElementById("ram");
@@ -1713,7 +1706,6 @@ body {
             const blurToggle = document.getElementById("blurToggle");
             const accentPicker = document.getElementById("accentPicker");
 
-            const refreshToggle = document.getElementById("refreshToggle");
             const pingChartToggle = document.getElementById("pingChartToggle");
             const ramChartToggle = document.getElementById("ramChartToggle");
             const musicToggle = document.getElementById("musicToggle");
@@ -1729,7 +1721,6 @@ body {
                 blurToggle.checked = settings.blur;
                 accentPicker.value = settings.accent;
 
-                refreshToggle.checked = settings.autoRefresh;
                 pingChartToggle.checked = settings.showPingChart;
                 ramChartToggle.checked = settings.showRamChart;
                 musicToggle.checked = settings.music;
@@ -1756,7 +1747,6 @@ body {
                 settings.blur=blurToggle.checked;
                 settings.accent=accentPicker.value;
 
-                settings.autoRefresh = refreshToggle.checked;
                 settings.showPingChart = pingChartToggle.checked;
                 settings.showRamChart = ramChartToggle.checked;
                 settings.music = musicToggle.checked;
