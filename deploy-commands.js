@@ -48,7 +48,7 @@ const rest = new REST({
 
         await rest.put(
             Routes.applicationCommands(
-                '1503725254386909194'
+                '1520717470262890657'
             ),
             {
                 body: commands
