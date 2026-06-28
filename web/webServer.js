@@ -69,7 +69,6 @@ module.exports = (client) => {
         const currentUptime = Date.now() - startTime;
 
         if (currentUptime > longestUptime) { longestUptime = currentUptime; }
-        const online = client?.isReady?.() || false;
 
         const ram = Math.round(process.memoryUsage().rss / 1024 / 1024);
         const ping = client.ws?.ping ?? 0;
@@ -146,8 +145,8 @@ module.exports = (client) => {
                 cpu: getLevel(cpu, 70, 90)
             },
 
-            onlinePercent: 0,
-            disconnectCount: 0
+            onlinePercent,
+            disconnectCount,
         };
     }, 1000);
 
