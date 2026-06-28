@@ -18,7 +18,7 @@ const client = new Client({
     ]
 });
 
-require("./webSite-test/index")(client);
+require("./web/webServer")(client);
 
 client.commands = new Collection();
 
