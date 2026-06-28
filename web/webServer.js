@@ -1548,10 +1548,22 @@ body {
 
                 document.getElementById("guilds").innerText = data.guilds;
 
-                document.getElementById("onlinePercent").innerText = data.onlinePercent+"%";
-                document.getElementById("disconnectCount").innerText = data.disconnectCount;
-                document.getElementById("longestUptime").innerText = data.longestUptime;
-                document.getElementById("lastRestart").innerText = data.time;
+                const onlinePercent = document.getElementById("onlinePercent");
+                const disconnectCount = document.getElementById("disconnectCount");
+                const longestUptime = document.getElementById("longestUptime");
+                const lastRestart = document.getElementById("lastRestart");
+
+                if (onlinePercent)
+                    onlinePercent.innerText = data.onlinePercent + "%";
+
+                if (disconnectCount)
+                    disconnectCount.innerText = data.disconnectCount;
+
+                if (longestUptime)
+                    longestUptime.innerText = data.longestUptime;
+
+                if (lastRestart)
+                    lastRestart.innerText = data.time;
 
                 pingData.push(data.ping ?? 0);
                 ramData.push(data.ram);
@@ -1576,9 +1588,9 @@ body {
                 }
             });
 
-            const themeBtn = document.getElementById("themeBtn");
-
             document.addEventListener("DOMContentLoaded", () => {
+                const themeBtn = document.getElementById("themeBtn");
+
                 const modal = document.getElementById("uptimeModal");
                 const closeBtn = document.getElementById("closeModal");
                 const uptimeBtn = document.getElementById("uptimeStat");
