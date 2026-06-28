@@ -1334,9 +1334,9 @@ body {
                     showPingChart: true,
                     showRamChart: true,
                     music: false,
-                    compact: false
+                    compact: false,
 
-                    timeFormat: "24h",
+                    timeFormat: "24h"
 
                 };
 
@@ -1529,16 +1529,10 @@ body {
                 cpu.innerText = data.cpu + " %";
 
                 const now = new Date();
-                    time.innerText =
-                    now.toLocaleString(
-                        settings.language === "en" ? "en-US" : "vi-VN",
-                        {
-                            hour12:
-                                settings.timeFormat === "12h",
-
-                            timeZone:"Asia/Ho_Chi_Minh"
-                        }
-                    );
+                time.innerText = now.toLocaleString("vi-VN", {
+                    hour12: settings.timeFormat === "12h",
+                    timeZone: "Asia/Ho_Chi_Minh"
+                });
 
                 uptime.innerText = data.uptime;
 
