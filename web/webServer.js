@@ -69,8 +69,7 @@ module.exports = (client) => {
         const currentUptime = Date.now() - startTime;
 
         if (currentUptime > longestUptime) { longestUptime = currentUptime; }
-        if (!client?.isReady?.()) return;
-        if (!client?.ws) return;
+       if (!client?.isReady()) return;
 
         const ram = Math.round(process.memoryUsage().rss / 1024 / 1024);
         const ping = client.ws?.ping ?? 0;
@@ -127,7 +126,7 @@ module.exports = (client) => {
             ping,
             ram,
             cpu,
-            guilds: client.guilds.cache.size,
+            guilds: client.guilds?.cache?.size || 0,
             uptime,
 
             version: packageJson.version,
@@ -147,8 +146,8 @@ module.exports = (client) => {
                 cpu: getLevel(cpu, 70, 90)
             },
 
-            onlinePercent,
-            disconnectCount
+            onlinePercent: 0,
+            disconnectCount: 0
         };
     }, 1000);
 
@@ -1506,6 +1505,10 @@ body {
             });
             
             socket.on("stats", (data) => {
+                if (!data) return;
+                const ping = document.getElementById("ping");
+                if (!ping) return;
+                
                 if (!settings.autoRefresh) return;
 
                 const ping = document.getElementById("ping");
