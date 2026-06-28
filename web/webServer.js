@@ -5,7 +5,7 @@ const { Server } = require("socket.io");
 
 const packageJson = require("../package.json");
 const expressVersion = require("express/package.json").version;
-const discordVersion = require("discord.js").version;
+const discordVersion = require("discord.js/package.json").version;
 
 const ramHistory = [];
 const pingHistory = [];
@@ -1709,7 +1709,6 @@ body {
             const settingsBtn = document.getElementById("settingsBtn");
             const settingsModal = document.getElementById("settingsModal");
             const closeSettings = document.getElementById("closeSettings");
-
             const themeSelect = document.getElementById("themeSelect");
             const animationToggle = document.getElementById("animationToggle");
             const blurToggle = document.getElementById("blurToggle");
