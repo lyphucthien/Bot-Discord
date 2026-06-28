@@ -18,19 +18,16 @@ const client = new Client({
     ]
 });
 
-// Khởi động Web Dashboard
-require("./web/webServer")(client);
+require("./webSite-test/index")(client);
 
 client.commands = new Collection();
 
-// Load Events
 const eventFiles = fs.readdirSync("./events").filter(f => f.endsWith(".js"));
 
 for (const file of eventFiles) {
     require(`./events/${file}`)(client);
 }
 
-// Load Commands
 const commandFiles = fs.readdirSync("./commands").filter(f => f.endsWith(".js"));
 
 for (const file of commandFiles) {
