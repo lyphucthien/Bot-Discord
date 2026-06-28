@@ -875,8 +875,12 @@ body {
     font-size:15px;
     font-weight:bold;
 
-    background:linear-gradient(135deg,#2563eb,#60a5fa);
-    color:white;
+    background: linear-gradient(
+        135deg,
+        var(--primary),
+        color-mix(in srgb, var(--primary) 60%, white)
+    );
+    color: white;
 
     box-shadow:0 10px 25px rgba(37,99,235,.4);
 
@@ -1018,8 +1022,12 @@ body {
     font-size:16px;
     font-weight:bold;
 
-    background:linear-gradient(135deg,#2563eb,#60a5fa);
-    color:white;
+    background: linear-gradient(
+        135deg,
+        var(--primary),
+        color-mix(in srgb, var(--primary) 60%, white)
+    );
+    color: white;
     transition:.25s;
 }
 
@@ -1040,6 +1048,27 @@ body {
 .no-blur .top-bar,
 .no-blur .modal-content{
     backdrop-filter:none !important;
+}
+
+.compact .card{
+    padding:18px;
+}
+
+.compact .chart-card{
+    height:350px;
+}
+
+.compact .stat{
+    margin:6px 0;
+    padding:8px;
+}
+
+.compact h1{
+    font-size:22px;
+}
+
+.compact .status{
+    font-size:22px;
 }
         </style>
     </head>
@@ -1200,21 +1229,49 @@ body {
                     <label>Animation</label>
 
                     <input
-                    type="checkbox"
-                    id="animationToggle"
+                        type="checkbox"
+                        id="animationToggle"
                     checked>
 
                     </div>
 
                     <div class="setting-row">
-
-                    <label>Blur Effect</label>
+                        <label>Blur Effect</label>
 
                     <input
-                    type="checkbox"
-                    id="blurToggle"
-                    checked>
+                        type="checkbox"
+                        id="blurToggle"
+                        checked>
 
+                    </div>
+
+                    <hr>
+
+                    <h3>📊 Dashboard</h3>
+
+                    <div class="setting-row">
+                        <label>Auto Refresh</label>
+                        <input type="checkbox" id="refreshToggle" checked>
+                    </div>
+
+                    <div class="setting-row">
+                        <label>Show Ping Chart</label>
+                        <input type="checkbox" id="pingChartToggle" checked>
+                    </div>
+
+                    <div class="setting-row">
+                        <label>Show RAM Chart</label>
+                        <input type="checkbox" id="ramChartToggle" checked>
+                    </div>
+
+                    <div class="setting-row">
+                        <label>Music Bar</label>
+                        <input type="checkbox" id="musicToggle">
+                    </div>
+
+                    <div class="setting-row">
+                        <label>Compact Mode</label>
+                        <input type="checkbox" id="compactToggle">
                     </div>
 
                     <div class="setting-row">
@@ -1222,18 +1279,16 @@ body {
                     <label>Accent Color</label>
 
                     <input
-                    type="color"
-                    id="accentPicker"
-                    value="#3b82f6">
+                        type="color"
+                        id="accentPicker"
+                        value="#3b82f6">
 
                     </div>
 
                     <br>
 
                     <button id="saveSettings">
-
-                    💾 Save Settings
-
+                        💾 Save Settings
                     </button>
 
                 </div>
@@ -1257,16 +1312,18 @@ body {
             const socket = io();
 
                 const defaultSettings = {
+                    theme: "dark",
+                    animation: true,
+                    blur: true,
+                    accent: "#3b82f6",
 
-                theme: "dark",
+                    autoRefresh: true,
+                    showPingChart: true,
+                    showRamChart: true,
+                    music: false,
+                    compact: false
 
-                animation: true,
-
-                blur: true,
-
-                accent: "#3b82f6"
-
-            };
+                };
 
             let settings = JSON.parse(localStorage.getItem("dashboardSettings")) || defaultSettings;
 
@@ -1434,6 +1491,7 @@ body {
             });
             
             socket.on("stats", (data) => {
+                if (!settings.autoRefresh) return;
 
                 const ping = document.getElementById("ping");
                 const ram = document.getElementById("ram");
@@ -1584,11 +1642,24 @@ body {
                     document.body.classList.add("no-blur");
                 }
 
+                document.querySelector(".left-charts").style.display =
+                    settings.showPingChart ? "" : "none";
+
+                document.querySelectorAll(".chart-card")[1].style.display =
+                    settings.showRamChart ? "" : "none";
+
+                if (settings.compact) {
+                    document.body.classList.add("compact");
+                } else {
+                    document.body.classList.remove("compact");
+                }
+
             }
 
             const saved = localStorage.getItem("theme") || "dark";
             setTheme(saved);
             applySettings();
+            updateThemeButton();
 
             function updateThemeButton() {
                 const theme = document.documentElement.getAttribute("data-theme");
@@ -1610,6 +1681,13 @@ body {
             const animationToggle = document.getElementById("animationToggle");
             const blurToggle = document.getElementById("blurToggle");
             const accentPicker = document.getElementById("accentPicker");
+
+            const refreshToggle = document.getElementById("refreshToggle");
+            const pingChartToggle = document.getElementById("pingChartToggle");
+            const ramChartToggle = document.getElementById("ramChartToggle");
+            const musicToggle = document.getElementById("musicToggle");
+            const compactToggle = document.getElementById("compactToggle");
+            
             const saveBtn = document.getElementById("saveSettings");
 
             settingsBtn.addEventListener("click",()=>{
@@ -1617,6 +1695,13 @@ body {
                 animationToggle.checked=settings.animation;
                 blurToggle.checked=settings.blur;
                 accentPicker.value=settings.accent;
+
+                refreshToggle.checked=settings.autoRefresh;
+                pingChartToggle.checked=settings.showPingChart;
+                ramChartToggle.checked=settings.showRamChart;
+                musicToggle.checked=settings.music;
+                compactToggle.checked=settings.compact;
+
                 settingsModal.classList.add("show");
             });
 
@@ -1635,6 +1720,13 @@ body {
                 settings.animation=animationToggle.checked;
                 settings.blur=blurToggle.checked;
                 settings.accent=accentPicker.value;
+
+                settings.autoRefresh = refreshToggle.checked;
+                settings.showPingChart = pingChartToggle.checked;
+                settings.showRamChart = ramChartToggle.checked;
+                settings.music = musicToggle.checked;
+                settings.compact = compactToggle.checked;
+
                 saveSettings();
                 applySettings();
                 settingsModal.classList.remove("show");
