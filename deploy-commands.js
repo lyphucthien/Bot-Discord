@@ -49,7 +49,7 @@ const rest = new REST({
         await rest.put(
             Routes.applicationGuildCommands(
   '1520717470262890657',
-  'GUILD_ID'
+  '1496474678515073046'
 ),
             {
                 body: commands
