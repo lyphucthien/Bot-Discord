@@ -1149,9 +1149,7 @@ body {
         
         <div class="card">
 
-            <h1>
-                🤖 ${client.user ? client.user.username : "Bot Lâm Đồng"}
-            </h1>
+            <h1 id="🤖 Bot Lâm Đồng"></h1>
 
             <div class="status">
                <span class="dot ${online ? "online" : "offline"}"></span>
@@ -1208,7 +1206,7 @@ body {
 
                     <div class="setting-row">
 
-                    <label>Theme</label>
+                        <label>Theme</label>
 
                     <select id="themeSelect">
 
@@ -1248,22 +1246,22 @@ body {
                     <h3>📊 Dashboard</h3>
 
                     <div class="setting-row">
-                        <label>Show Ping Chart</label>
+                        <label>Hiển Thị Biểu Đồ Ping</label>
                         <input type="checkbox" id="pingChartToggle" checked>
                     </div>
 
                     <div class="setting-row">
-                        <label>Show RAM Chart</label>
+                        <label>Hiển Thị Biểu Đồ RAM</label>
                         <input type="checkbox" id="ramChartToggle" checked>
                     </div>
 
                     <div class="setting-row">
-                        <label>Music Bar</label>
+                        <label>Thanh Nhạc</label>
                         <input type="checkbox" id="musicToggle">
                     </div>
 
                     <div class="setting-row">
-                        <label>Compact Mode</label>
+                        <label>Chế Độ Nhỏ Gọn</label>
                         <input type="checkbox" id="compactToggle">
                     </div>
 
@@ -1272,7 +1270,7 @@ body {
                     <h3>🕒 Time</h3>
 
                     <div class="setting-row">
-                        <label>Time Format</label>
+                        <label>Định Dạng Thời Gian</label>
 
                     <select id="timeFormatSelect">
                         <option value="24h">24 Hour</option>
