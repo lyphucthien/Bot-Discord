@@ -5,7 +5,7 @@ const { Server } = require("socket.io");
 
 const packageJson = require("../package.json");
 const expressVersion = require("express/package.json").version;
-const discordVersion = require("discord.js/package.json").version;
+const discordVersion = require("discord.js").version;
 
 const ramHistory = [];
 const pingHistory = [];
