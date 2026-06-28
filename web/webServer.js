@@ -1274,6 +1274,21 @@ body {
                         <input type="checkbox" id="compactToggle">
                     </div>
 
+                    <hr>
+
+                    <h3>🕒 Time</h3>
+
+                    <div class="setting-row">
+                        <label>Time Format</label>
+
+                    <select id="timeFormatSelect">
+                        <option value="24h">24 Hour</option>
+                        <option value="12h">12 Hour</option>
+
+                    </select>
+
+                    </div>
+
                     <div class="setting-row">
 
                     <label>Accent Color</label>
@@ -1286,12 +1301,10 @@ body {
                     </div>
 
                     <br>
-
-                    <button id="saveSettings">
-                        💾 Save Settings
-                    </button>
-
-                </div>
+                        <button id="saveSettings">
+                            💾 Save Settings
+                        </button>
+                    </div>
             </div>
         </div>
 
@@ -1322,6 +1335,8 @@ body {
                     showRamChart: true,
                     music: false,
                     compact: false
+
+                    timeFormat: "24h",
 
                 };
 
@@ -1512,7 +1527,19 @@ body {
                 ping.innerText = data.ping + " ms";
                 ram.innerText = data.ram + " MB";
                 cpu.innerText = data.cpu + " %";
-                time.innerText = data.time;
+
+                const now = new Date();
+                    time.innerText =
+                    now.toLocaleString(
+                        settings.language === "en" ? "en-US" : "vi-VN",
+                        {
+                            hour12:
+                                settings.timeFormat === "12h",
+
+                            timeZone:"Asia/Ho_Chi_Minh"
+                        }
+                    );
+
                 uptime.innerText = data.uptime;
 
                 ping.classList.add(data.status.ping);
@@ -1687,20 +1714,24 @@ body {
             const ramChartToggle = document.getElementById("ramChartToggle");
             const musicToggle = document.getElementById("musicToggle");
             const compactToggle = document.getElementById("compactToggle");
+
+            const timeFormatSelect = document.getElementById("timeFormatSelect");
             
             const saveBtn = document.getElementById("saveSettings");
 
             settingsBtn.addEventListener("click",()=>{
-                themeSelect.value=settings.theme;
-                animationToggle.checked=settings.animation;
-                blurToggle.checked=settings.blur;
-                accentPicker.value=settings.accent;
+                themeSelect.value = settings.theme;
+                animationToggle.checked = settings.animation;
+                blurToggle.checked = settings.blur;
+                accentPicker.value = settings.accent;
 
-                refreshToggle.checked=settings.autoRefresh;
-                pingChartToggle.checked=settings.showPingChart;
-                ramChartToggle.checked=settings.showRamChart;
-                musicToggle.checked=settings.music;
-                compactToggle.checked=settings.compact;
+                refreshToggle.checked = settings.autoRefresh;
+                pingChartToggle.checked = settings.showPingChart;
+                ramChartToggle.checked = settings.showRamChart;
+                musicToggle.checked = settings.music;
+                compactToggle.checked = settings.compact;
+
+                timeFormatSelect.value = settings.timeFormat;
 
                 settingsModal.classList.add("show");
             });
@@ -1726,6 +1757,8 @@ body {
                 settings.showRamChart = ramChartToggle.checked;
                 settings.music = musicToggle.checked;
                 settings.compact = compactToggle.checked;
+
+                settings.timeFormat = timeFormatSelect.value;
 
                 saveSettings();
                 applySettings();
