@@ -307,6 +307,7 @@ module.exports = (client) => {
     color:var(--text);
 
     border:1px solid var(--border);
+
     backdrop-filter:blur(15px);
 
     transition:opacity .25s, transform .25s;
@@ -319,17 +320,21 @@ module.exports = (client) => {
 }
 
 #menuOverlay{
+
     position:fixed;
     inset:0;
 
     background:rgba(0,0,0,.45);
+
     backdrop-filter:blur(4px);
 
     opacity:0;
     visibility:hidden;
+
     transition:.3s;
 
     z-index:9998;
+
 }
 
 #menuOverlay.show{
@@ -1057,21 +1062,19 @@ body {
     bottom:20px;
     transform:translateX(-50%);
 
-    width:320px;
-    height:600px;
-
+    width:520px;
+    max-width:95%;
     display:flex;
-    flex-direction:column;
-    gap:12px;
+    gap:15px;
+    padding:18px;
 
-    padding:20px;
-
+    border-radius:18px;
     background:var(--card);
     border:1px solid var(--border);
-    border-radius:20px;
-    box-shadow:var(--shadow);
+    backdrop-filter:blur(15px);
 
-    backdrop-filter:blur(25px);
+    box-shadow:var(--shadow);
+    z-index:9999;
 }
 
 .cover{
@@ -1429,6 +1432,42 @@ body {
             let pingData = [];
             let ramData = [];
 
+            const playlist = [
+                {
+                    title: "Never Gonna Give You Up",
+                    artist: "Rick Astley",
+                    src: "/music1.mp3",
+                    cover: "/cover1.jpg"
+                },
+                {
+                    title: "Faded",
+                    artist: "Alan Walker",
+                    src: "/music2.mp3",
+                    cover: "/cover2.jpg"
+                },
+                {
+                    title: "Believer",
+                    artist: "Imagine Dragons",
+                    src: "/music3.mp3",
+                    cover: "/cover3.jpg"
+                }
+            ];
+
+            let currentSong = 0;
+            let isShuffle = false;
+            let isRepeat = false;
+
+            function loadTrack(index) {
+                const song = playlist[index];
+
+                document.getElementById("songTitle").innerText = song.title;
+                document.getElementById("artist").innerText = song.artist;
+                document.getElementById("cover").src = song.cover;
+
+                audio.src = song.src;
+                audio.load();
+            }
+
             pingChart = new Chart(document.getElementById("pingChart"), {
                 type: "line",
                 data: {
@@ -1720,6 +1759,7 @@ body {
                 });
 
                 const audio = document.getElementById("bgMusic");
+                loadTrack(currentSong);
                 const playBtn = document.getElementById("playMusic");
                 const volume = document.getElementById("volume");
 
@@ -1775,8 +1815,67 @@ body {
                     isToggling = false;
                 };
 
+                document.getElementById("nextBtn").onclick = () => {
+                    currentSong++;
+
+                    if (currentSong >= playlist.length) {
+                        currentSong = 0;
+                    }
+
+                    loadTrack(currentSong);
+
+                    audio.play();
+                    playBtn.innerHTML = "⏸";
+                };
+
+                document.getElementById("prevBtn").onclick = () => {
+                    currentSong--;
+
+                    if (currentSong < 0) {
+                        currentSong = playlist.length - 1;
+                    }
+
+                    loadTrack(currentSong);
+
+                    audio.play();
+                    playBtn.innerHTML = "⏸";
+                };
+
+                document.getElementById("shuffleBtn").onclick = () => {
+                    isShuffle = !isShuffle;
+
+                    document.getElementById("shuffleBtn").style.opacity =
+                        isShuffle ? "1" : "0.4";
+                };
+
+                document.getElementById("repeatBtn").onclick = () => {
+                    isRepeat = !isRepeat;
+
+                    audio.loop = isRepeat;
+
+                    document.getElementById("repeatBtn").style.opacity =
+                        isRepeat ? "1" : "0.4";
+                };
+
                 volume.oninput = () => {
                     audio.volume = volume.value / 100;
+                };
+                
+                audio.onended = () => {
+                    if (isRepeat) return;
+
+                    if (isShuffle) {
+                        currentSong = Math.floor(Math.random() * playlist.length);
+                    } else {
+                        currentSong++;
+
+                        if (currentSong >= playlist.length) {
+                            currentSong = 0;
+                        }
+                    }
+
+                    loadTrack(currentSong);
+                    audio.play();
                 };
 
             });
