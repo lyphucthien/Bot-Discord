@@ -1434,23 +1434,11 @@ body {
 
             const playlist = [
                 {
-                    title: "Never Gonna Give You Up",
-                    artist: "Rick Astley",
-                    src: "/music1.mp3",
-                    cover: "/cover1.jpg"
+                    title: "Jessie Villa - WILDFIRE",
+                    artist: "123",
+                    src: "/Wildfire - Jessie Villa.mp3",
+                    cover: "/123.jpg"
                 },
-                {
-                    title: "Faded",
-                    artist: "Alan Walker",
-                    src: "/music2.mp3",
-                    cover: "/cover2.jpg"
-                },
-                {
-                    title: "Believer",
-                    artist: "Imagine Dragons",
-                    src: "/music3.mp3",
-                    cover: "/cover3.jpg"
-                }
             ];
 
             let currentSong = 0;
