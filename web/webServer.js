@@ -1071,66 +1071,87 @@ body {
     font-size:22px;
 }
 
-.music-bar{
+.music-player{
     position:fixed;
-
     left:50%;
     bottom:20px;
-
     transform:translateX(-50%);
 
-    width:450px;
-    max-width:90%;
-
+    width:520px;
+    max-width:95%;
     display:flex;
-    align-items:center;
     gap:15px;
+    padding:18px;
 
-    padding:15px;
     border-radius:18px;
-
     background:var(--card);
     border:1px solid var(--border);
     backdrop-filter:blur(15px);
-    box-shadow:var(--shadow);
 
+    box-shadow:var(--shadow);
     z-index:9999;
 }
 
-.music-bar button{
+.cover{
+    width:90px;
+    height:90px;
 
-    width:50px;
-    height:50px;
+    border-radius:12px;
+    object-fit:cover;
+}
+
+.player-body{
+    flex:1;
+}
+
+.song-title{
+    font-size:18px;
+    font-weight:bold;
+}
+
+.artist{
+    opacity:.7;
+    margin-bottom:10px;
+}
+
+.controls{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    margin:10px 0;
+}
+
+.controls button{
+    width:38px;
+    height:38px;
 
     border:none;
     border-radius:50%;
 
     background:var(--primary);
     color:white;
-
-    font-size:20px;
     cursor:pointer;
-
 }
 
-.music-bar button:hover{
-    transform:scale(1.1);
+.progress{
+    display:flex;
+    align-items:center;
+    gap:10px;
 }
 
-.music-info{
+.progress input{
     flex:1;
 }
 
-.music-info div{
-    font-weight:bold;
+.volume{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-top:10px;
 }
 
-.music-info small{
-    opacity:.7;
-}
-
-.music-bar input{
-    width:120px;
+.volume input{
+    flex:1;
 }
         </style>
     </head>
@@ -1702,11 +1723,41 @@ body {
                         modal.classList.remove("show");
                     }
                 });
-                
+
                 const audio = document.getElementById("bgMusic");
                 const playBtn = document.getElementById("playMusic");
                 const volume = document.getElementById("volume");
+
+                const progressBar = document.getElementById("progressBar");
+                const currentTime = document.getElementById("currentTime");
+                const duration = document.getElementById("duration");
+
                 audio.volume = 0.5;
+
+                function formatTime(sec){
+                    const m = Math.floor(sec / 60);
+                    const s = Math.floor(sec % 60);
+                    return m + ":" + String(s).padStart(2,"0");
+                }
+
+                audio.onloadedmetadata = ()=>{
+                    duration.innerText = formatTime(audio.duration);
+                };
+
+                audio.ontimeupdate = ()=>{
+                    if(!audio.duration) return;
+
+                    progressBar.value =
+                        audio.currentTime / audio.duration * 100;
+                        
+                    currentTime.innerText =
+                        formatTime(audio.currentTime);
+                };
+
+                progressBar.oninput = ()=>{
+                    audio.currentTime =
+                        progressBar.value / 100 * audio.duration;
+                };
 
                 playBtn.onclick = async () => {
                     if(audio.paused){
@@ -1894,32 +1945,68 @@ body {
 
             </div>
 
-        <div id="musicBar" class="music-bar">
+            <div id="musicBar" class="music-player">
 
-            <button id="playMusic">
-                ▶
-            </button>
+                <img
+                    id="cover"
+                    src="/cover.jpg"
+                    class="cover">
 
-            <div class="music-info">
+                <div class="player-body">
 
-                <div>
-                    🎵 Dashboard Music
+                    <div class="song-title" id="songTitle">
+                        Never Gonna Give You Up
+                    </div>
+
+                    <div class="artist" id="artist">
+                        Rick Astley
+                    </div>
+
+                    <div class="controls">
+
+                        <button id="prevBtn">⏮</button>
+
+                        <button id="playMusic">▶</button>
+
+                        <button id="nextBtn">⏭</button>
+
+                        <button id="shuffleBtn">🔀</button>
+
+                        <button id="repeatBtn">🔁</button>
+
+                    </div>
+
+                    <div class="progress">
+
+                        <span id="currentTime">0:00</span>
+
+                        <input
+                            type="range"
+                            id="progressBar"
+                            value="0"
+                            min="0"
+                            max="100">
+
+                        <span id="duration">0:00</span>
+
+                    </div>
+
+                    <div class="volume">
+
+                        🔊
+
+                        <input
+                            type="range"
+                            id="volume"
+                            min="0"
+                            max="100"
+                            value="50">
+
+                    </div>
+
                 </div>
 
-                <small>
-                    My Favorite Song
-                </small>
-
             </div>
-
-            <input
-                id="volume"
-                type="range"
-                min="0"
-                max="100"
-                value="50">
-
-        </div>
 
         <audio id="bgMusic" loop>
 
