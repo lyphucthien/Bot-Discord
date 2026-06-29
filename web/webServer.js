@@ -1437,7 +1437,7 @@ body {
                     title: "WILDFIRE",
                     artist: "Jessie Villa",
                     src: "https://drive.google.com/uc?export=download&id=1fJqN6eczaiEnEz6_9fINLQbes8HfvEsO",
-                    cover: "/cover/123.jpg"
+                    cover: "https://drive.google.com/uc?export=view&id=1d12Mi6-cJHl6dgL1UgPb62xaTEi_slK8"
                 }
             ];
 
