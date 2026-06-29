@@ -23,7 +23,8 @@ module.exports = (client) => {
     const server = http.createServer(app);
     const io = new Server(server);
     
-    app.use(express.static("public"));
+    const path = require("path");
+    app.use(express.static(path.join(__dirname, "public")));
 
     const PORT = process.env.PORT || 3000;
     const URL = "https://my-discord-bot-mfu0.onrender.com";
@@ -1434,8 +1435,8 @@ body {
 
             const playlist = [
                 {
-                    title: "Jessie Villa - WILDFIRE",
-                    artist: "123",
+                    title: "Jessie Villa",
+                    artist: "WILDFIRE",
                     src: "/music/Wildfire-JessieVilla.mp3",
                     cover: "/cover/123.jpg"
                 }
