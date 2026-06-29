@@ -24,7 +24,8 @@ module.exports = (client) => {
     const io = new Server(server);
     
     const path = require("path");
-    app.use(express.static(path.join(__dirname, "public")));
+    app.use("/music", express.static(path.join(__dirname, "public/music")));
+    console.log(__dirname);
 
     const PORT = process.env.PORT || 10000;
     const URL = "https://my-discord-bot-mfu0.onrender.com";
