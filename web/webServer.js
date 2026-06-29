@@ -1436,7 +1436,7 @@ body {
                 {
                     title: "Jessie Villa - WILDFIRE",
                     artist: "123",
-                    src: "/Wildfire-JessieVilla.mp3",
+                    src: "/music/Wildfire-JessieVilla.mp3",
                     cover: "/cover/123.jpg"
                 },
             ];
