@@ -22,6 +22,8 @@ module.exports = (client) => {
     const app = express();
     const server = http.createServer(app);
     const io = new Server(server);
+    
+    app.use(express.static("public"));
 
     const PORT = process.env.PORT || 3000;
     const URL = "https://my-discord-bot-mfu0.onrender.com";
@@ -1068,6 +1070,68 @@ body {
 .compact .status{
     font-size:22px;
 }
+
+.music-bar{
+    position:fixed;
+
+    left:50%;
+    bottom:20px;
+
+    transform:translateX(-50%);
+
+    width:450px;
+    max-width:90%;
+
+    display:flex;
+    align-items:center;
+    gap:15px;
+
+    padding:15px;
+    border-radius:18px;
+
+    background:var(--card);
+    border:1px solid var(--border);
+    backdrop-filter:blur(15px);
+    box-shadow:var(--shadow);
+
+    z-index:9999;
+}
+
+.music-bar button{
+
+    width:50px;
+    height:50px;
+
+    border:none;
+    border-radius:50%;
+
+    background:var(--primary);
+    color:white;
+
+    font-size:20px;
+    cursor:pointer;
+
+}
+
+.music-bar button:hover{
+    transform:scale(1.1);
+}
+
+.music-info{
+    flex:1;
+}
+
+.music-info div{
+    font-weight:bold;
+}
+
+.music-info small{
+    opacity:.7;
+}
+
+.music-bar input{
+    width:120px;
+}
         </style>
     </head>
     <body>
@@ -1149,7 +1213,9 @@ body {
         
         <div class="card">
 
-            <h1 id="🤖 Bot Lâm Đồng"></h1>
+            <h1 id="botName">
+                🤖 ${client.user ? client.user.username : "Bot Lâm Đồng"}
+            </h1>
 
             <div class="status">
                <span class="dot ${online ? "online" : "offline"}"></span>
@@ -1636,6 +1702,35 @@ body {
                         modal.classList.remove("show");
                     }
                 });
+                
+                const audio = document.getElementById("bgMusic");
+                const playBtn = document.getElementById("playMusic");
+                const volume = document.getElementById("volume");
+                audio.volume = 0.5;
+
+                playBtn.onclick = async () => {
+                    if(audio.paused){
+
+                        try{
+                            await audio.play();
+                            playBtn.innerHTML = "⏸";
+
+                        }catch(err){
+                            console.log(err);
+
+                        }
+
+                    }else{
+                        audio.pause();
+                        playBtn.innerHTML = "▶";
+
+                    }
+
+                };
+
+                volume.oninput = () => {
+                    audio.volume = volume.value / 100;
+                };
 
             });
 
@@ -1757,7 +1852,7 @@ body {
                 settingsModal.classList.remove("show");
             };
 
-            </script>
+        </script>
             <div id="uptimeModal" class="modal">
 
                 <div class="modal-content">
@@ -1798,9 +1893,44 @@ body {
                 </div>
 
             </div>
-        </body>
-    </html>
-    `);
+
+        <div id="musicBar" class="music-bar">
+
+            <button id="playMusic">
+                ▶
+            </button>
+
+            <div class="music-info">
+
+                <div>
+                    🎵 Dashboard Music
+                </div>
+
+                <small>
+                    My Favorite Song
+                </small>
+
+            </div>
+
+            <input
+                id="volume"
+                type="range"
+                min="0"
+                max="100"
+                value="50">
+
+        </div>
+
+        <audio id="bgMusic" loop>
+
+            <source
+                src="/music.mp3"
+                type="audio/mpeg">
+
+        </audio>
+    </body>
+</html>
+`);
 
     });
 
