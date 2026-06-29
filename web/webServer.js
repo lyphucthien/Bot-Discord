@@ -1749,7 +1749,7 @@ body {
 
                     progressBar.value =
                         audio.currentTime / audio.duration * 100;
-                        
+
                     currentTime.innerText =
                         formatTime(audio.currentTime);
                 };
@@ -1801,13 +1801,17 @@ body {
 
                 if (settings.animation) {
                     document.body.classList.remove("no-animation");
-                } else {
+                }
+
+                else {
                     document.body.classList.add("no-animation");
                 }
 
                 if (settings.blur) {
                     document.body.classList.remove("no-blur");
-                } else {
+                }
+
+                else {
                     document.body.classList.add("no-blur");
                 }
 
@@ -1819,10 +1823,13 @@ body {
 
                 if (settings.compact) {
                     document.body.classList.add("compact");
-                } else {
+                }
+
+                else {
                     document.body.classList.remove("compact");
                 }
 
+                document.getElementById("musicBar").style.display = settings.music ? "flex" : "none";
             }
 
             const saved = localStorage.getItem("theme") || "dark";
@@ -1963,15 +1970,11 @@ body {
                     </div>
 
                     <div class="controls">
-
                         <button id="prevBtn">⏮</button>
-
                         <button id="playMusic">▶</button>
-
                         <button id="nextBtn">⏭</button>
 
                         <button id="shuffleBtn">🔀</button>
-
                         <button id="repeatBtn">🔁</button>
 
                     </div>
