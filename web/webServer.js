@@ -307,7 +307,6 @@ module.exports = (client) => {
     color:var(--text);
 
     border:1px solid var(--border);
-
     backdrop-filter:blur(15px);
 
     transition:opacity .25s, transform .25s;
@@ -320,21 +319,17 @@ module.exports = (client) => {
 }
 
 #menuOverlay{
-
     position:fixed;
     inset:0;
 
     background:rgba(0,0,0,.45);
-
     backdrop-filter:blur(4px);
 
     opacity:0;
     visibility:hidden;
-
     transition:.3s;
 
     z-index:9998;
-
 }
 
 #menuOverlay.show{
@@ -1035,21 +1030,6 @@ body {
     transform:translateY(-2px);
 }
 
-.no-animation *,
-.no-animation *::before,
-.no-animation *::after{
-    animation:none !important;
-    transition:none !important;
-}
-
-.no-blur .card,
-.no-blur .chart-card,
-.no-blur #sideMenu,
-.no-blur .top-bar,
-.no-blur .modal-content{
-    backdrop-filter:none !important;
-}
-
 .compact .card{
     padding:18px;
 }
@@ -1077,19 +1057,21 @@ body {
     bottom:20px;
     transform:translateX(-50%);
 
-    width:520px;
-    max-width:95%;
-    display:flex;
-    gap:15px;
-    padding:18px;
+    width:320px;
+    height:600px;
 
-    border-radius:18px;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+
+    padding:20px;
+
     background:var(--card);
     border:1px solid var(--border);
-    backdrop-filter:blur(15px);
-
+    border-radius:20px;
     box-shadow:var(--shadow);
-    z-index:9999;
+
+    backdrop-filter:blur(25px);
 }
 
 .cover{
@@ -1152,6 +1134,24 @@ body {
 
 .volume input{
     flex:1;
+}
+
+.no-animation *,
+.no-animation *::before,
+.no-animation *::after{
+    animation:none !important;
+    transition:none !important;
+}
+
+.no-blur .card,
+.no-blur .chart-card,
+.no-blur #sideMenu,
+.no-blur .top-bar,
+.no-blur .modal-content{
+    backdrop-filter:none !important;
+}
+.no-blur .music-player {
+    backdrop-filter: none !important;
 }
         </style>
     </head>
