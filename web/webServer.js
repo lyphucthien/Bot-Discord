@@ -25,8 +25,6 @@ module.exports = (client) => {
     
     const path = require("path");
 
-    app.use("/music",express.static(path.resolve(__dirname, "public/music")));
-
     const PORT = process.env.PORT || 10000;
     const URL = "https://my-discord-bot-mfu0.onrender.com";
 
@@ -1436,9 +1434,9 @@ body {
 
             const playlist = [
                 {
-                    title: "Jessie Villa",
-                    artist: "WILDFIRE",
-                    src: "/music/Wildfire-JessieVilla.mp3",
+                    title: "WILDFIRE",
+                    artist: "Jessie Villa",
+                    src: "https://drive.google.com/uc?export=download&id=1fJqN6eczaiEnEz6_9fINLQbes8HfvEsO",
                     cover: "/cover/123.jpg"
                 }
             ];
