@@ -26,7 +26,7 @@ module.exports = (client) => {
     const path = require("path");
     app.use(express.static(path.join(__dirname, "public")));
 
-    const PORT = process.env.PORT || 3000;
+    const PORT = process.env.PORT || 10000;
     const URL = "https://my-discord-bot-mfu0.onrender.com";
 
     function formatUptime(sec) {
