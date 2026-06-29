@@ -1436,8 +1436,8 @@ body {
                 {
                     title: "WILDFIRE",
                     artist: "Jessie Villa",
-                    src: "https://drive.google.com/uc?export=download&id=1fJqN6eczaiEnEz6_9fINLQbes8HfvEsO",
-                    cover: "https://drive.google.com/uc?export=view&id=1d12Mi6-cJHl6dgL1UgPb62xaTEi_slK8"
+                    src: "https://raw.githubusercontent.com/lyphucthien/pictuces-music/main/Wildfire-Jessie-Villa.mp3",
+                    cover: "https://raw.githubusercontent.com/lyphucthien/pictuces-music/main/123.jpg"
                 }
             ];
 
