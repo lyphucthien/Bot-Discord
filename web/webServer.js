@@ -1754,24 +1754,25 @@ body {
                         progressBar.value / 100 * audio.duration;
                 };
 
-                playBtn.onclick = async () => {
-                    if(audio.paused){
+                let isToggling = false;
 
-                        try{
+                playBtn.onclick = async () => {
+                    if (isToggling) return;
+                    isToggling = true;
+
+                    try {
+                        if (audio.paused) {
                             await audio.play();
                             playBtn.innerHTML = "⏸";
-
-                        }catch(err){
-                            console.log(err);
-
+                        } else {
+                            audio.pause();
+                            playBtn.innerHTML = "▶";
                         }
-
-                    }else{
-                        audio.pause();
-                        playBtn.innerHTML = "▶";
-
+                    } catch (err) {
+                        console.warn(err);
                     }
 
+                    isToggling = false;
                 };
 
                 volume.oninput = () => {
@@ -1821,9 +1822,9 @@ body {
                 const theme = document.documentElement.getAttribute("data-theme");
 
                 const map = {
-                    dark: "🌙 Dark Mode",
-                    light: "☀️ Light Mode",
-                    oled: "⚫ OLED Mode"
+                    dark: "🌙 Dark",
+                    light: "☀️ Light",
+                    oled: "⚫ OLED"
                 };
 
                 themeBtn.innerHTML = map[theme] || "🌙 Dark";
