@@ -1789,48 +1789,33 @@ body {
             function applySettings() {
                 setTheme(settings.theme);
 
-                document.documentElement.style.setProperty(
-                    "--primary",
-                    settings.accent
-                );
+                document.documentElement.style.setProperty("--primary", settings.accent);
 
-                if (settings.animation) {
-                    document.body.classList.remove("no-animation");
+                document.body.classList.toggle("no-animation", !settings.animation);
+                document.body.classList.toggle("no-blur", !settings.blur);
+
+                const leftCharts = document.querySelector(".left-charts");
+                if (leftCharts) {
+                    leftCharts.style.display = settings.showPingChart ? "" : "none";
                 }
 
-                else {
-                    document.body.classList.add("no-animation");
+                const ramChartCard = document.querySelectorAll(".chart-card")[1];
+                if (ramChartCard) {
+                    ramChartCard.style.display = settings.showRamChart ? "" : "none";
                 }
 
-                if (settings.blur) {
-                    document.body.classList.remove("no-blur");
+                const musicBar = document.getElementById("musicBar");
+                if (musicBar) {
+                    musicBar.style.display = settings.music ? "flex" : "none";
                 }
-
-                else {
-                    document.body.classList.add("no-blur");
-                }
-
-                document.querySelector(".left-charts").style.display =
-                    settings.showPingChart ? "" : "none";
-
-                document.querySelectorAll(".chart-card")[1].style.display =
-                    settings.showRamChart ? "" : "none";
-
-                if (settings.compact) {
-                    document.body.classList.add("compact");
-                }
-
-                else {
-                    document.body.classList.remove("compact");
-                }
-
-                document.getElementById("musicBar").style.display = settings.music ? "flex" : "none";
             }
 
-            const saved = localStorage.getItem("theme") || "dark";
-            setTheme(saved);
-            applySettings();
-            updateThemeButton();
+            document.addEventListener("DOMContentLoaded", () => {
+                const saved = localStorage.getItem("theme") || "dark";
+                setTheme(saved);
+                applySettings();
+                updateThemeButton();
+            });
 
             function updateThemeButton() {
                 const theme = document.documentElement.getAttribute("data-theme");
