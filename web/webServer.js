@@ -1347,11 +1347,6 @@ body {
                         <input type="checkbox" id="musicToggle">
                     </div>
 
-                    <div class="setting-row">
-                        <label>Chế Độ Nhỏ Gọn</label>
-                        <input type="checkbox" id="compactToggle">
-                    </div>
-
                     <hr>
 
                     <h3>🕒 Time</h3>
@@ -1860,7 +1855,6 @@ body {
             const pingChartToggle = document.getElementById("pingChartToggle");
             const ramChartToggle = document.getElementById("ramChartToggle");
             const musicToggle = document.getElementById("musicToggle");
-            const compactToggle = document.getElementById("compactToggle");
 
             const timeFormatSelect = document.getElementById("timeFormatSelect");
             
@@ -1875,7 +1869,6 @@ body {
                 pingChartToggle.checked = settings.showPingChart;
                 ramChartToggle.checked = settings.showRamChart;
                 musicToggle.checked = settings.music;
-                compactToggle.checked = settings.compact;
 
                 timeFormatSelect.value = settings.timeFormat;
 
@@ -1901,7 +1894,6 @@ body {
                 settings.showPingChart = pingChartToggle.checked;
                 settings.showRamChart = ramChartToggle.checked;
                 settings.music = musicToggle.checked;
-                settings.compact = compactToggle.checked;
 
                 settings.timeFormat = timeFormatSelect.value;
 
