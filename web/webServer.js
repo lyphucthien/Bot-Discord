@@ -1444,6 +1444,7 @@ body {
             let currentSong = 0;
             let isShuffle = false;
             let isRepeat = false;
+            let audio;
 
             function loadTrack(index) {
                 const song = playlist[index];
@@ -1746,7 +1747,7 @@ body {
                     }
                 });
 
-                const audio = document.getElementById("bgMusic");
+                audio = document.getElementById("bgMusic");
                 loadTrack(currentSong);
                 const playBtn = document.getElementById("playMusic");
                 const volume = document.getElementById("volume");
