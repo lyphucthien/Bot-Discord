@@ -1438,7 +1438,7 @@ body {
                     artist: "123",
                     src: "/music/Wildfire-JessieVilla.mp3",
                     cover: "/cover/123.jpg"
-                },
+                }
             ];
 
             let currentSong = 0;
@@ -1448,6 +1448,7 @@ body {
 
             function loadTrack(index) {
                 const song = playlist[index];
+                if (!song || !audio) return;
 
                 document.getElementById("songTitle").innerText = song.title;
                 document.getElementById("artist").innerText = song.artist;
@@ -1853,14 +1854,15 @@ body {
                 audio.onended = () => {
                     if (isRepeat) return;
 
+                    if (playlist.length <= 1) {
+                        audio.play();
+                        return;
+                    }
+
                     if (isShuffle) {
                         currentSong = Math.floor(Math.random() * playlist.length);
                     } else {
-                        currentSong++;
-
-                        if (currentSong >= playlist.length) {
-                            currentSong = 0;
-                        }
+                        currentSong = (currentSong + 1) % playlist.length;
                     }
 
                     loadTrack(currentSong);
@@ -1973,6 +1975,7 @@ body {
 
                 saveSettings();
                 applySettings();
+                loadTrack(currentSong);
                 settingsModal.classList.remove("show");
             };
 
