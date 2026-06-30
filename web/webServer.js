@@ -2209,13 +2209,8 @@ body {
 
             </div>
 
-        <audio id="bgMusic">
-
-            <source
-                src="/music.mp3"
-                type="audio/mpeg">
-
-        </audio>
+        <audio id="bgMusic"></audio>
+        
     </body>
 </html>
 `);
