@@ -1809,6 +1809,12 @@ body {
                     document.getElementById("host").textContent = data.host;
                 }
             });
+            
+            function formatTime(sec){
+                const m = Math.floor(sec / 60);
+                const s = Math.floor(sec % 60);
+                return m + ":" + String(s).padStart(2,"0");
+            }
 
             document.addEventListener("DOMContentLoaded", () => {
                 const themeBtn = document.getElementById("themeBtn");
@@ -1876,12 +1882,6 @@ body {
                 const progressBar = document.getElementById("progressBar");
                 const currentTime = document.getElementById("currentTime");
                 const duration = document.getElementById("duration");
-
-                function formatTime(sec){
-                    const m = Math.floor(sec / 60);
-                    const s = Math.floor(sec % 60);
-                    return m + ":" + String(s).padStart(2,"0");
-                }
 
                 audio.ontimeupdate = ()=>{
                     if(!audio.duration) return;
