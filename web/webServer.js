@@ -172,7 +172,7 @@ module.exports = (client) => {
         </script>
 
             <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-            <title>🤖 Bot Dashboard - Xem Trạng Thái Bot Discord Của Bot Lâm Đồng</title>
+            <title>Bot Dashboard - Xem Trạng Thái Bot Discord Của Bot Lâm Đồng</title>
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
         <style>
@@ -1546,10 +1546,12 @@ body {
                     loadTrack(currentSong);
 
                     audio.addEventListener("loadedmetadata", () => {
-                        audio.currentTime = data.time ?? 0;
-
-                        duration.innerText = formatTime(audio.duration);
-
+                        if (data.song === currentSong) {
+                            audio.currentTime = data.time ?? 0;
+                        } else {
+                            audio.currentTime = 0;
+                        }
+                            
                     }, { once: true });
 
                     document.getElementById("volume").value =
@@ -1580,6 +1582,13 @@ body {
 
                 audio.src = song.src;
                 audio.load();
+                audio.currentTime = 0;
+
+                const progressBar = document.getElementById("progressBar");
+                const currentTime = document.getElementById("currentTime");
+
+                if (progressBar) progressBar.value = 0;
+                if (currentTime) currentTime.innerText = "0:00";
             }
 
             pingChart = new Chart(document.getElementById("pingChart"), {
