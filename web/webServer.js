@@ -1436,9 +1436,39 @@ body {
                 {
                     title: "WILDFIRE",
                     artist: "Jessie Villa",
-                    src: "https://raw.githubusercontent.com/lyphucthien/pictuces-music/main/Wildfire-Jessie-Villa.mp3",
-                    cover: "https://raw.githubusercontent.com/lyphucthien/pictuces-music/main/123.jpg"
-                }
+                    src: "https://raw.githubusercontent.com/lyphucthien/pictuces-music/main/Wildfire.mp3",
+                    cover: "https://raw.githubusercontent.com/lyphucthien/pictuces-music/main/Wildfire.jpg"
+                },
+                {
+                    title: "Ngủ Sớm Đi Em",
+                    artist: "DucMinh",
+                    src: "https://raw.githubusercontent.com/lyphucthien/pictuces-music/main/Ngủ%20Sớm%20Đi%20Em.mp3",
+                    cover: "https://raw.githubusercontent.com/lyphucthien/pictuces-music/main/Ngủ%20Sớm%20Đi%20Em.jpg"
+                },
+                {
+                    title: "Anh Biết",
+                    artist: "Xám, D Blue",
+                    src: "https://raw.githubusercontent.com/lyphucthien/pictuces-music/main/Anh%20Biết.mp3",
+                    cover: "https://raw.githubusercontent.com/lyphucthien/pictuces-music/main/Anh%20Biết.jpg"
+                },
+                {
+                    title: "Sao Em Lại Tắt Máy?",
+                    artist: "Phạm Nguyên Ngọc, VAnh, BMZ",
+                    src: "https://raw.githubusercontent.com/lyphucthien/pictuces-music/main/Sao%20Em%20Lại%20Tắt%20Máy.mp3",
+                    cover: "https://raw.githubusercontent.com/lyphucthien/pictuces-music/main/Sao%20Em%20Lại%20Tắt%20Máy.jpg"
+                },
+                {
+                    title: "Đừng Nghe Máy",
+                    artist: "SIVAN",
+                    src: "https://raw.githubusercontent.com/lyphucthien/pictuces-music/main/Đừng%20Nghe%20Máy.mp3",
+                    cover: "https://raw.githubusercontent.com/lyphucthien/pictuces-music/main/Đừng%20Nghe%20Máy.jpg"
+                },
+                {
+                    title: "Dù Có Cách Xa",
+                    artist: "Đinh Mạnh Ninh",
+                    src: "https://raw.githubusercontent.com/lyphucthien/pictuces-music/main/Dù%20Có%20Cách%20Xa.mp3",
+                    cover: "https://raw.githubusercontent.com/lyphucthien/pictuces-music/main/"
+                },
             ];
 
             let currentSong = 0;
