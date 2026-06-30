@@ -2154,7 +2154,6 @@ body {
 
                 <img
                     id="cover"
-                    src="/cover.jpg"
                     class="cover">
 
                 <div class="player-body">
@@ -2210,7 +2209,7 @@ body {
             </div>
 
         <audio id="bgMusic"></audio>
-        
+
     </body>
 </html>
 `);
