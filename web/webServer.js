@@ -1077,6 +1077,7 @@ body {
     backdrop-filter:blur(15px);
 
     box-shadow:var(--shadow);
+    transition: all 0.3s ease;
     z-index:9999;
 }
 
@@ -1545,14 +1546,9 @@ body {
                     audio.volume = data.volume ?? 0.5;
                     loadTrack(currentSong);
 
-                    audio.addEventListener("loadedmetadata", () => {
-                        if (data.song === currentSong) {
-                            audio.currentTime = data.time ?? 0;
-                        } else {
-                            audio.currentTime = 0;
-                        }
-                            
-                    }, { once: true });
+                    if (data.song === index) {
+                        audio.currentTime = data.time ?? 0;
+                    }
 
                     document.getElementById("volume").value =
                         (audio.volume * 100);
@@ -1582,13 +1578,18 @@ body {
 
                 audio.src = song.src;
                 audio.load();
-                audio.currentTime = 0;
 
                 const progressBar = document.getElementById("progressBar");
                 const currentTime = document.getElementById("currentTime");
+                const duration = document.getElementById("duration");
 
-                if (progressBar) progressBar.value = 0;
-                if (currentTime) currentTime.innerText = "0:00";
+                progressBar.value = 0;
+                currentTime.innerText = "0:00";
+                duration.innerText = "0:00";
+
+                audio.onloadedmetadata = () => {
+                    duration.innerText = formatTime(audio.duration);
+                };
             }
 
             pingChart = new Chart(document.getElementById("pingChart"), {
