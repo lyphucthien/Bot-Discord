@@ -1877,8 +1877,6 @@ body {
                 const currentTime = document.getElementById("currentTime");
                 const duration = document.getElementById("duration");
 
-                loadMusicState();
-
                 function formatTime(sec){
                     const m = Math.floor(sec / 60);
                     const s = Math.floor(sec % 60);
@@ -1998,6 +1996,7 @@ body {
                     saveMusicState();
                 };
 
+                loadMusicState();
             });
 
             function setTheme(mode) {
