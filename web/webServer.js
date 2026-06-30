@@ -24,6 +24,7 @@ module.exports = (client) => {
     const io = new Server(server);
     
     const path = require("path");
+    app.use(express.static(path.join(__dirname, "public")));
 
     const PORT = process.env.PORT || 10000;
     const URL = process.env.URL;
@@ -161,11 +162,13 @@ module.exports = (client) => {
         res.send(`
     <html>
     <head>
+        <link rel="icon" href="/Panda.png" type="image/png">
+        
         <script>
-        (() => {
-            const theme = localStorage.getItem("theme") || "dark";
-            document.documentElement.setAttribute("data-theme", theme);
-        })();
+            (() => {
+                const theme = localStorage.getItem("theme") || "dark";
+                document.documentElement.setAttribute("data-theme", theme);
+            })();
         </script>
 
             <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -1809,7 +1812,7 @@ body {
                     document.getElementById("host").textContent = data.host;
                 }
             });
-            
+
             function formatTime(sec){
                 const m = Math.floor(sec / 60);
                 const s = Math.floor(sec % 60);
