@@ -1507,6 +1507,66 @@ body {
             let isRepeat = false;
             let audio;
 
+            const MUSIC_KEY = "dashboardMusic";
+
+            function saveMusicState() {
+                if (!audio) return;
+
+                localStorage.setItem(
+                    MUSIC_KEY,
+                    JSON.stringify({
+                        song: currentSong,
+                        time: audio.currentTime,
+                        volume: audio.volume,
+                        shuffle: isShuffle,
+                        repeat: isRepeat
+                    })
+                );
+            }
+
+            function loadMusicState() {
+
+                const saved = localStorage.getItem(MUSIC_KEY);
+
+                if (!saved) return;
+
+                try {
+
+                    const data = JSON.parse(saved);
+
+                    currentSong = data.song ?? 0;
+
+                    isShuffle = data.shuffle ?? false;
+                    isRepeat = data.repeat ?? false;
+
+                    audio.volume = data.volume ?? 0.5;
+                    loadTrack(currentSong);
+
+                    audio.addEventListener("loadedmetadata", () => {
+                        audio.currentTime = data.time ?? 0;
+
+                        duration.innerText = formatTime(audio.duration);
+
+                    }, { once: true });
+
+                    document.getElementById("volume").value =
+                        (audio.volume * 100);
+
+                    audio.loop = isRepeat;
+
+                    document.getElementById("shuffleBtn").style.opacity =
+                        isShuffle ? "1" : "0.4";
+
+                    document.getElementById("repeatBtn").style.opacity =
+                        isRepeat ? "1" : "0.4";
+
+                } catch (e) {
+                    console.error(e);
+
+                }
+
+            }
+
             function loadTrack(index) {
                 const song = playlist[index];
                 if (!song || !audio) return;
@@ -1810,7 +1870,6 @@ body {
                 });
 
                 audio = document.getElementById("bgMusic");
-                loadTrack(currentSong);
                 const playBtn = document.getElementById("playMusic");
                 const volume = document.getElementById("volume");
 
@@ -1818,17 +1877,13 @@ body {
                 const currentTime = document.getElementById("currentTime");
                 const duration = document.getElementById("duration");
 
-                audio.volume = 0.5;
+                loadMusicState();
 
                 function formatTime(sec){
                     const m = Math.floor(sec / 60);
                     const s = Math.floor(sec % 60);
                     return m + ":" + String(s).padStart(2,"0");
                 }
-
-                audio.onloadedmetadata = ()=>{
-                    duration.innerText = formatTime(audio.duration);
-                };
 
                 audio.ontimeupdate = ()=>{
                     if(!audio.duration) return;
@@ -1838,11 +1893,15 @@ body {
 
                     currentTime.innerText =
                         formatTime(audio.currentTime);
+
+                    saveMusicState();
                 };
 
                 progressBar.oninput = ()=>{
                     audio.currentTime =
                         progressBar.value / 100 * audio.duration;
+
+                    saveMusicState();
                 };
 
                 let isToggling = false;
@@ -1864,6 +1923,7 @@ body {
                     }
 
                     isToggling = false;
+                    saveMusicState();
                 };
 
                 document.getElementById("nextBtn").onclick = () => {
@@ -1877,6 +1937,7 @@ body {
 
                     audio.play();
                     playBtn.innerHTML = "⏸";
+                    saveMusicState();
                 };
 
                 document.getElementById("prevBtn").onclick = () => {
@@ -1887,9 +1948,9 @@ body {
                     }
 
                     loadTrack(currentSong);
-
                     audio.play();
                     playBtn.innerHTML = "⏸";
+                    saveMusicState();
                 };
 
                 document.getElementById("shuffleBtn").onclick = () => {
@@ -1897,6 +1958,8 @@ body {
 
                     document.getElementById("shuffleBtn").style.opacity =
                         isShuffle ? "1" : "0.4";
+
+                    saveMusicState();
                 };
 
                 document.getElementById("repeatBtn").onclick = () => {
@@ -1906,10 +1969,14 @@ body {
 
                     document.getElementById("repeatBtn").style.opacity =
                         isRepeat ? "1" : "0.4";
+
+                    saveMusicState();
                 };
 
                 volume.oninput = () => {
                     audio.volume = volume.value / 100;
+
+                    saveMusicState();
                 };
                 
                 audio.onended = () => {
@@ -1928,6 +1995,7 @@ body {
 
                     loadTrack(currentSong);
                     audio.play();
+                    saveMusicState();
                 };
 
             });
@@ -2141,7 +2209,7 @@ body {
 
             </div>
 
-        <audio id="bgMusic" loop>
+        <audio id="bgMusic">
 
             <source
                 src="/music.mp3"
