@@ -26,7 +26,7 @@ module.exports = (client) => {
     const path = require("path");
 
     const PORT = process.env.PORT || 10000;
-    const URL = "https://my-discord-bot-mfu0.onrender.com";
+    const URL = process.env.URL;
 
     function formatUptime(sec) {
         const d = Math.floor(sec / 86400);
@@ -2163,7 +2163,7 @@ body {
                     </div>
 
                     <div class="artist" id="artist">
-                        Rick Astley
+                        Lý Phúc Thiện
                     </div>
 
                     <div class="controls">
