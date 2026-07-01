@@ -134,6 +134,9 @@
                 guilds: client.guilds?.cache?.size || 0,
                 uptime,
 
+                botName: client.user?.username || "Discord Bot",
+                online: client.isReady(),
+
                 version: packageJson.version,
                 node: process.version,
                 discordjs: discordVersion,
@@ -425,12 +428,35 @@
 
     .menu-content{
 
-        padding:25px;
+        padding:20px;
+        padding-right:15px;
 
-        font-size:18px;
+        font-size:15px;
+        opacity:.95;
+        
+        flex: 1;
+        overflow-y: auto;
+        overflow-x: hidden;
 
-        opacity:.9;
+    }
 
+    .menu-content::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .menu-content::-webkit-scrollbar-track {
+        background: rgba(255,255,255,.05);
+        border-radius: 10px;
+    }
+
+    .menu-content::-webkit-scrollbar-thumb {
+        background: rgba(255,255,255,.2);
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+
+    .menu-content::-webkit-scrollbar-thumb:hover {
+        background: rgba(59,130,246,.4);
     }
 
     .top-bar{
@@ -562,8 +588,9 @@
 
     .modal-content{
 
-        width:700px;
-        max-width:95%;
+        width:550px;
+        max-width:90%;
+        max-height:75vh;
 
         background:var(--card);
         backdrop-filter: blur(25px);
@@ -576,6 +603,8 @@
         box-shadow: 0 25px 60px rgba(0,0,0,.5), var(--shadow-neon);
         position: relative;
         overflow: hidden;
+        display: flex;
+        flex-direction: column;
 
     }
 
@@ -597,7 +626,15 @@
         align-items:center;
 
         margin-bottom:20px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid rgba(255,255,255,.1);
 
+    }
+
+    .modal-header h2 {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 700;
     }
 
     #closeModal{
@@ -1193,6 +1230,50 @@
         box-shadow: 0 0 15px rgba(59,130,246,.2);
     }
 
+    .bot-info-table {
+        background: rgba(255,255,255,.06);
+        border: 1px solid rgba(255,255,255,.1);
+        border-radius: 14px;
+        padding: 16px;
+        margin: 12px 0;
+        font-size: 14px;
+    }
+
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid rgba(255,255,255,.05);
+        transition: all 0.3s ease;
+    }
+
+    .info-row:last-child {
+        border-bottom: none;
+    }
+
+    .info-row:hover {
+        background: rgba(255,255,255,.05);
+        padding-left: 8px;
+        padding-right: 8px;
+        border-radius: 6px;
+    }
+
+    .info-label {
+        font-weight: 600;
+        color: rgba(255,255,255,.7);
+        min-width: 80px;
+    }
+
+    .info-value {
+        font-weight: 700;
+        color: var(--primary);
+        text-align: right;
+        flex: 1;
+        margin-left: 10px;
+        font-family: 'Courier New', monospace;
+    }
+
     #saveSettings{
         margin-top:20px;
         width:100%;
@@ -1250,11 +1331,11 @@
     .music-player{
         position:fixed;
         left:50%;
-        bottom:20px;
+        bottom:30px;
         transform:translateX(-50%);
 
         width:520px;
-        max-width:95%;
+        max-width:90%;
         display:flex;
         gap:15px;
         padding:20px;
@@ -1265,7 +1346,7 @@
         backdrop-filter:blur(25px);
         box-shadow:var(--shadow), var(--shadow-neon);
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        z-index:9999;
+        z-index:10002;
         animation: slideUp 0.5s ease-out;
     }
 
@@ -1622,6 +1703,41 @@
                             id="accentPicker"
                             value="#3b82f6">
 
+                        </div>
+
+                        <hr>
+
+                        <h3>🤖 Bot Info</h3>
+
+                        <div class="bot-info-table">
+                            <div class="info-row">
+                                <span class="info-label">Tên Bot:</span>
+                                <span class="info-value" id="botName">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Ping:</span>
+                                <span class="info-value" id="botPing">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Máy Chủ:</span>
+                                <span class="info-value" id="botServers">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">RAM:</span>
+                                <span class="info-value" id="botRam">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">CPU:</span>
+                                <span class="info-value" id="botCpu">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Uptime:</span>
+                                <span class="info-value" id="botUptime">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Trạng Thái:</span>
+                                <span class="info-value" id="botStatus">-</span>
+                            </div>
                         </div>
 
                         <br>
@@ -2074,6 +2190,26 @@
                         document.getElementById("discordjs").textContent = "v" + data.discordjs;
                         document.getElementById("express").textContent = "v" + data.express;
                         document.getElementById("host").textContent = data.host;
+                    }
+
+                    // Update Bot Info Table
+                    const botName = document.getElementById("botName");
+                    const botPing = document.getElementById("botPing");
+                    const botServers = document.getElementById("botServers");
+                    const botRam = document.getElementById("botRam");
+                    const botCpu = document.getElementById("botCpu");
+                    const botUptime = document.getElementById("botUptime");
+                    const botStatus = document.getElementById("botStatus");
+
+                    if (botName) botName.textContent = data.botName || "Discord Bot";
+                    if (botPing) botPing.textContent = data.ping + " ms";
+                    if (botServers) botServers.textContent = data.guilds || "0";
+                    if (botRam) botRam.textContent = data.ram + " MB";
+                    if (botCpu) botCpu.textContent = data.cpu + " %";
+                    if (botUptime) botUptime.textContent = data.uptime || "-";
+                    if (botStatus) {
+                        botStatus.textContent = data.online ? "🟢 Online" : "🔴 Offline";
+                        botStatus.style.color = data.online ? "#22c55e" : "#ef4444";
                     }
                 });
 
