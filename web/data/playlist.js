@@ -1,4 +1,4 @@
-module.exports = [
+window.playlist = [
         {
             title: "WILDFIRE",
             artist: "Jessie Villa",
