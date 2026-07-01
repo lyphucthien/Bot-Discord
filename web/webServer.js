@@ -1143,6 +1143,26 @@ body {
     flex:1;
 }
 
+#musicOverlay{
+    position: fixed;
+    inset: 0;
+
+    background: rgba(0,0,0,.45);
+    backdrop-filter: blur(4px);
+
+    opacity: 0;
+    visibility: hidden;
+
+    transition: .3s;
+
+    z-index: 9998;
+}
+
+#musicOverlay.show{
+    opacity: 1;
+    visibility: visible;
+}
+
 .no-animation *,
 .no-animation *::before,
 .no-animation *::after{
@@ -1840,6 +1860,19 @@ body {
                 const sideMenu = document.getElementById("sideMenu");
                 const menuOverlay = document.getElementById("menuOverlay");
                 const closeMenu = document.getElementById("closeMenu");
+                const musicOverlay = document.getElementById("musicOverlay");
+                const musicBar = document.getElementById("musicBar");
+
+                musicOverlay.addEventListener("click", () => {
+                    musicBar.style.display = "none";
+                    musicOverlay.classList.remove("show");
+
+                    settings.music = false;
+                    saveSettings();
+
+                    const musicToggle = document.getElementById("musicToggle");
+                    if (musicToggle) musicToggle.checked = false;
+                });
 
                 menuBtn.addEventListener("click", () => {
                     document.body.classList.add("menu-open");
@@ -2041,9 +2074,21 @@ body {
                 }
 
                 const musicBar = document.getElementById("musicBar");
+                const musicOverlay = document.getElementById("musicOverlay");
+
                 if (musicBar) {
-                    musicBar.style.display = settings.music ? "flex" : "none";
+
+                    if (settings.music) {
+                        musicBar.style.display = "flex";
+                        musicOverlay.classList.add("show");
+
+                    } else {
+                        musicBar.style.display = "none";
+                        musicOverlay.classList.remove("show");
+
+                    }
                 }
+
             }
 
             document.addEventListener("DOMContentLoaded", () => {
@@ -2167,6 +2212,8 @@ body {
                 </div>
 
             </div>
+
+            <div id="musicOverlay"></div>
 
             <div id="musicBar" class="music-player">
 
