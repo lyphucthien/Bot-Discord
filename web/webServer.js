@@ -2868,7 +2868,6 @@
             console.log(`🌐 Web Server Chạy Ở Cổng ${PORT}`);
         });
 
-        // Error handling cho server
         server.on("error", (err) => {
             console.error("❌ Server error:", err);
         });
@@ -2884,11 +2883,7 @@
                 }
             }).on("error", err => {
                 console.log("❌ Lỗi Duy Trì Kết Nối:", err.message);
-            }).on("timeout", function() {
-                this.destroy();
-                console.log("⏱️ Ping timeout");
-            });
-
+            })
         }, 4 * 60 * 1000);
 
     };
