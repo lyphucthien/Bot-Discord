@@ -1451,6 +1451,12 @@ body.menu-open .music-player {
 
             const playlist = [
                 {
+                    title: "Buông Bỏ Sự Phụ Thuộc Nơi Anh (离开我的依赖)",
+                    artist: "Vương Diễm Vi",
+                    src: "https://raw.githubusercontent.com/lyphucthien/pictuces-music/main/Buông%20Bỏ%20Sự%20Phụ%20Thuộc%20Nơi%20Anh%20(离开我的依赖).mp3",
+                    cover: "https://raw.githubusercontent.com/lyphucthien/pictuces-music/main/Buông%20Bỏ%20Sự%20Phụ%20Thuộc%20Nơi%20Anh%20(离开我的依赖).jpg"
+                },
+                {
                     title: "WILDFIRE",
                     artist: "Jessie Villa",
                     src: "https://raw.githubusercontent.com/lyphucthien/pictuces-music/main/Wildfire.mp3",
