@@ -7,8 +7,6 @@ const packageJson = require("../package.json");
 const expressVersion = require("express/package.json").version;
 const discordVersion = require("discord.js").version;
 
-const playlist = require("./data/playlist");
-
 const ramHistory = [];
 const pingHistory = [];
 const uptimeHistory = [];
@@ -2168,6 +2166,7 @@ body.menu-open .music-player {
             </div>
 
         <audio id="bgMusic"></audio>
+        <script src="/data/playlist.js"></script>
 
     </body>
 </html>
@@ -2194,6 +2193,7 @@ body.menu-open .music-player {
         if (statsCache)
             socket.emit("stats", statsCache);
 
+        socket.emit("playlist", playlist);
     });
 
     setInterval(() => {
