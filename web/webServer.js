@@ -22,29 +22,7 @@
         const app = express();
         const server = http.createServer(app);
         const io = new Server(server);
-        
-        // 🔒 Authentication Token
-        const AUTH_TOKEN = "lyphucthien180312";
-        
-        // Middleware để kiểm tra authentication
-        const authenticateToken = (req, res, next) => {
-            const token = req.query.token || req.headers.authorization?.replace("Bearer ", "");
-            if (token !== AUTH_TOKEN) {
-                return res.status(401).send(`
-                    <html>
-                    <head><title>Unauthorized</title></head>
-                    <body style="font-family:Arial;text-align:center;padding:50px;">
-                        <h1>🔒 Không Được Phép</h1>
-                        <p>Mã xác thực không hợp lệ hoặc bị Thiếu</p>
-                    </body>
-                    </html>
-                `);
-            }
-            next();
-        };
-        
-        app.use(authenticateToken);
-        
+
         const path = require("path");
         app.use(express.static(path.join(__dirname, "public")));
 
@@ -2331,11 +2309,8 @@
 
         server.listen(PORT, "0.0.0.0", () => {
             console.log(`🌐 Web Server Chạy Ở Cổng ${PORT}`);
-            if (AUTH_TOKEN === "default_token_change_me") {
-                console.warn("⚠️ WARNING: Using default authentication token! Set DASHBOARD_TOKEN environment variable!");
-            }
         });
-        
+
         // Error handling cho server
         server.on("error", (err) => {
             console.error("❌ Server error:", err);
