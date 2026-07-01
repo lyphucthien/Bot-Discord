@@ -1451,16 +1451,22 @@ body.menu-open .music-player {
 
             const playlist = [
                 {
-                    title: "Buông Bỏ Sự Phụ Thuộc Nơi Anh",
-                    artist: "Vương Diễm Vi",
-                    src: "https://raw.githubusercontent.com/lyphucthien/pictuces-music/main/Buông%20Bỏ%20Sự%20Phụ%20Thuộc%20Nơi%20Anh.mp3",
-                    cover: "https://raw.githubusercontent.com/lyphucthien/pictuces-music/main/Buông%20Bỏ%20Sự%20Phụ%20Thuộc%20Nơi%20Anh.jpg"
-                },
-                {
                     title: "WILDFIRE",
                     artist: "Jessie Villa",
                     src: "https://raw.githubusercontent.com/lyphucthien/pictuces-music/main/Wildfire.mp3",
                     cover: "https://raw.githubusercontent.com/lyphucthien/pictuces-music/main/Wildfire.jpg"
+                },
+                {
+                    title: "Một Nửa Sự Thật",
+                    artist: "24K.RIGHT",
+                    src: "https://raw.githubusercontent.com/lyphucthien/pictuces-music/main/Một%20Nửa%20Sự%20Thật.mp3",
+                    cover: "https://raw.githubusercontent.com/lyphucthien/pictuces-music/main/Một%20Nửa%20Sự%20Thật.jpg"
+                },
+                {
+                    title: "Buông Bỏ Sự Phụ Thuộc Nơi Anh",
+                    artist: "Vương Diễm Vi",
+                    src: "https://raw.githubusercontent.com/lyphucthien/pictuces-music/main/Buông%20Bỏ%20Sự%20Phụ%20Thuộc%20Nơi%20Anh.mp3",
+                    cover: "https://raw.githubusercontent.com/lyphucthien/pictuces-music/main/Buông%20Bỏ%20Sự%20Phụ%20Thuộc%20Nơi%20Anh.jpg"
                 },
                 {
                     title: "Ngủ Sớm Đi Em",
