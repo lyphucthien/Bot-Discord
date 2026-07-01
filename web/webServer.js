@@ -1160,6 +1160,15 @@ body {
 .no-blur .music-player {
     backdrop-filter: none !important;
 }
+
+body.menu-open .card,
+body.menu-open .chart-card,
+body.menu-open .top-bar,
+body.menu-open .music-player {
+    filter: blur(6px);
+    pointer-events: none;
+    user-select: none;
+}
         </style>
     </head>
     <body>
