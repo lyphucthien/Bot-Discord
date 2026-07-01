@@ -2173,7 +2173,7 @@ body {
                 <div class="player-body">
 
                     <div class="song-title" id="songTitle">
-                        Never Gonna Give You Up
+                        Không Biết
                     </div>
 
                     <div class="artist" id="artist">
