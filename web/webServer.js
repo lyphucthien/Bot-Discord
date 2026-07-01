@@ -162,7 +162,7 @@ module.exports = (client) => {
         res.send(`
     <html>
     <head>
-        <link rel="icon" href="/Panda.png" type="image/png">
+        <link rel="icon" href="/icon-web.png" type="image/png">
         
         <script>
             (() => {
