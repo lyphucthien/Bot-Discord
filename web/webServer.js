@@ -2319,12 +2319,17 @@
         const https = require("https");
 
         setInterval(() => {
-            https.get(URL, res => {
+            if (!URL) return; // Skip nếu URL không được set
+            
+            https.get(URL, { timeout: 5000 }, res => {
                 if (res.statusCode >= 400) {
                     console.log("⚠️ Ping fail:", res.statusCode);
                 }
             }).on("error", err => {
                 console.log("❌ Lỗi Duy Trì Kết Nối:", err.message);
+            }).on("timeout", function() {
+                this.destroy();
+                console.log("⏱️ Ping timeout");
             });
 
         }, 4 * 60 * 1000);
