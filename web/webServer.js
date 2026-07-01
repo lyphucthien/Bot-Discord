@@ -7,6 +7,8 @@ const packageJson = require("../package.json");
 const expressVersion = require("express/package.json").version;
 const discordVersion = require("discord.js").version;
 
+const playlist = require("./data/playlist");
+
 const ramHistory = [];
 const pingHistory = [];
 const uptimeHistory = [];
@@ -482,7 +484,7 @@ module.exports = (client) => {
 
     backdrop-filter:blur(8px);
 
-    z-index:9999;
+    z-index:10000;
 
 }
 
@@ -1193,6 +1195,10 @@ body.menu-open .music-player {
                     <i class="fa-brands fa-discord"></i> Discord Invite
                 </div>
 
+                <div class="menu-item" onclick="openLink('https://www.roblox.com/share?code=36bb76fc1fa42c4e8c991dfa320f7f2a&type=Profile&source=ProfileShare&stamp=1782844958068')">
+                    🎮 Acc Roblox
+                </div>
+
                 <div class="menu-item" onclick="openLink('https://beacons.ai/lyphucthien')">
                     🌐 Nền Tảng MXH
                 </div>
@@ -1444,76 +1450,6 @@ body.menu-open .music-player {
 
             let pingData = [];
             let ramData = [];
-
-            const playlist = [
-                {
-                    title: "WILDFIRE",
-                    artist: "Jessie Villa",
-                    src: "https://raw.githubusercontent.com/lyphucthien/pictuces-music/main/Wildfire.mp3",
-                    cover: "https://raw.githubusercontent.com/lyphucthien/pictuces-music/main/Wildfire.jpg"
-                },
-                {
-                    title: "Ngủ Sớm Đi Em",
-                    artist: "DucMinh",
-                    src: "https://raw.githubusercontent.com/lyphucthien/pictuces-music/main/Ngủ%20Sớm%20Đi%20Em.mp3",
-                    cover: "https://raw.githubusercontent.com/lyphucthien/pictuces-music/main/Ngủ%20Sớm%20Đi%20Em.jpg"
-                },
-                {
-                    title: "Anh Biết",
-                    artist: "Xám, D Blue",
-                    src: "https://raw.githubusercontent.com/lyphucthien/pictuces-music/main/Anh%20Biết.mp3",
-                    cover: "https://raw.githubusercontent.com/lyphucthien/pictuces-music/main/Anh%20Biết.jpg"
-                },
-                {
-                    title: "Sao Em Lại Tắt Máy?",
-                    artist: "Phạm Nguyên Ngọc, VAnh, BMZ",
-                    src: "https://raw.githubusercontent.com/lyphucthien/pictuces-music/main/Sao%20Em%20Lại%20Tắt%20Máy.mp3",
-                    cover: "https://raw.githubusercontent.com/lyphucthien/pictuces-music/main/Sao%20Em%20Lại%20Tắt%20Máy.jpg"
-                },
-                {
-                    title: "Đừng Nghe Máy",
-                    artist: "SIVAN",
-                    src: "https://raw.githubusercontent.com/lyphucthien/pictuces-music/main/Đừng%20Nghe%20Máy.mp3",
-                    cover: "https://raw.githubusercontent.com/lyphucthien/pictuces-music/main/Đừng%20Nghe%20Máy.jpg"
-                },
-                {
-                    title: "Dù Có Cách Xa",
-                    artist: "Đinh Mạnh Ninh",
-                    src: "https://raw.githubusercontent.com/lyphucthien/pictuces-music/main/Dù%20Có%20Cách%20Xa.mp3",
-                    cover: "https://raw.githubusercontent.com/lyphucthien/pictuces-music/main/Dù%20Có%20Cách%20Xa.jpg"
-                },
-
-                {
-                    title: "Để Dành Khi Thức Giấc",
-                    artist: "SIVAN",
-                    src: "https://raw.githubusercontent.com/lyphucthien/pictuces-music/main/Để%20Dành%20Khi%20Thức%20Giấc.mp3",
-                    cover: "https://raw.githubusercontent.com/lyphucthien/pictuces-music/main/Để%20Dành%20Khi%20Thức%20Giấc.jpg"
-                },
-                {
-                    title: "Vệt Nắng Nhạt Phai (Piano Version)",
-                    artist: "Kai, Xưa Lâm, LIKIE",
-                    src: "https://raw.githubusercontent.com/lyphucthien/pictuces-music/main/Vệt%20Nắng%20Nhạt%20Phai%20(Piano%20Version).mp3",
-                    cover: "https://raw.githubusercontent.com/lyphucthien/pictuces-music/main/Vệt%20Nắng%20Nhạt%20Phai%20(Piano%20Version).jpg"
-                },
-                {
-                    title: "Già Cùng Nhau Là Được",
-                    artist: "Tùng TeA, PC, TaynguyenSound",
-                    src: "https://raw.githubusercontent.com/lyphucthien/pictuces-music/main/Già%20Cùng%20Nhau%20Là%20Được.mp3",
-                    cover: "https://raw.githubusercontent.com/lyphucthien/pictuces-music/main/Già%20Cùng%20Nhau%20Là%20Được.jpg"
-                },
-                {
-                    title: "Feel At Home",
-                    artist: "B Ray",
-                    src: "https://raw.githubusercontent.com/lyphucthien/pictuces-music/main/Feel%20At%20Home.mp3",
-                    cover: "https://raw.githubusercontent.com/lyphucthien/pictuces-music/main/Feel%20At%20Home.jpg"
-                },
-                {
-                    title: "Bản Nhạc Cuối (Cho Em)",
-                    artist: "B Ray",
-                    src: "https://raw.githubusercontent.com/lyphucthien/pictuces-music/main/Bản%20Nhạc%20Cuối%20(Cho%20Em).mp3",
-                    cover: "https://raw.githubusercontent.com/lyphucthien/pictuces-music/main/Bản%20Nhạc%20Cuối%20(Cho%20Em).jpg"
-                },
-            ];
 
             let currentSong = 0;
             let isShuffle = false;
