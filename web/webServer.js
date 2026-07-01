@@ -23,6 +23,28 @@ module.exports = (client) => {
     const server = http.createServer(app);
     const io = new Server(server);
     
+    // 🔒 Authentication Token
+    const AUTH_TOKEN = lyphucthien180312;
+    
+    // Middleware để kiểm tra authentication
+    const authenticateToken = (req, res, next) => {
+        const token = req.query.token || req.headers.authorization?.replace("Bearer ", "");
+        if (token !== AUTH_TOKEN) {
+            return res.status(401).send(`
+                <html>
+                <head><title>Unauthorized</title></head>
+                <body style="font-family:Arial;text-align:center;padding:50px;">
+                    <h1>🔒 Không Được Phép</h1>
+                    <p>Mã xác thực không hợp lệ hoặc bị Thiếu</p>
+                </body>
+                </html>
+            `);
+        }
+        next();
+    };
+    
+    app.use(authenticateToken);
+    
     const path = require("path");
     app.use(express.static(path.join(__dirname, "public")));
 
@@ -54,7 +76,10 @@ module.exports = (client) => {
             .then(load => {
                 systemCache.cpu = Math.round(load.currentLoad ?? 0);
             })
-            .catch(console.error)
+            .catch(err => {
+                console.error("❌ CPU monitoring error:", err.message);
+                systemCache.cpu = 0;
+            })
             .finally(() => {
                 cpuRunning = false;
             });
@@ -618,6 +643,10 @@ module.exports = (client) => {
     --danger: #ef4444;
 
     --shadow: 0 20px 45px rgba(0,0,0,.45);
+    
+    --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --gradient-success: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    --gradient-danger: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
 }
 
 [data-theme="light"] {
@@ -676,11 +705,12 @@ body {
 
     padding: 15px 40px 40px;
 
-    background: radial-gradient(circle at top left,#1d4ed8 0%,transparent 35%), radial-gradient(circle at bottom right,#7c3aed 0%,transparent 35%),
-    linear-gradient( 135deg, var(--bg), var(--bg2));
+    background: radial-gradient(circle at top left,#1e3a8a 0%,transparent 35%), radial-gradient(circle at bottom right,#6d28d9 0%,transparent 35%),
+    radial-gradient(circle at center,#0f172a 0%, transparent 50%),
+    linear-gradient(135deg, var(--bg), var(--bg2));
 
-    background-size: 400% 400%;
-    animation: gradient 15s ease infinite;
+    background-size: 400% 400%, 400% 400%, 100% 100%, 100% 100%;
+    animation: gradient 20s ease infinite;
 
     color: var(--text);
     font-family:
@@ -704,6 +734,9 @@ body {
     flex-shrink:0;
 
     background: var(--card);
+    background-image: 
+        radial-gradient(circle at top right, rgba(102, 126, 234, 0.1), transparent 50%),
+        radial-gradient(circle at bottom left, rgba(118, 75, 162, 0.1), transparent 50%);
     backdrop-filter:blur(15px);
     border:1px solid var(--border);
     border-radius:20px;
@@ -719,6 +752,7 @@ body {
         scale(1.01);
 
     border-color:rgba(59,130,246,.3);
+    box-shadow: 0 25px 50px rgba(59,130,246,.15), var(--shadow);
 
 }
 
@@ -885,14 +919,14 @@ body {
     );
     color: white;
 
-    box-shadow:0 10px 25px rgba(37,99,235,.4);
+    box-shadow: 0 10px 25px rgba(37,99,235,.4), 0 0 20px rgba(37,99,235,.2);
 
     transition:all .25s ease;
 }
 
 #themeBtn:hover{
     transform:translateY(-4px) scale(1.08);
-    box-shadow:0 15px 35px rgba(37,99,235,.6);
+    box-shadow: 0 15px 35px rgba(37,99,235,.6), 0 0 30px rgba(37,99,235,.3);
     filter:brightness(1.1);
 }
 
@@ -2264,16 +2298,28 @@ body.menu-open .music-player {
     });
 
     io.on("connection", socket => {
+        try {
+            socket.emit("history", {
+                ram: ramHistory,
+                ping: pingHistory,
+                uptime: uptimeHistory
+            });
 
-        socket.emit("history", {
-            ram: ramHistory,
-            ping: pingHistory,
-            uptime: uptimeHistory
-        });
-
-        if (statsCache)
-            socket.emit("stats", statsCache);
-
+            if (statsCache)
+                socket.emit("stats", statsCache);
+        } catch (err) {
+            console.error("❌ Socket connection error:", err);
+            socket.emit("error", { message: "Failed to load dashboard data" });
+        }
+    });
+    
+    // Error handling cho Socket.IO
+    io.on("error", (error) => {
+        console.error("❌ Socket.IO error:", error);
+    });
+    
+    io.on("connect_error", (error) => {
+        console.error("❌ Socket connection error:", error);
     });
 
     setInterval(() => {
@@ -2285,6 +2331,14 @@ body.menu-open .music-player {
 
     server.listen(PORT, "0.0.0.0", () => {
         console.log(`🌐 Web Server Chạy Ở Cổng ${PORT}`);
+        if (AUTH_TOKEN === "default_token_change_me") {
+            console.warn("⚠️ WARNING: Using default authentication token! Set DASHBOARD_TOKEN environment variable!");
+        }
+    });
+    
+    // Error handling cho server
+    server.on("error", (err) => {
+        console.error("❌ Server error:", err);
     });
 
     const https = require("https");
