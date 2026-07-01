@@ -554,7 +554,7 @@
         background:rgba(0,0,0,.7);
         backdrop-filter:blur(12px);
 
-        z-index:10000;
+        z-index:10005;
         animation: fadeInBackdrop .3s ease;
 
     }
@@ -589,7 +589,7 @@
     .modal-content{
 
         width:550px;
-        max-width:90%;
+        max-width:85%;
         max-height:75vh;
 
         background:var(--card);
@@ -1331,22 +1331,22 @@
     .music-player{
         position:fixed;
         left:50%;
-        bottom:30px;
+        bottom:25px;
         transform:translateX(-50%);
 
-        width:520px;
-        max-width:90%;
+        width:420px;
+        max-width:88%;
         display:flex;
-        gap:15px;
-        padding:20px;
+        gap:12px;
+        padding:14px;
 
-        border-radius:22px;
+        border-radius:18px;
         background:var(--card);
         border:1.5px solid var(--border);
         backdrop-filter:blur(25px);
         box-shadow:var(--shadow), var(--shadow-neon);
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        z-index:10002;
+        z-index:9998;
         animation: slideUp 0.5s ease-out;
     }
 
@@ -1380,11 +1380,12 @@
     }
 
     .cover{
-        width:90px;
-        height:90px;
+        width:70px;
+        height:70px;
 
-        border-radius:12px;
+        border-radius:10px;
         object-fit:cover;
+        flex-shrink: 0;
     }
 
     .player-body{
@@ -1392,13 +1393,15 @@
     }
 
     .song-title{
-        font-size:18px;
-        font-weight:bold;
+        font-size:15px;
+        font-weight:700;
+        line-height: 1.3;
     }
 
     .artist{
         opacity:.7;
-        margin-bottom:10px;
+        margin-bottom:8px;
+        font-size: 13px;
     }
 
     .controls{
@@ -1409,8 +1412,8 @@
     }
 
     .controls button{
-        width:40px;
-        height:40px;
+        width:36px;
+        height:36px;
 
         border:1px solid rgba(255,255,255,.2);
         border-radius:50%;
@@ -1419,7 +1422,7 @@
         color:white;
         cursor:pointer;
         font-weight: 600;
-        font-size: 14px;
+        font-size: 12px;
         transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
         box-shadow: 0 5px 15px rgba(59,130,246,.2);
     }
@@ -1437,7 +1440,8 @@
     .progress{
         display:flex;
         align-items:center;
-        gap:10px;
+        gap:8px;
+        font-size: 12px;
     }
 
     .progress input{
@@ -1447,7 +1451,7 @@
     .volume{
         display:flex;
         align-items:center;
-        gap:10px;
+        gap:8px;
         margin-top:10px;
     }
 
@@ -1480,6 +1484,204 @@
         filter: blur(6px);
         pointer-events: none;
         user-select: none;
+    }
+
+    input[type="range"] {
+        height: 5px;
+        -webkit-appearance: none;
+        appearance: none;
+        background: rgba(255,255,255,.2);
+        border-radius: 5px;
+        outline: none;
+        cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--primary);
+        cursor: pointer;
+        box-shadow: 0 0 8px rgba(59,130,246,.4);
+        transition: all 0.2s ease;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+        width: 16px;
+        height: 16px;
+        box-shadow: 0 0 12px rgba(59,130,246,.6);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--primary);
+        cursor: pointer;
+        border: none;
+        box-shadow: 0 0 8px rgba(59,130,246,.4);
+        transition: all 0.2s ease;
+    }
+
+    input[type="range"]::-moz-range-thumb:hover {
+        width: 16px;
+        height: 16px;
+        box-shadow: 0 0 12px rgba(59,130,246,.6);
+    }
+
+    input[type="range"]::-moz-range-track {
+        background: transparent;
+        border: none;
+    }
+
+    @media (max-width: 768px) {
+        .modal-content {
+            width: 90vw;
+            max-width: 95%;
+            padding: 24px;
+            max-height: 80vh;
+        }
+
+        .menu-content {
+            padding: 16px;
+            padding-right: 12px;
+            font-size: 14px;
+        }
+
+        .setting-row {
+            margin: 16px 0;
+            padding: 10px;
+        }
+
+        .bot-info-table {
+            padding: 12px;
+            margin: 10px 0;
+        }
+
+        .info-row {
+            padding: 8px 0;
+            font-size: 13px;
+        }
+
+        .music-player {
+            width: 380px;
+            max-width: 85%;
+            padding: 12px;
+            gap: 10px;
+        }
+
+        .cover {
+            width: 60px;
+            height: 60px;
+        }
+
+        .song-title {
+            font-size: 14px;
+        }
+
+        .artist {
+            font-size: 12px;
+            margin-bottom: 6px;
+        }
+
+        .controls button {
+            width: 32px;
+            height: 32px;
+            font-size: 11px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .modal-content {
+            width: 95vw;
+            max-width: 98%;
+            padding: 18px;
+            max-height: 85vh;
+        }
+
+        .modal-header h2 {
+            font-size: 16px;
+        }
+
+        .menu-content {
+            padding: 12px;
+            padding-right: 8px;
+            font-size: 13px;
+        }
+
+        .setting-row {
+            margin: 12px 0;
+            padding: 8px;
+            font-size: 12px;
+        }
+
+        .setting-row label {
+            font-size: 12px;
+        }
+
+        .bot-info-table {
+            padding: 10px;
+            margin: 8px 0;
+        }
+
+        .info-row {
+            padding: 6px 0;
+            font-size: 12px;
+        }
+
+        .info-label {
+            min-width: 60px;
+            font-size: 11px;
+        }
+
+        .info-value {
+            font-size: 11px;
+        }
+
+        #saveSettings {
+            padding: 12px;
+            font-size: 13px;
+            margin-top: 16px;
+        }
+
+        .music-player {
+            width: 320px;
+            max-width: 80%;
+            padding: 10px;
+            gap: 8px;
+            bottom: 20px;
+        }
+
+        .cover {
+            width: 50px;
+            height: 50px;
+        }
+
+        .song-title {
+            font-size: 13px;
+        }
+
+        .artist {
+            font-size: 11px;
+            margin-bottom: 4px;
+        }
+
+        .controls button {
+            width: 30px;
+            height: 30px;
+            font-size: 10px;
+        }
+
+        .progress {
+            font-size: 11px;
+            gap: 6px;
+        }
+
+        .volume {
+            font-size: 11px;
+        }
     }
             </style>
         </head>
@@ -1712,7 +1914,7 @@
                         <div class="bot-info-table">
                             <div class="info-row">
                                 <span class="info-label">Tên Bot:</span>
-                                <span class="info-value" id="botName">-</span>
+                                <span class="info-value" id="botName">Lâm Đồng</span>
                             </div>
                             <div class="info-row">
                                 <span class="info-label">Ping:</span>
