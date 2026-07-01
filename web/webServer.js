@@ -1247,7 +1247,7 @@ body {
 
             <div class="status">
                <span class="dot ${online ? "online" : "offline"}"></span>
-                 ${statusText}
+                ${statusText}
             </div>
 
             <div class="stat">
@@ -1529,9 +1529,7 @@ body {
             }
 
             function loadMusicState() {
-
                 const saved = localStorage.getItem(MUSIC_KEY);
-
                 if (!saved) return;
 
                 try {
@@ -1546,9 +1544,9 @@ body {
                     audio.volume = data.volume ?? 0.5;
                     loadTrack(currentSong);
 
-                    if (data.song === index) {
+                    audio.onloadedmetadata = () => {
                         audio.currentTime = data.time ?? 0;
-                    }
+                    };
 
                     document.getElementById("volume").value =
                         (audio.volume * 100);
@@ -1831,6 +1829,8 @@ body {
 
             document.addEventListener("DOMContentLoaded", () => {
                 const themeBtn = document.getElementById("themeBtn");
+                const settingsBtn = document.getElementById("settingsBtn");
+                const settingsModal = document.getElementById("settingsModal");
 
                 const modal = document.getElementById("uptimeModal");
                 const closeBtn = document.getElementById("closeModal");
@@ -1842,6 +1842,8 @@ body {
                 const closeMenu = document.getElementById("closeMenu");
 
                 menuBtn.addEventListener("click", () => {
+                    document.body.classList.add("menu-open");
+
                     sideMenu.classList.add("show");
                     menuOverlay.classList.add("show");
 
@@ -1851,6 +1853,8 @@ body {
                 });
 
                 function closeSideMenu() {
+                    document.body.classList.remove("menu-open");
+
                     sideMenu.classList.remove("show");
                     menuOverlay.classList.remove("show");
 
@@ -2049,19 +2053,21 @@ body {
                 updateThemeButton();
             });
 
-            function updateThemeButton() {
-                const theme = document.documentElement.getAttribute("data-theme");
+            function updateThemeButton(){
+                const themeBtn=document.getElementById("themeBtn");
+                if(!themeBtn) return;
 
-                const map = {
-                    dark: "🌙 Dark",
-                    light: "☀️ Light",
-                    oled: "⚫ OLED"
+                const theme=document.documentElement.getAttribute("data-theme");
+
+                const map={
+                    dark:"🌙 Dark",
+                    light:"☀️ Light",
+                    oled:"⚫ OLED"
                 };
 
-                themeBtn.innerHTML = map[theme] || "🌙 Dark";
+                themeBtn.textContent=map[theme] ?? "🌙 Dark";
             }
 
-            const settingsBtn = document.getElementById("settingsBtn");
             const settingsModal = document.getElementById("settingsModal");
             const closeSettings = document.getElementById("closeSettings");
             const themeSelect = document.getElementById("themeSelect");
