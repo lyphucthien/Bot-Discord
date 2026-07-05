@@ -2,6 +2,7 @@
     const si = require("systeminformation");
     const http = require("http");
     const { Server } = require("socket.io");
+    const compression = require("compression");
 
     const packageJson = require("../package.json");
     const expressVersion = require("express/package.json").version;
@@ -22,9 +23,11 @@
         const app = express();
         const server = http.createServer(app);
         const io = new Server(server);
+        const visibleClients = new Set();
 
         const path = require("path");
         app.use(express.static(path.join(__dirname, "public")));
+        app.use(compression());
 
         const PORT = process.env.PORT || 10000;
         const URL = process.env.URL;
@@ -1965,6 +1968,10 @@
                 }
 
                 const socket = io();
+                    document.addEventListener("visibilitychange", () => {
+                        socket.emit("visibility", document.visibilityState === "visible");
+                    });
+                    socket.emit("visibility", document.visibilityState === "visible");
 
                     const defaultSettings = {
                         theme: "dark",
@@ -2800,9 +2807,7 @@
                         </div>
 
                         <div class="volume">
-
                             🔊
-
                             <input
                                 type="range"
                                 id="volume"
@@ -2833,6 +2838,8 @@
         });
 
         io.on("connection", socket => {
+            visibleClients.add(socket.id);
+
             try {
                 socket.emit("history", {
                     ram: ramHistory,
@@ -2846,6 +2853,15 @@
                 console.error("❌ Socket connection error:", err);
                 socket.emit("error", { message: "Failed to load dashboard data" });
             }
+
+            socket.on("visibility", (visible) => {
+                if (visible) visibleClients.add(socket.id);
+                else visibleClients.delete(socket.id);
+            });
+
+            socket.on("disconnect", () => {
+                visibleClients.delete(socket.id);
+            });
         });
         
         // Error handling cho Socket.IO
@@ -2859,7 +2875,7 @@
 
         setInterval(() => {
 
-            if (statsCache)
+            if (statsCache && visibleClients.size > 0)
                 io.emit("stats", statsCache);
 
         }, 1000);
