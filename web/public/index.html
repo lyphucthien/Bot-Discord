@@ -1,0 +1,305 @@
+<html>
+<head>
+    <link rel="icon" href="/icon-web.png" type="image/png">
+
+    <script>
+        (() => {
+            const theme = localStorage.getItem("theme") || "dark";
+            document.documentElement.setAttribute("data-theme", theme);
+        })();
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Bot Dashboard - Xem Trạng Thái Bot Discord Của Bot Lâm Đồng</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <button id="menuBtn">☰</button>
+
+    <div id="menuOverlay"></div>
+
+    <div id="sideMenu">
+        <div class="menu-header">
+            <h2>📋 Menu</h2>
+            <span id="closeMenu">&times;</span>
+        </div>
+
+        <div class="menu-content">
+            <div class="menu-item" id="settingsBtn">⚙️ Settings</div>
+
+            <div class="menu-item" onclick="openLink('https://discord.gg/gyZ27Hw9qu')">
+                <i class="fa-brands fa-discord"></i> Discord Invite
+            </div>
+
+            <div class="menu-item" onclick="openLink('https://www.roblox.com/share?code=36bb76fc1fa42c4e8c991dfa320f7f2a&type=Profile&source=ProfileShare&stamp=1782844958068')">
+                🎮 Acc Roblox
+            </div>
+
+            <div class="menu-item" onclick="openLink('https://beacons.ai/lyphucthien')">
+                🌐 Nền Tảng MXH
+            </div>
+
+            <div class="menu-content">
+                🚧 Sẽ Có Cập Nhật Tiếp Theo...
+            </div>
+        </div>
+    </div>
+
+    <button id="themeBtn">🌙 Dark</button>
+
+    <div class="page">
+        <div class="top-bar">
+            <div class="top-item">
+                <div class="top-title">🤖 Version</div>
+                <div class="top-value" id="version"></div>
+            </div>
+            <div class="top-item">
+                <div class="top-title">🟢 Node</div>
+                <div class="top-value" id="node"></div>
+            </div>
+            <div class="top-item">
+                <div class="top-title">📦 discord.js</div>
+                <div class="top-value" id="discordjs"></div>
+            </div>
+            <div class="top-item">
+                <div class="top-title">⚡ Express</div>
+                <div class="top-value" id="express"></div>
+            </div>
+            <div class="top-item">
+                <div class="top-title">😎 LPT</div>
+                <div class="top-value" id="host"></div>
+            </div>
+        </div>
+
+        <div class="dashboard">
+            <div class="left-charts">
+                <div class="chart-card small">
+                    <h2>⚡ Ping</h2>
+                    <canvas id="pingChart"></canvas>
+                </div>
+            </div>
+
+            <div class="card">
+                <h1 id="botName">🤖 Bot Lâm Đồng</h1>
+
+                <div class="status">
+                    <span class="dot loading" id="statusDot"></span>
+                    <span id="statusText">ĐANG TẢI...</span>
+                </div>
+
+                <div class="stat">
+                    <span>⚡ Ping</span>
+                    <span id="ping" class="loading-spinner"></span>
+                </div>
+
+                <div class="stat">
+                    <span>💾 RAM</span>
+                    <span id="ram" class="loading-spinner"></span>
+                </div>
+
+                <div class="stat">
+                    <span>🖥 CPU</span>
+                    <span id="cpu" class="loading-spinner"></span>
+                </div>
+
+                <div class="stat">
+                    <span>🏠 Servers</span>
+                    <span id="guilds">0</span>
+                </div>
+
+                <div class="stat">
+                    <span>📅 Time</span>
+                    <span id="time" class="loading-spinner"></span>
+                </div>
+
+                <div class="stat" id="uptimeStat">
+                    <span>🕒 Uptime</span>
+                    <span id="uptime" class="loading-spinner"></span>
+                </div>
+
+                <hr style="border:none;height:1px;background:rgba(255, 255, 255, 0.13);margin:20px 0;">
+                <div style="opacity:.7">
+                    💻 Created By Lý Phúc Thiện
+                </div>
+            </div>
+
+            <div id="settingsModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>⚙️ Settings</h2>
+                        <span id="closeSettings">&times;</span>
+                    </div>
+
+                    <div class="menu-content">
+                        <h3>🎨 Appearance</h3>
+
+                        <div class="setting-row">
+                            <label>Theme</label>
+                            <select id="themeSelect">
+                                <option value="dark">Dark</option>
+                                <option value="light">Light</option>
+                                <option value="oled">OLED</option>
+                            </select>
+                        </div>
+
+                        <div class="setting-row">
+                            <label>Animation</label>
+                            <input type="checkbox" id="animationToggle" checked>
+                        </div>
+
+                        <div class="setting-row">
+                            <label>Blur Effect</label>
+                            <input type="checkbox" id="blurToggle" checked>
+                        </div>
+
+                        <hr>
+
+                        <h3>📊 Dashboard</h3>
+
+                        <div class="setting-row">
+                            <label>Hiển Thị Biểu Đồ Ping</label>
+                            <input type="checkbox" id="pingChartToggle" checked>
+                        </div>
+
+                        <div class="setting-row">
+                            <label>Hiển Thị Biểu Đồ RAM</label>
+                            <input type="checkbox" id="ramChartToggle" checked>
+                        </div>
+
+                        <div class="setting-row">
+                            <label>Thanh Nhạc</label>
+                            <input type="checkbox" id="musicToggle">
+                        </div>
+
+                        <hr>
+
+                        <h3>🕒 Time</h3>
+
+                        <div class="setting-row">
+                            <label>Định Dạng Thời Gian</label>
+                            <select id="timeFormatSelect">
+                                <option value="24h">24 Hour</option>
+                                <option value="12h">12 Hour</option>
+                            </select>
+                        </div>
+
+                        <div class="setting-row">
+                            <label>Accent Color</label>
+                            <input type="color" id="accentPicker" value="#3b82f6">
+                        </div>
+
+                        <hr>
+
+                        <h3>🤖 Bot Info</h3>
+
+                        <div class="bot-info-table">
+                            <div class="info-row">
+                                <span class="info-label">Tên Bot:</span>
+                                <span class="info-value" id="infoBotName">Lâm Đồng</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Ping:</span>
+                                <span class="info-value" id="botPing">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Máy Chủ:</span>
+                                <span class="info-value" id="botServers">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">RAM:</span>
+                                <span class="info-value" id="botRam">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">CPU:</span>
+                                <span class="info-value" id="botCpu">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Uptime:</span>
+                                <span class="info-value" id="botUptime">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Trạng Thái:</span>
+                                <span class="info-value" id="botStatus">-</span>
+                            </div>
+                        </div>
+
+                        <br>
+                        <button id="saveSettings">💾 Save Settings</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <h2>💾 RAM</h2>
+                <canvas id="ramChart"></canvas>
+            </div>
+        </div>
+
+        <div id="uptimeModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>🕒 Uptime History</h2>
+                    <span id="closeModal">&times;</span>
+                </div>
+
+                <div class="uptime-bar">
+                    <div id="uptimeBlocks"></div>
+                </div>
+
+                <div class="uptime-info">
+                    <div class="info-row">
+                        <span>🟢 Online</span>
+                        <span id="onlinePercent">0%</span>
+                    </div>
+                    <div class="info-row">
+                        <span>🔴 Disconnect</span>
+                        <span id="disconnectCount">0</span>
+                    </div>
+                    <div class="info-row">
+                        <span>⏱ Uptime Lâu Nhất</span>
+                        <span id="longestUptime">0 phút</span>
+                    </div>
+                    <div class="info-row">
+                        <span>🔄 Khởi Động Lại Lần Cuối</span>
+                        <span id="lastRestart">--</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="musicBar" class="music-player">
+            <img id="cover" class="cover">
+
+            <div class="player-body">
+                <div class="song-title" id="songTitle">Không Biết</div>
+                <div class="artist" id="artist">Lý Phúc Thiện</div>
+
+                <div class="controls">
+                    <button id="prevBtn">⏮</button>
+                    <button id="playMusic">▶</button>
+                    <button id="nextBtn">⏭</button>
+                    <button id="shuffleBtn">🔀</button>
+                    <button id="repeatBtn">🔁</button>
+                </div>
+
+                <div class="progress">
+                    <span id="currentTime">0:00</span>
+                    <input type="range" id="progressBar" value="0" min="0" max="100">
+                    <span id="duration">0:00</span>
+                </div>
+
+                <div class="volume">
+                    🔊
+                    <input type="range" id="volume" min="0" max="100" value="50">
+                </div>
+            </div>
+        </div>
+
+        <audio id="bgMusic"></audio>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/dashboard.js"></script>
+</body>
+</html>
