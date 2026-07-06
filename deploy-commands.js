@@ -2,7 +2,6 @@ const { REST, Routes } = require('discord.js');
 const fs = require('fs');
 const config = require('./config.json');
 const commands = [];
-console.log(config.TOKEN);
 
 const commandFiles = fs
     .readdirSync('./commands')
@@ -11,7 +10,7 @@ const commandFiles = fs
 for (const file of commandFiles) {
 
     try {
-
+        
         const command = require(`./commands/${file}`);
 
         console.log(`✅ ${file} -> ${command.data?.name}`);
