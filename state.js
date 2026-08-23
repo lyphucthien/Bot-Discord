@@ -1,3 +1,1 @@
-module.exports = {
-    maintenance: false
-};
+module.exports = {maintenance: false};
