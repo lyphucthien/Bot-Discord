@@ -23,7 +23,6 @@ module.exports = (client) => {
         // ======================
         // XP SYSTEM (FIXED)
         // ======================
-
         const userId = message.author.id;
         const key = `${message.guild.id}-${userId}`;
 
@@ -49,14 +48,12 @@ module.exports = (client) => {
                 );
             }
 
-            // 🔥 lưu lại DB
             levelDB.update(userId, user.xp, user.level);
         }
 
         // ======================
         // TICKET SYSTEM
         // ======================
-
         const data = ticketStatus.get(message.channel.id);
         if (!data) return;
 

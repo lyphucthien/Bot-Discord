@@ -52,23 +52,29 @@ module.exports = {
             🎉 **Tiện ích Server**
             ━━━━━━━━━━━━━━━━━━
 
-            \`/ticket\`
-            ➜ Tạo hệ thống Ticket
-
             \`/verify\`
             ➜ Tạo hệ thống Verify
 
-            \`/giveaway\`
+            \`/giveaway create\`
             ➜ Tạo Giveaway
 
-            \`/reroll\`
+            \`/giveaway reroll\`
             ➜ Quay lại Giveaway
+
+            \`/giveaway end\`
+            ➜ Kết thúc Giveaway sớm
 
             \`/report\`
             ➜ Báo cáo thành viên
 
             \`/support\`
             ➜ Hiển thị thông tin hỗ trợ
+
+            \`/script\`
+            ➜ Gửi nội dung script (chỉ bạn thấy)
+
+            \`/ping\`
+            ➜ Xem độ trễ của Bot
             `)
                 .setFooter({
                     text: "Trang 2/4 • Sử dụng các nút bên dưới để chuyển trang"
@@ -87,19 +93,13 @@ module.exports = {
             ➜ Xem Level
 
             \`/rank\`
-            ➜ Xem Rank
+            ➜ Xem Thẻ Rank
 
             \`/leaderboard\`
             ➜ BXH Level
 
             \`/stats\`
             ➜ Thống kê Server
-
-            \`/order\`
-            ➜ Xem thông tin đơn hàng
-
-            \`/lich-su-mua-hang\`
-            ➜ Xem lịch sử mua hàng
             `)
                 .setFooter({
                     text: "Trang 3/4 • Sử dụng các nút bên dưới để chuyển trang"
@@ -120,8 +120,11 @@ module.exports = {
             \`/restart\`
             ➜ Khởi động lại Bot
 
-            \`/maintenance\`
+            \`/maint <on|off>\`
             ➜ Bật/Tắt chế độ bảo trì
+
+            \`/setlevel <user> <level>\`
+            ➜ Set Level thành viên
 
             \`/eval\`
             ➜ Thực thi JavaScript

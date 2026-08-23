@@ -161,8 +161,6 @@ module.exports = (client) => {
         };
     }, 1000);
 
-    // Route "/" không còn cần thiết — express.static tự phục vụ public/index.html
-
     app.get("/ping", (req, res) => {
         res.json({
             status: "ok",
@@ -198,7 +196,6 @@ module.exports = (client) => {
         });
     });
 
-    // Error handling cho Socket.IO
     io.on("error", (error) => {
         console.error("❌ Socket.IO error:", error);
     });
