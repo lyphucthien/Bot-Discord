@@ -9,8 +9,7 @@ module.exports = (client) => {
         boosts: "1514454605998592110",
         members: "1514454436905353326",
 
-        onlineIdle: "1515573448192167948",
-        dndOffline: "1515581678897070115"
+        statusPlayerChannel: "1515573448192167948",
     };
 
     let updateTimeout = null;
@@ -79,8 +78,7 @@ module.exports = (client) => {
             const ownerChannel = guild.channels.cache.get(CHANNELS.owner);
             const boostsChannel = guild.channels.cache.get(CHANNELS.boosts);
             const membersChannel = guild.channels.cache.get(CHANNELS.members);
-            const onlineIdleChannel = guild.channels.cache.get(CHANNELS.onlineIdle);
-            const dndOfflineChannel = guild.channels.cache.get(CHANNELS.dndOffline);
+            const statusPlayerChannel = guild.channels.cache.get(CHANNELS.statusPlayerChannel);
 
             await Promise.all([
                 setChannelName(ownerChannel, ownerStatus),
@@ -96,14 +94,9 @@ module.exports = (client) => {
                 ),
 
                 setChannelName(
-                    onlineIdleChannel,
-                    `🟢 𝗢𝗡𝗟𝗜𝗡𝗘: ${online}  | 🌙 𝗜𝗗𝗟𝗘: ${idle}`
+                    statusPlayerChannel,
+                    `🟢 ${online}  | 🌙 ${idle}  | ⛔ ${dnd}  | ⚫ ${offline}`
                 ),
-
-                setChannelName(
-                    dndOfflineChannel,
-                    `⛔ 𝗗𝗡𝗗: ${dnd}  | ⚫ 𝗢𝗙𝗙𝗟𝗜𝗡𝗘: ${offline}`
-                )
             ]);
 
         } catch (err) {
