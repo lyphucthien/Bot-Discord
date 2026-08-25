@@ -1,8 +1,5 @@
 const config = require('../config.json');
 const ticketStatus = require('../utils/ticketDB');
-const levelDB = require('../utils/levelDB');
-
-const cooldowns = new Map();
 
 // ======================
 // HELPER ROLES SAFE
@@ -19,37 +16,6 @@ module.exports = (client) => {
 
         if (message.author.bot) return;
         if (!message.guild) return;
-
-        // ======================
-        // XP SYSTEM (FIXED)
-        // ======================
-        const userId = message.author.id;
-        const key = `${message.guild.id}-${userId}`;
-
-        if (!cooldowns.has(key)) {
-
-            cooldowns.set(key, Date.now());
-            setTimeout(() => cooldowns.delete(key), 3000);
-
-            // 🔥 lấy data từ DB
-            let user = levelDB.get(userId);
-
-            const gainedXP = Math.floor(Math.random() * 15) + 5;
-            user.xp += gainedXP;
-
-            const neededXP = user.level * 100;
-
-            if (user.xp >= neededXP) {
-                user.xp -= neededXP;
-                user.level++;
-
-                message.channel.send(
-                    `🎉 ${message.author} Lên **Level ${user.level}**!`
-                );
-            }
-
-            levelDB.update(userId, user.xp, user.level);
-        }
 
         // ======================
         // TICKET SYSTEM
