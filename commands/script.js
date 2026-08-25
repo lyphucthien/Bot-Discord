@@ -15,12 +15,12 @@ function hasScriptPermission(interaction) {
 }
 
 const SCRIPT_EMBED = {
-    title: 'Latest Script!',
+    title: 'Script do mình tự làm',
     authorName: 'LPT_HUB',
     authorIcon: "https://res.cloudinary.com/dkui88bcf/image/upload/v1786939501/Logo_LPT_vnq390.png",
     ticketChannelId: '1515926856589775100',
     ticketLine: 'Nếu bạn gặp lỗi với script, vui lòng tạo ticket tại {ticket}',
-    scriptLabel: '`loadstring(game:HttpGet("https://raw.githubusercontent.com/lyphucthien/LPT-Hub/refs/heads/main/LPT_Hub.luau"))()`'
+    scriptLabel: `\`\`\`lua\nloadstring(game:HttpGet("https://raw.githubusercontent.com/mentayuu/script/refs/heads/main/script.lua"))()\`\`\``
 };
 
 module.exports = {
@@ -31,7 +31,7 @@ module.exports = {
     async execute(interaction) {
         if (!hasScriptPermission(interaction)) {
             return interaction.reply({
-                content: '🔒 Bạn không có quyền sử dụng lệnh này.\nChỉ Owner, Admin hoặc role Helper mới được phép.',
+                content: '🔒 Bạn không có quyền sử dụng lệnh này.',
                 flags: MessageFlags.Ephemeral
             });
         }
@@ -45,7 +45,7 @@ module.exports = {
             .setTitle(SCRIPT_EMBED.title)
             .setDescription(
                 `${SCRIPT_EMBED.ticketLine.replace('{ticket}', `<#${SCRIPT_EMBED.ticketChannelId}>`)}\n\n` +
-                `**Script**\n${SCRIPT_EMBED.scriptLabel}`
+                `## Script\n${SCRIPT_EMBED.scriptLabel}`
             );
 
         return interaction.reply({ embeds: [embed] });
