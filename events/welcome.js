@@ -4,7 +4,7 @@ module.exports = (client) => {
 
     client.on('guildMemberAdd', async member => {
 
-        const channel = member.guild.channels.cache.get(`<#1503396671613046804>`);
+        const channel = member.guild.channels.cache.get('1503396671613046804');
         if (!channel) return;
 
         const embed = new EmbedBuilder()
