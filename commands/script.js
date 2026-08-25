@@ -20,7 +20,7 @@ const SCRIPT_EMBED = {
     authorIcon: "https://res.cloudinary.com/dkui88bcf/image/upload/v1786939501/Logo_LPT_vnq390.png",
     ticketChannelId: '1515926856589775100',
     ticketLine: 'Nếu bạn gặp lỗi với script, vui lòng tạo ticket tại {ticket}',
-    scriptLabel: `\`\`\`lua\nloadstring(game:HttpGet("https://raw.githubusercontent.com/mentayuu/script/refs/heads/main/script.lua"))()\`\`\``
+    scriptLabel: `\`\`\`lua\nloadstring(game:HttpGet("loadstring(game:HttpGet("https://raw.githubusercontent.com/lyphucthien/LPT-Hub/refs/heads/main/LPT_Hub.luau"))()"))()\`\`\``
 };
 
 module.exports = {
