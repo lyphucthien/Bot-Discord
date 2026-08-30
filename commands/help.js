@@ -9,7 +9,6 @@ module.exports = {
 
         const pages = [
 
-            // ===== TRANG 1 =====
             new EmbedBuilder()
                 .setColor("#5865F2")
                 .setTitle("📖 Help Menu (1/4)")
@@ -38,12 +37,8 @@ module.exports = {
 
             \`/setrole\`
             ➜ Thêm / Xóa / Toggle Role
-            `)
-                .setFooter({
-                    text: "Trang 1/4 • Sử dụng các nút bên dưới để chuyển trang"
-                }),
+            `),
 
-            // ===== TRANG 2 =====
             new EmbedBuilder()
                 .setColor("#5865F2")
                 .setTitle("📖 Help Menu (2/4)")
@@ -53,7 +48,7 @@ module.exports = {
             ━━━━━━━━━━━━━━━━━━
 
             \`/verify\`
-            ➜ Tạo hệ thống Verify
+            ➜ Tạo bảng hệ thống Verify
 
             \`/giveaway create\`
             ➜ Tạo Giveaway
@@ -75,40 +70,11 @@ module.exports = {
 
             \`/ping\`
             ➜ Xem độ trễ của Bot
-            `)
-                .setFooter({
-                    text: "Trang 2/4 • Sử dụng các nút bên dưới để chuyển trang"
-                }),
+            `),
 
-            // ===== TRANG 3 =====
             new EmbedBuilder()
                 .setColor("#5865F2")
-                .setTitle("📖 Help Menu (3/4)")
-                .setDescription(`
-            ━━━━━━━━━━━━━━━━━━
-            📊 **Level & Thống Kê**
-            ━━━━━━━━━━━━━━━━━━
-
-            \`/level\`
-            ➜ Xem Level
-
-            \`/rank\`
-            ➜ Xem Thẻ Rank
-
-            \`/leaderboard\`
-            ➜ BXH Level
-
-            \`/stats\`
-            ➜ Thống kê Server
-            `)
-                .setFooter({
-                    text: "Trang 3/4 • Sử dụng các nút bên dưới để chuyển trang"
-                }),
-
-            // ===== TRANG 4 =====
-            new EmbedBuilder()
-                .setColor("#5865F2")
-                .setTitle("📖 Help Menu (4/4)")
+                .setTitle("📖 Help Menu (3/3)")
                 .setDescription(`
             ━━━━━━━━━━━━━━━━━━
             👑 **Owner**
@@ -123,19 +89,15 @@ module.exports = {
             \`/maint <on|off>\`
             ➜ Bật/Tắt chế độ bảo trì
 
-            \`/setlevel <user> <level>\`
-            ➜ Set Level thành viên
-
 
             📚 **Khác**
 
             \`/help\`
             ➜ Hiển thị danh sách lệnh
-            `)
-                .setFooter({
-                    text: "Trang 4/4 • Sử dụng các nút bên dưới để chuyển trang"
-                })
 
+            \`/stats\`
+            ➜ Thống tin Server
+            `)
         ];
 
         let page = 0;
