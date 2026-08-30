@@ -30,6 +30,13 @@ module.exports = (client) => {
     app.use(compression());
     app.use(express.static(path.join(__dirname, "public")));
 
+    try {
+        const fs = require("fs");
+        console.log("🔍 DEBUG web/public:", fs.readdirSync(path.join(__dirname, "public")));
+    } catch (err) {
+        console.log("❌ DEBUG web/public LỖI:", err.message);
+    }
+
     const PORT = process.env.PORT || 10000;
     const URL = process.env.URL;
 
