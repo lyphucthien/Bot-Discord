@@ -45,9 +45,8 @@ module.exports = {
                 name: 'LPT_HUB',
                 iconURL: "https://res.cloudinary.com/dkui88bcf/image/upload/v1786939501/Logo_LPT_vnq390.png"
             })
-            .setTitle('Script do mình tự làm')
             .setDescription(
-                `Nếu bạn gặp lỗi với script, vui lòng tạo ticket tại <#1515926856589775100>\n\n` +
+                `Nếu bạn gặp lỗi với trong quá trình sử dụng, vui lòng tạo ticket hỗ trợ tại <#1515926856589775100>\n\n` +
                 `## Script\n\`\`\`lua\nloadstring(game:HttpGet("https://raw.githubusercontent.com/lyphucthien/LPT-Hub/refs/heads/main/LPT_Hub.luau"))()\`\`\`\n\n` +
                 `Nhấn Nút Bên Dưới Để Xem Danh Sách Script Hỗ Trợ.`
             );
@@ -78,17 +77,17 @@ module.exports = {
                 if (i.customId === 'script_games_supported') {
                     return i.reply({
                         content:
-                            '🎮 **Games Supported**\n\n' +
-                            '**TRẠNG THÁI / STATUS**\n' +
+                            '# 🎮 Game Supported\n\n' +
+                            '## TRẠNG THÁI / STATUS\n' +
                             '🟢 Đang Hoạt Động - ON\n' +
                             '🟡 Đang Cập Nhật - UPDATING\n' +
                             '🔴 Tạm Ngưng Hoạt Động - OFF\n\n' +
-                            '**Game Status:**\n' +
+                            '## Game Status:\n' +
                             '🔴 Blox Fruits *(Đang Làm)*\n' +
                             '🟢 +1 Speed Keyboard Escape\n' +
                             '🟢 Greedy Growers\n\n' +
-                            '_Các game không được đề cập sẽ có 1 script hỗ trợ riêng.\n' +
-                            'Games not mentioned will have a separate support script._',
+                            '**Các game không được đề cập sẽ có 1 script hỗ trợ riêng.\n' +
+                            'Games not mentioned will have a separate support script.**',
                         flags: MessageFlags.Ephemeral
                     });
                 }
