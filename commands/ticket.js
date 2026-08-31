@@ -47,8 +47,7 @@ function replyExecutorInfo(si, chosen) {
         content:
             `# ${chosen}\n\n` +
             `**Trạng Thái:** ${info.status}\n` +
-            `**Link Tải:** ${info.download}\n` +
-            `**Discord:** ${info.discord}`,
+            `**Link Tải:** ${info.download} [Discord](${info.discord})`,
         flags: MessageFlags.Ephemeral
     });
 }
