@@ -41,7 +41,7 @@ module.exports = {
             }
 
             const embed = new EmbedBuilder()
-                .setColor('#272727')
+                .setColor('#4b4b4b')
                 .setAuthor({
                     name: 'LPT HUB',
                     iconURL: "https://res.cloudinary.com/dkui88bcf/image/upload/v1786939501/Logo_LPT_vnq390.png"
@@ -106,8 +106,14 @@ module.exports = {
                     iconURL: "https://res.cloudinary.com/dkui88bcf/image/upload/v1786939501/Logo_LPT_vnq390.png"
                 })
                 .setDescription(
-                    `## Executor Được Hỗ Trợ\n` +
-                    `Chọn nền tảng của bạn để xem danh sách executor tương thích.`
+                    `# Executor Supported\n` +
+                    `## TRẠNG THÁI / STATUS\n` +
+                    `> **🟢 Đã Cập Nhật - Updated**\n` +
+                    `> **🟡 Không Ổn Định - Unstable**\n` +
+                    `> **🟠 Chưa Cập Nhật - Not Update Yet**\n` +
+                    `> **🔴 Đang Bảo Trì - Under Maintenance:**\n` +
+                    `> **⚫ Tạm Ngưng Hoạt Động - OFF**\n` +
+                    `**Chọn nền tảng của bạn để xem danh sách executor tương thích.**`
                 );
 
             const row = new ActionRowBuilder()
@@ -133,9 +139,7 @@ module.exports = {
 
             const msg = await interaction.fetchReply();
 
-            const collector = msg.createMessageComponentCollector({
-                time: 300000
-            });
+            const collector = msg.createMessageComponentCollector({time: 300000});
 
             collector.on('collect', async i => {
                 if (i.customId === 'executor_pc') {
@@ -157,7 +161,7 @@ module.exports = {
                     const selectRow = new ActionRowBuilder().addComponents(menu);
 
                     return i.reply({
-                        content: '💻 **PC / Laptop — Select (1/1) 1-9**',
+                        content: '💻 **Executor PC / Laptop — Select (1/1) 1-9**',
                         components: [selectRow],
                         flags: MessageFlags.Ephemeral
                     });
