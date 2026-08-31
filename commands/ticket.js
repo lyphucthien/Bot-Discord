@@ -59,7 +59,7 @@ module.exports = {
                     new ButtonBuilder()
                         .setCustomId('script_executors_supported')
                         .setLabel('Executors Supported')
-                        .setEmoji('⚙️')
+                        .setEmoji('💻')
                         .setStyle(ButtonStyle.Secondary)
                 );
 
@@ -92,7 +92,7 @@ module.exports = {
 
                 if (i.customId === 'script_executors_supported') {
                     return i.reply({
-                        content: '⚙️ **Executors Supported**\n\n_(nội dung sẽ cập nhật sau)_',
+                        content: '💻 **Executors Supported**\n\nTất Cả Client',
                         flags: MessageFlags.Ephemeral
                     });
                 }
