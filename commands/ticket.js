@@ -1,6 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder, PermissionsBitField, MessageFlags } = require('discord.js');
 const config = require('../config.json');
 
+//Vòng Tròn Trạng Thái: 🟢/🟡/🟠/🔴/⚫
 const EXECUTOR_DATA = {
     // PC / Laptop
     'Wave': { status: '🟢', download: 'https://getwave.gg/', discord: 'https://discord.gg/p4asyAEXt' },
@@ -45,7 +46,7 @@ function replyExecutorInfo(si, chosen) {
 
     return si.reply({
         content:
-            `# ${chosen}  ${info.status}\n\n` +
+            `# ${chosen} ${info.status}\n\n` +
             `**Download:** [Download](${info.download})\n` +
             `**Discord:** [Discord](${info.discord})`,
         flags: MessageFlags.Ephemeral
