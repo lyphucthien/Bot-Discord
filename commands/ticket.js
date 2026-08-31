@@ -14,15 +14,6 @@ function hasScriptPermission(interaction) {
     );
 }
 
-const SCRIPT_EMBED = {
-    title: 'Script do mình tự làm',
-    authorName: 'LPT_HUB',
-    authorIcon: "https://res.cloudinary.com/dkui88bcf/image/upload/v1786939501/Logo_LPT_vnq390.png",
-    ticketChannelId: '1515926856589775100',
-    ticketLine: 'Nếu bạn gặp lỗi với script, vui lòng tạo ticket tại {ticket}',
-    scriptLabel: `\`\`\`lua\nloadstring(game:HttpGet("https://raw.githubusercontent.com/lyphucthien/LPT-Hub/refs/heads/main/LPT_Hub.luau"))()\`\`\``
-};
-
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('ticket')
@@ -48,23 +39,24 @@ module.exports = {
                 });
             }
 
-            const embed = new EmbedBuilder()
-                .setColor('#5865F2')
-                .setAuthor({
-                    name: SCRIPT_EMBED.authorName,
-                    iconURL: SCRIPT_EMBED.authorIcon
-                })
-                .setTitle(SCRIPT_EMBED.title)
-                .setDescription(
-                    `${SCRIPT_EMBED.ticketLine.replace('{ticket}', `<#${SCRIPT_EMBED.ticketChannelId}>`)}\n\n` +
-                    `Nhấn nút bên dưới để xem danh sách được hỗ trợ.`
-                );
+        const embed = new EmbedBuilder()
+            .setColor('#5865F2')
+            .setAuthor({
+                name: 'LPT_HUB',
+                iconURL: "https://res.cloudinary.com/dkui88bcf/image/upload/v1786939501/Logo_LPT_vnq390.png"
+            })
+            .setTitle('Script do mình tự làm')
+            .setDescription(
+                `Nếu bạn gặp lỗi với script, vui lòng tạo ticket tại <#1515926856589775100>\n\n` +
+                `## Script\n\`\`\`lua\nloadstring(game:HttpGet("https://raw.githubusercontent.com/lyphucthien/LPT-Hub/refs/heads/main/LPT_Hub.luau"))()\`\`\`\n\n` +
+                `Nhấn Nút Bên Dưới Để Xem Danh Sách Script Hỗ Trợ.`
+            );
 
             const row = new ActionRowBuilder()
                 .addComponents(
                     new ButtonBuilder()
                         .setCustomId('script_games_supported')
-                        .setLabel('Games Supported')
+                        .setLabel('Game Supported')
                         .setEmoji('🎮')
                         .setStyle(ButtonStyle.Primary),
                     new ButtonBuilder()
@@ -85,7 +77,18 @@ module.exports = {
             collector.on('collect', async i => {
                 if (i.customId === 'script_games_supported') {
                     return i.reply({
-                        content: '🎮 **Games Supported**\n\n_(nội dung sẽ cập nhật sau)_',
+                        content:
+                            '🎮 **Games Supported**\n\n' +
+                            '**TRẠNG THÁI / STATUS**\n' +
+                            '🟢 Đang Hoạt Động - ON\n' +
+                            '🟡 Đang Cập Nhật - UPDATING\n' +
+                            '🔴 Tạm Ngưng Hoạt Động - OFF\n\n' +
+                            '**Game Status:**\n' +
+                            '🔴 Blox Fruits *(Đang Làm)*\n' +
+                            '🟢 +1 Speed Keyboard Escape\n' +
+                            '🟢 Greedy Growers\n\n' +
+                            '_Các game không được đề cập sẽ có 1 script hỗ trợ riêng.\n' +
+                            'Games not mentioned will have a separate support script._',
                         flags: MessageFlags.Ephemeral
                     });
                 }
