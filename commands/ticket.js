@@ -3,23 +3,23 @@ const config = require('../config.json');
 
 const EXECUTOR_DATA = {
     // PC / Laptop
-    'Wave': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://getwave.gg/', discord: 'https://discord.gg/p4asyAEXt' },
-    'Potassium': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://potassium.pro/', discord: 'https://discord.gg/potassium' },
-    'Volt': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://voltbz.net/', discord: 'https://discord.gg/voltbz' },
-    'Madium': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://getmadium.net/', discord: 'https://discord.gg/olemad' },
-    'Real': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://projectreal.gg/', discord: 'https://discord.gg/projectreal' },
-    'Velocity': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://getvelocity.llc/', discord: 'https://discord.gg/velocityide' },
-    'Solara': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://getsolara.dev/', discord: 'https://stoat.chat/invite/yQBTsMHA' },
-    'Xeno': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://xeno.now/', discord: 'https://discord.gg/xe-no' },
+    'Wave': { status: '🟢', download: 'https://getwave.gg/', discord: 'https://discord.gg/p4asyAEXt' },
+    'Potassium': { status: '🟢', download: 'https://potassium.pro/', discord: 'https://discord.gg/potassium' },
+    'Volt': { status: '🟢', download: 'https://voltbz.net/', discord: 'https://discord.gg/voltbz' },
+    'Madium': { status: '🟢', download: 'https://getmadium.net/', discord: 'https://discord.gg/olemad' },
+    'Real': { status: '🟢', download: 'https://projectreal.gg/', discord: 'https://discord.gg/projectreal' },
+    'Velocity': { status: '🟢', download: 'https://getvelocity.llc/', discord: 'https://discord.gg/velocityide' },
+    'Solara': { status: '🟢', download: 'https://getsolara.dev/', discord: 'https://stoat.chat/invite/yQBTsMHA' },
+    'Xeno': { status: '🟢', download: 'https://xeno.now/', discord: 'https://discord.gg/xe-no' },
 
     // Macbook
-    'MacSploit': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://raptor.fun/', discord: 'https://discord.gg/macsploit' },
-    'Opiumware': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://use.opiumware.today/', discord: 'https://discord.gg/opiumware' },
+    'MacSploit': { status: '🟢', download: 'https://raptor.fun/', discord: 'https://discord.gg/macsploit' },
+    'Opiumware': { status: '🟢', download: 'https://use.opiumware.today/', discord: 'https://discord.gg/opiumware' },
 
     // Mobile
-    'Delta (IOS & Android)': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://deltaexploits.gg/', discord: 'https://discord.gg/deltax' },
-    'Vega X': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://vegax.gg/', discord: 'https://discord.gg/vegasupport' },
-    'Codex': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://codex.lol/', discord: 'https://discord.gg/codexlol' }
+    'Delta (IOS & Android)': { status: '🟢', download: 'https://deltaexploits.gg/', discord: 'https://discord.gg/deltax' },
+    'Vega X': { status: '🟢', download: 'https://vegax.gg/', discord: 'https://discord.gg/vegasupport' },
+    'Codex': { status: '🟢', download: 'https://codex.lol/', discord: 'https://discord.gg/codexlol' }
 };
 
 function hasScriptPermission(interaction) {
