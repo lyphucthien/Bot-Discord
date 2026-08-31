@@ -1,10 +1,8 @@
 const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, PermissionsBitField, MessageFlags } = require('discord.js');
 const config = require('../config.json');
 
-const OWNER_ID = '1330395226933559297';
-
 function hasScriptPermission(interaction) {
-    if (interaction.user.id === OWNER_ID) return true;
+    if (interaction.user.id === '1330395226933559297') return true;
     if (interaction.member?.permissions?.has(PermissionsBitField.Flags.Administrator)) return true;
 
     const helperRole = config.Helper;
@@ -17,16 +15,16 @@ function hasScriptPermission(interaction) {
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('ticket')
-        .setDescription('Tạo phiếu hỗ trợ hoặc tố cáo')
+        .setDescription('Tạo Bảng Ticket')
         .addSubcommand(sub =>
             sub.setName('support')
-                .setDescription('Gửi Bảng Support Ticket'))
+                .setDescription('Gửi Bảng Ticket Support'))
         .addSubcommand(sub =>
             sub.setName('report')
-                .setDescription('Gửi Bảng Report Ticket'))
+                .setDescription('Gửi Bảng Ticket Report'))
         .addSubcommand(sub =>
             sub.setName('script-supported')
-                .setDescription('Gửi Script (kèm ticket hỗ trợ)')),
+                .setDescription('Gửi Script')),
 
     async execute(interaction) {
         const sub = interaction.options.getSubcommand();
@@ -46,8 +44,8 @@ module.exports = {
                 iconURL: "https://res.cloudinary.com/dkui88bcf/image/upload/v1786939501/Logo_LPT_vnq390.png"
             })
             .setDescription(
-                `Nếu bạn gặp lỗi với trong quá trình sử dụng, vui lòng tạo ticket hỗ trợ tại <#1515926856589775100>\n\n` +
-                `## Script\n\`\`\`lua\nloadstring(game:HttpGet("https://raw.githubusercontent.com/lyphucthien/LPT-Hub/refs/heads/main/LPT_Hub.luau"))()\`\`\`\n\n` +
+                `Nếu bạn gặp lỗi trong quá trình sử dụng, vui lòng gửi hỗ trợ tại <#1515926856589775100>\n` +
+                `## Script\n\`\`\`lua\nloadstring(game:HttpGet("https://raw.githubusercontent.com/lyphucthien/LPT-Hub/refs/heads/main/LPT_Hub.luau"))()\`\`\`\n` +
                 `Nhấn Nút Bên Dưới Để Xem Danh Sách Script Hỗ Trợ.`
             );
 
