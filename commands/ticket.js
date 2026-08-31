@@ -74,7 +74,7 @@ module.exports = {
                     return i.reply({
                         content:
                             '# 🎮 Game Supported\n\n' +
-                            '## TRẠNG THÁI / STATUS\n' +
+                            '### TRẠNG THÁI / STATUS\n' +
                             '> **🟢 Đang Hoạt Động - ON**\n' +
                             '> **🟡 Đang Cập Nhật - UPDATING**\n' +
                             '> **🔴 Tạm Ngưng Hoạt Động - OFF**\n\n' +
@@ -102,18 +102,17 @@ module.exports = {
             const embed = new EmbedBuilder()
                 .setColor('#272727')
                 .setAuthor({
-                    name: 'LPT HUB',
+                    name: '### Executor Supported',
                     iconURL: "https://res.cloudinary.com/dkui88bcf/image/upload/v1786939501/Logo_LPT_vnq390.png"
                 })
                 .setDescription(
-                    `# Executor Supported\n` +
                     `## TRẠNG THÁI / STATUS\n` +
-                    `> **🟢 Đã Cập Nhật - Updated**\n` +
-                    `> **🟡 Không Ổn Định - Unstable**\n` +
-                    `> **🟠 Chưa Cập Nhật - Not Update Yet**\n` +
-                    `> **🔴 Đang Bảo Trì - Under Maintenance:**\n` +
-                    `> **⚫ Tạm Ngưng Hoạt Động - OFF**\n` +
-                    `**Chọn nền tảng của bạn để xem danh sách executor tương thích.**`
+                    `**🟢 Đã Cập Nhật - Updated**\n` +
+                    `**🟡 Không Ổn Định - Unstable**\n` +
+                    `**🟠 Chưa Cập Nhật - Not Update Yet**\n` +
+                    `**🔴 Đang Bảo Trì - Under Maintenance:**\n` +
+                    `**⚫ Tạm Ngưng Hoạt Động - OFF**\n` +
+                    `Chọn nền tảng của bạn để xem danh sách executor tương thích.`
                 );
 
             const row = new ActionRowBuilder()
