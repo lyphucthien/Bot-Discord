@@ -17,7 +17,7 @@ const EXECUTOR_DATA = {
     'Opiumware': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://use.opiumware.today/', discord: 'https://discord.gg/opiumware' },
 
     // Mobile
-    'Delta': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://deltaexploits.gg/', discord: 'https://discord.gg/deltax' },
+    'Delta (IOS & Android)': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://deltaexploits.gg/', discord: 'https://discord.gg/deltax' },
     'Vega X': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://vegax.gg/', discord: 'https://discord.gg/vegasupport' },
     'Codex': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://codex.lol/', discord: 'https://discord.gg/codexlol' }
 };
@@ -47,7 +47,7 @@ function replyExecutorInfo(si, chosen) {
         content:
             `# ${chosen}\n\n` +
             `**Trạng Thái:** ${info.status}\n` +
-            `**Link Tải:** ${info.download} [Discord](${info.discord})`,
+            `[Link Tải](${info.download}) [Discord](${info.discord})`,
         flags: MessageFlags.Ephemeral
     });
 }
@@ -242,7 +242,7 @@ module.exports = {
                         .setCustomId('select_executor_mobile')
                         .setPlaceholder('Chọn 1 Executor Để Xem Chi Tiết')
                         .addOptions([
-                            { label: 'Delta', value: 'Delta' },
+                            { label: 'Delta (IOS & Android)', value: 'Delta (IOS & Android)' },
                             { label: 'Vega X', value: 'Vega X' },
                             { label: 'Codex', value: 'Codex' }
                         ]);
