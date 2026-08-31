@@ -34,22 +34,38 @@ function hasScriptPermission(interaction) {
     );
 }
 
+function replyExecutorInfo(si, chosen) {
+    const info = EXECUTOR_DATA[chosen];
+
+    if (!info) {
+        return si.reply({
+            content: `**${chosen}**\n\n_(thông tin chi tiết sẽ cập nhật sau)_`,
+            flags: MessageFlags.Ephemeral
+        });
+    }
+
+    return si.reply({
+        content:
+            `# ${chosen}\n\n` +
+            `**Trạng Thái:** ${info.status}\n` +
+            `**Link Tải:** ${info.download}\n` +
+            `**Discord:** ${info.discord}`,
+        flags: MessageFlags.Ephemeral
+    });
+}
+
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('ticket')
         .setDescription('Tạo Bảng Ticket')
-        .addSubcommand(sub =>
-            sub.setName('support')
-                .setDescription('Gửi Bảng Ticket Support'))
-        .addSubcommand(sub =>
-            sub.setName('report')
-                .setDescription('Gửi Bảng Ticket Report'))
-        .addSubcommand(sub =>
-            sub.setName('script')
-                .setDescription('Gửi Script'))
-        .addSubcommand(sub =>
-            sub.setName('executor-supported')
-                .setDescription('Gửi Executor Được Hỗ Trợ')),
+        .addSubcommand(sub => sub.setName('support')
+            .setDescription('Gửi Bảng Ticket Support'))
+        .addSubcommand(sub => sub.setName('report')
+            .setDescription('Gửi Bảng Ticket Report'))
+        .addSubcommand(sub => sub.setName('script')
+            .setDescription('Gửi Script'))
+        .addSubcommand(sub => sub.setName('executor-supported')
+            .setDescription('Gửi Executor Script Hỗ Trợ')),
 
     async execute(interaction) {
         const sub = interaction.options.getSubcommand();
@@ -133,7 +149,7 @@ module.exports = {
                     `> **🟡 Không Ổn Định - Unstable**\n` +
                     `> **🟠 Chưa Cập Nhật - Not Update Yet**\n` +
                     `> **🔴 Đang Bảo Trì - Under Maintenance**\n` +
-                    `> **⚫ Tạm Ngưng Hoạt Động - OFF**\n\n` +
+                    `> **⚫ Ngừng Hoạt Động - OFF**\n\n` +
                     `Chọn nền tảng của bạn để xem danh sách executor tương thích.`
                 );
 
@@ -181,11 +197,20 @@ module.exports = {
 
                     const selectRow = new ActionRowBuilder().addComponents(menu);
 
-                    return i.reply({
+                    await i.reply({
                         content: '💻 **Trạng Thái Executor PC / Laptop**',
                         components: [selectRow],
                         flags: MessageFlags.Ephemeral
                     });
+
+                    const selectMsg = await i.fetchReply();
+                    const selectCollector = selectMsg.createMessageComponentCollector({ time: 300000 });
+
+                    selectCollector.on('collect', async si => {
+                        return replyExecutorInfo(si, si.values[0]);
+                    });
+
+                    return;
                 }
 
                 if (i.customId === 'executor_mac') {
@@ -199,11 +224,20 @@ module.exports = {
 
                     const selectRow = new ActionRowBuilder().addComponents(menu);
 
-                    return i.reply({
+                    await i.reply({
                         content: '🍎 **Trạng Thái Executor Macbook**',
                         components: [selectRow],
                         flags: MessageFlags.Ephemeral
                     });
+
+                    const selectMsg = await i.fetchReply();
+                    const selectCollector = selectMsg.createMessageComponentCollector({ time: 300000 });
+
+                    selectCollector.on('collect', async si => {
+                        return replyExecutorInfo(si, si.values[0]);
+                    });
+
+                    return;
                 }
 
                 if (i.customId === 'executor_mobile') {
@@ -218,32 +252,20 @@ module.exports = {
 
                     const selectRow = new ActionRowBuilder().addComponents(menu);
 
-                    return i.reply({
+                    await i.reply({
                         content: '📱 **Trạng Thái Executor Mobile**',
                         components: [selectRow],
                         flags: MessageFlags.Ephemeral
                     });
-                }
 
-                if (i.isStringSelectMenu()) {
-                    const chosen = i.values[0];
-                    const info = EXECUTOR_DATA[chosen];
+                    const selectMsg = await i.fetchReply();
+                    const selectCollector = selectMsg.createMessageComponentCollector({ time: 300000 });
 
-                    if (!info) {
-                        return i.reply({
-                            content: `**${chosen}**\n\n_(thông tin chi tiết sẽ cập nhật sau)_`,
-                            flags: MessageFlags.Ephemeral
-                        });
-                    }
-
-                    return i.reply({
-                        content:
-                            `# ${chosen}\n\n` +
-                            `**Trạng Thái:** ${info.status}\n` +
-                            `**Link Tải:** ${info.download}\n` +
-                            `**Discord:** ${info.discord}`,
-                        flags: MessageFlags.Ephemeral
+                    selectCollector.on('collect', async si => {
+                        return replyExecutorInfo(si, si.values[0]);
                     });
+
+                    return;
                 }
             });
 
