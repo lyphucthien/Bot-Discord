@@ -102,16 +102,16 @@ module.exports = {
             const embed = new EmbedBuilder()
                 .setColor('#272727')
                 .setAuthor({
-                    name: '### Executor Supported',
+                    name: 'Executor Supported',
                     iconURL: "https://res.cloudinary.com/dkui88bcf/image/upload/v1786939501/Logo_LPT_vnq390.png"
                 })
                 .setDescription(
                     `## TRẠNG THÁI / STATUS\n` +
-                    `**🟢 Đã Cập Nhật - Updated**\n` +
-                    `**🟡 Không Ổn Định - Unstable**\n` +
-                    `**🟠 Chưa Cập Nhật - Not Update Yet**\n` +
-                    `**🔴 Đang Bảo Trì - Under Maintenance:**\n` +
-                    `**⚫ Tạm Ngưng Hoạt Động - OFF**\n` +
+                    `> **🟢 Đã Cập Nhật - Updated**\n` +
+                    `> **🟡 Không Ổn Định - Unstable**\n` +
+                    `> **🟠 Chưa Cập Nhật - Not Update Yet**\n` +
+                    `> **🔴 Đang Bảo Trì - Under Maintenance:**\n` +
+                    `> **⚫ Tạm Ngưng Hoạt Động - OFF**\n\n` +
                     `Chọn nền tảng của bạn để xem danh sách executor tương thích.`
                 );
 
