@@ -3,24 +3,23 @@ const config = require('../config.json');
 
 const EXECUTOR_DATA = {
     // PC / Laptop
-    'Wave': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://...', discord: 'https://discord.gg/...' },
-    'Volt': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://...', discord: 'https://discord.gg/...' },
-    'Potassium': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://...', discord: 'https://discord.gg/...' },
-    'Volcano': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://...', discord: 'https://discord.gg/...' },
-    'Seliware': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://...', discord: 'https://discord.gg/...' },
-    'Ronix': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://...', discord: 'https://discord.gg/...' },
-    'Velocity': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://...', discord: 'https://discord.gg/...' },
-    'Madium': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://...', discord: 'https://discord.gg/...' },
-    'YUB-X': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://...', discord: 'https://discord.gg/...' },
+    'Wave': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://getwave.gg/', discord: 'https://discord.gg/p4asyAEXt' },
+    'Potassium': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://www.potassium.pro/', discord: 'https://discord.gg/potassium' },
+    'Volt': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://voltbz.net/', discord: 'https://discord.gg/voltbz' },
+    'Madium': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://getmadium.net/', discord: 'https://discord.gg/olemad' },
+    'Real': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://projectreal.gg/', discord: 'https://discord.gg/projectreal' },
+    'Velocity': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://getvelocity.llc/', discord: 'https://discord.gg/velocityide' },
+    'Solara': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://getsolara.dev/', discord: 'https://stoat.chat/invite/yQBTsMHA' },
+    'Xeno': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://xeno.now/', discord: 'https://discord.gg/xe-no' },
 
     // Macbook
-    'Hydrogen': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://...', discord: 'https://discord.gg/...' },
-    'Macsploit': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://...', discord: 'https://discord.gg/...' },
+    'MacSploit': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://raptor.fun/', discord: 'https://discord.gg/macsploit' },
+    'Opiumware': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://use.opiumware.today/', discord: 'https://discord.gg/opiumware' },
 
     // Mobile
-    'Arceus X': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://...', discord: 'https://discord.gg/...' },
-    'Delta': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://...', discord: 'https://discord.gg/...' },
-    'Codex': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://...', discord: 'https://discord.gg/...' }
+    'Delta': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://deltaexploits.gg/', discord: 'https://discord.gg/deltax' },
+    'Vega X': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://vegax.gg/', discord: 'https://discord.gg/vegasupport' },
+    'Codex': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://codex.lol/', discord: 'https://discord.gg/codexlol' }
 };
 
 function hasScriptPermission(interaction) {
@@ -185,14 +184,13 @@ module.exports = {
                         .setPlaceholder('Chọn 1 Executor Để Xem Chi Tiết')
                         .addOptions([
                             { label: 'Wave', value: 'Wave' },
-                            { label: 'Volt', value: 'Volt' },
                             { label: 'Potassium', value: 'Potassium' },
-                            { label: 'Volcano', value: 'Volcano' },
-                            { label: 'Seliware', value: 'Seliware' },
-                            { label: 'Ronix', value: 'Ronix' },
-                            { label: 'Velocity', value: 'Velocity' },
+                            { label: 'Volt', value: 'Volt' },
                             { label: 'Madium', value: 'Madium' },
-                            { label: 'YUB-X', value: 'YUB-X' }
+                            { label: 'Real', value: 'Real' },
+                            { label: 'Velocity', value: 'Velocity' },
+                            { label: 'Solara', value: 'Solara' },
+                            { label: 'Xeno', value: 'Xeno' }
                         ]);
 
                     const selectRow = new ActionRowBuilder().addComponents(menu);
@@ -218,8 +216,8 @@ module.exports = {
                         .setCustomId('select_executor_mac')
                         .setPlaceholder('Chọn 1 Executor Để Xem Chi Tiết')
                         .addOptions([
-                            { label: 'Hydrogen', value: 'Hydrogen' },
-                            { label: 'Macsploit', value: 'Macsploit' }
+                            { label: 'MacSploit', value: 'MacSploit' },
+                            { label: 'Opiumware', value: 'Opiumware' }
                         ]);
 
                     const selectRow = new ActionRowBuilder().addComponents(menu);
@@ -245,8 +243,8 @@ module.exports = {
                         .setCustomId('select_executor_mobile')
                         .setPlaceholder('Chọn 1 Executor Để Xem Chi Tiết')
                         .addOptions([
-                            { label: 'Arceus X', value: 'Arceus X' },
                             { label: 'Delta', value: 'Delta' },
+                            { label: 'Vega X', value: 'Vega X' },
                             { label: 'Codex', value: 'Codex' }
                         ]);
 
