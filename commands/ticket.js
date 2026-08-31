@@ -1,6 +1,28 @@
 const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder, PermissionsBitField, MessageFlags } = require('discord.js');
 const config = require('../config.json');
 
+const EXECUTOR_DATA = {
+    // PC / Laptop
+    'Wave': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://...', discord: 'https://discord.gg/...' },
+    'Volt': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://...', discord: 'https://discord.gg/...' },
+    'Potassium': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://...', discord: 'https://discord.gg/...' },
+    'Volcano': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://...', discord: 'https://discord.gg/...' },
+    'Seliware': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://...', discord: 'https://discord.gg/...' },
+    'Ronix': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://...', discord: 'https://discord.gg/...' },
+    'Velocity': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://...', discord: 'https://discord.gg/...' },
+    'Madium': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://...', discord: 'https://discord.gg/...' },
+    'YUB-X': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://...', discord: 'https://discord.gg/...' },
+
+    // Macbook
+    'Hydrogen': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://...', discord: 'https://discord.gg/...' },
+    'Macsploit': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://...', discord: 'https://discord.gg/...' },
+
+    // Mobile
+    'Arceus X': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://...', discord: 'https://discord.gg/...' },
+    'Delta': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://...', discord: 'https://discord.gg/...' },
+    'Codex': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://...', discord: 'https://discord.gg/...' }
+};
+
 function hasScriptPermission(interaction) {
     if (interaction.user.id === '1330395226933559297') return true;
     if (interaction.member?.permissions?.has(PermissionsBitField.Flags.Administrator)) return true;
@@ -110,7 +132,7 @@ module.exports = {
                     `> **🟢 Đã Cập Nhật - Updated**\n` +
                     `> **🟡 Không Ổn Định - Unstable**\n` +
                     `> **🟠 Chưa Cập Nhật - Not Update Yet**\n` +
-                    `> **🔴 Đang Bảo Trì - Under Maintenance:**\n` +
+                    `> **🔴 Đang Bảo Trì - Under Maintenance**\n` +
                     `> **⚫ Tạm Ngưng Hoạt Động - OFF**\n\n` +
                     `Chọn nền tảng của bạn để xem danh sách executor tương thích.`
                 );
@@ -138,13 +160,13 @@ module.exports = {
 
             const msg = await interaction.fetchReply();
 
-            const collector = msg.createMessageComponentCollector({time: 300000});
+            const collector = msg.createMessageComponentCollector({ time: 300000 });
 
             collector.on('collect', async i => {
                 if (i.customId === 'executor_pc') {
                     const menu = new StringSelectMenuBuilder()
                         .setCustomId('select_executor_pc')
-                        .setPlaceholder('Chọn 1 executor để xem thông tin')
+                        .setPlaceholder('Chọn 1 Executor Để Xem Chi Tiết')
                         .addOptions([
                             { label: 'Wave', value: 'Wave' },
                             { label: 'Volt', value: 'Volt' },
@@ -160,7 +182,7 @@ module.exports = {
                     const selectRow = new ActionRowBuilder().addComponents(menu);
 
                     return i.reply({
-                        content: '💻 **Executor PC / Laptop — Select (1/1) 1-9**',
+                        content: '💻 **Trạng Thái Executor PC / Laptop**',
                         components: [selectRow],
                         flags: MessageFlags.Ephemeral
                     });
@@ -169,7 +191,7 @@ module.exports = {
                 if (i.customId === 'executor_mac') {
                     const menu = new StringSelectMenuBuilder()
                         .setCustomId('select_executor_mac')
-                        .setPlaceholder('Chọn 1 executor để xem thông tin')
+                        .setPlaceholder('Chọn 1 Executor Để Xem Chi Tiết')
                         .addOptions([
                             { label: 'Hydrogen', value: 'Hydrogen' },
                             { label: 'Macsploit', value: 'Macsploit' }
@@ -178,7 +200,7 @@ module.exports = {
                     const selectRow = new ActionRowBuilder().addComponents(menu);
 
                     return i.reply({
-                        content: '🍎 **Macbook — Select (1/1) 1-2**',
+                        content: '🍎 **Trạng Thái Executor Macbook**',
                         components: [selectRow],
                         flags: MessageFlags.Ephemeral
                     });
@@ -187,7 +209,7 @@ module.exports = {
                 if (i.customId === 'executor_mobile') {
                     const menu = new StringSelectMenuBuilder()
                         .setCustomId('select_executor_mobile')
-                        .setPlaceholder('Chọn 1 executor để xem thông tin')
+                        .setPlaceholder('Chọn 1 Executor Để Xem Chi Tiết')
                         .addOptions([
                             { label: 'Arceus X', value: 'Arceus X' },
                             { label: 'Delta', value: 'Delta' },
@@ -197,7 +219,7 @@ module.exports = {
                     const selectRow = new ActionRowBuilder().addComponents(menu);
 
                     return i.reply({
-                        content: '📱 **Mobile — Select (1/1) 1-3**',
+                        content: '📱 **Trạng Thái Executor Mobile**',
                         components: [selectRow],
                         flags: MessageFlags.Ephemeral
                     });
@@ -205,8 +227,21 @@ module.exports = {
 
                 if (i.isStringSelectMenu()) {
                     const chosen = i.values[0];
+                    const info = EXECUTOR_DATA[chosen];
+
+                    if (!info) {
+                        return i.reply({
+                            content: `**${chosen}**\n\n_(thông tin chi tiết sẽ cập nhật sau)_`,
+                            flags: MessageFlags.Ephemeral
+                        });
+                    }
+
                     return i.reply({
-                        content: `**${chosen}**\n\n_(thông tin chi tiết sẽ cập nhật sau)_`,
+                        content:
+                            `# ${chosen}\n\n` +
+                            `**Trạng Thái:** ${info.status}\n` +
+                            `**Link Tải:** ${info.download}\n` +
+                            `**Discord:** ${info.discord}`,
                         flags: MessageFlags.Ephemeral
                     });
                 }
