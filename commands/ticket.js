@@ -4,7 +4,7 @@ const config = require('../config.json');
 const EXECUTOR_DATA = {
     // PC / Laptop
     'Wave': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://getwave.gg/', discord: 'https://discord.gg/p4asyAEXt' },
-    'Potassium': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://www.potassium.pro/', discord: 'https://discord.gg/potassium' },
+    'Potassium': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://potassium.pro/', discord: 'https://discord.gg/potassium' },
     'Volt': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://voltbz.net/', discord: 'https://discord.gg/voltbz' },
     'Madium': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://getmadium.net/', discord: 'https://discord.gg/olemad' },
     'Real': { status: '🟢 Đã Cập Nhật - Updated', download: 'https://projectreal.gg/', discord: 'https://discord.gg/projectreal' },
@@ -45,9 +45,9 @@ function replyExecutorInfo(si, chosen) {
 
     return si.reply({
         content:
-            `# ${chosen}\n\n` +
-            `**Trạng Thái:** ${info.status}\n` +
-            `[Link Tải](${info.download}) [Discord](${info.discord})`,
+            `# ${chosen}  ${info.status}\n\n` +
+            `**Download:** [Download](${info.download})\n` +
+            `**Discord:** [Discord](${info.discord})`,
         flags: MessageFlags.Ephemeral
     });
 }
