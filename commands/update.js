@@ -1,4 +1,4 @@
-const {SlashCommandBuilder,ContainerBuilder,ActionRowBuilder,ButtonBuilder,ButtonStyle,ModalBuilder,
+const {SlashCommandBuilder,ContainerBuilder,TextDisplayBuilder,ActionRowBuilder,ButtonBuilder,ButtonStyle,ModalBuilder,
     TextInputBuilder,TextInputStyle,SeparatorSpacingSize,PermissionsBitField,MessageFlags} = require('discord.js');
 const config = require('../config.json');
 
@@ -142,6 +142,8 @@ module.exports = {
         const changelogItems = buildChangelogAnsi(changelogRaw);
         const timeText = formatVietnameseTime(new Date());
 
+        const pingText = new TextDisplayBuilder().setContent(`<@&${UPDATE_ROLE_ID}>`);
+
         const container = new ContainerBuilder()
             .addTextDisplayComponents(
                 td => td.setContent('# UPDATE')
@@ -176,9 +178,9 @@ module.exports = {
             );
 
         await channel.send({
-            content: `<@&${UPDATE_ROLE_ID}>`,
-            components: [container, buttonRow],
-            flags: MessageFlags.IsComponentsV2
+            components: [pingText, container, buttonRow],
+            flags: MessageFlags.IsComponentsV2,
+            allowedMentions: { roles: [UPDATE_ROLE_ID] }
         });
 
         return submitted.reply({
