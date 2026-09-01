@@ -2,7 +2,7 @@ const config = require('../config.json');
 const ticketStatus = require('../utils/ticketDB');
 const doneCooldown = new Map();
 
-const { ChannelType, PermissionsBitField, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require("discord.js");
+const { ChannelType, PermissionsBitField, EmbedBuilder, ActionRowBuilder, ButtonBuilder } = require("discord.js");
 
 const helperRoles = config.Helper ? [config.Helper] : [];
 const ADMIN_MARKET = ["1330395226933559297"];
