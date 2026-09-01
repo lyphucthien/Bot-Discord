@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, PermissionFlagsBits, MessageFlags } = require("discord.js");
+const { SlashCommandBuilder, PermissionFlagsBits } = require("discord.js");
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -7,10 +7,10 @@ module.exports = {
         .addIntegerOption(option =>
             option
                 .setName("amount")
-                .setDescription("Số Lượng Tin Nhắn Cần Xóa (1-100)")
+                .setDescription("Số Lượng Tin Nhắn Cần Xóa (1-1000)")
                 .setRequired(true)
                 .setMinValue(1)
-                .setMaxValue(100)
+                .setMaxValue(1000)
         )
         .setDefaultMemberPermissions(
             PermissionFlagsBits.ManageMessages
@@ -31,26 +31,49 @@ module.exports = {
             });
         }
 
+        await interaction.deferReply({ flags: 64 });
+
+        let remaining = amount;
+        let totalDeleted = 0;
+        let hitOldMessageLimit = false;
+
         try {
 
-            const deleted = await interaction.channel.bulkDelete(
-                amount,
-                true
-            );
+            while (remaining > 0) {
+                const batchSize = Math.min(remaining, 100);
+                const deleted = await interaction.channel.bulkDelete(
+                    batchSize,
+                    true
+                );
 
-            return interaction.reply({
-                content: `🧹 Đã xóa **${deleted.size}** tin nhắn.`,
-                flags: 64
+                totalDeleted += deleted.size;
+                remaining -= batchSize;
+
+                if (deleted.size < batchSize) {
+                    hitOldMessageLimit = deleted.size > 0 || remaining < amount;
+                    break;
+                }
+
+                if (remaining > 0) {
+                    await new Promise(res => setTimeout(res, 1000));
+                }
+            }
+
+            const note = hitOldMessageLimit
+                ? "\n⚠️ Đã dừng sớm vì gặp tin nhắn cũ quá **14 ngày.**"
+                : "";
+
+            return interaction.editReply({
+                content: `🧹 Đã xóa **${totalDeleted}** tin nhắn.${note}`
             });
 
         } catch (err) {
 
             console.error(err);
 
-            return interaction.reply({
+            return interaction.editReply({
                 content:
-                    `❌ Không Thể Xóa **${deleted.size}** Tin Nhắn. Có Thể Các Tin Nhắn Đã Quá 14 Ngày Hoặc Bot Thiếu Quyền.`,
-                flags: 64
+                    `❌ Đã xóa được **${totalDeleted}** tin nhắn trước khi gặp lỗi. Có Thể Bot Thiếu Quyền hoặc bị Rate Limit.`
             });
 
         }
