@@ -1,9 +1,12 @@
-const {SlashCommandBuilder,ContainerBuilder,TextDisplayBuilder,ActionRowBuilder,ButtonBuilder,ButtonStyle,ModalBuilder,
+const {SlashCommandBuilder,ContainerBuilder,TextDisplayBuilder,ActionRowBuilder,ModalBuilder,
     TextInputBuilder,TextInputStyle,SeparatorSpacingSize,PermissionsBitField,MessageFlags} = require('discord.js');
 const config = require('../config.json');
+const fs = require('fs');
+const path = require('path');
 
 const UPDATE_CHANNEL_ID = '1540328462840111225';
 const UPDATE_ROLE_ID = '1544167526454403082';
+const STATUS_FILE = path.join(__dirname, '..', 'lastStatus.json');
 
 function hasScriptPermission(interaction) {
     if (interaction.user.id === '1330395226933559297') return true;
@@ -14,6 +17,19 @@ function hasScriptPermission(interaction) {
         helperRole &&
         interaction.member?.roles?.cache?.has(helperRole)
     );
+}
+
+function getLastStatus() {
+    try {
+        const data = fs.readFileSync(STATUS_FILE, 'utf8');
+        return JSON.parse(data).status || null;
+    } catch {
+        return null;
+    }
+}
+
+function saveLastStatus(status) {
+    fs.writeFileSync(STATUS_FILE, JSON.stringify({ status }), 'utf8');
 }
 
 function buildChangelogAnsi(changelogRaw) {
@@ -56,47 +72,23 @@ module.exports = {
             .setCustomId('update_modal')
             .setTitle('Thông Báo Update');
 
-        const versionInput = new TextInputBuilder()
-            .setCustomId('input_version')
-            .setLabel('Version')
-            .setStyle(TextInputStyle.Short)
-            .setPlaceholder('VD: 1.0.1')
-            .setRequired(true);
-
-        const robloxVersionInput = new TextInputBuilder()
-            .setCustomId('input_roblox_version')
-            .setLabel('Roblox External Version')
-            .setStyle(TextInputStyle.Short)
-            .setPlaceholder('VD: version-17d504d2c9544583')
-            .setRequired(true);
-
         const statusInput = new TextInputBuilder()
             .setCustomId('input_status')
             .setLabel('Status (chỉ nhập icon: 🟢 🟡 🟠 🔴 ⚫)')
             .setStyle(TextInputStyle.Short)
-            .setPlaceholder('🟢')
+            .setPlaceholder('...')
             .setRequired(true);
 
         const changelogInput = new TextInputBuilder()
             .setCustomId('input_changelog')
-            .setLabel('Changelog (mỗi dòng bắt đầu +/=/-)')
+            .setLabel('Nhật ký thay đổi (mỗi dòng bắt đầu +/=/-)')
             .setStyle(TextInputStyle.Paragraph)
             .setPlaceholder('=Fixed lỗi X\n+Thêm tính năng Y\n-Gỡ bỏ Z')
             .setRequired(true);
 
-        const downloadInput = new TextInputBuilder()
-            .setCustomId('input_download')
-            .setLabel('Link Tải')
-            .setStyle(TextInputStyle.Short)
-            .setPlaceholder('https://...')
-            .setRequired(true);
-
         modal.addComponents(
-            new ActionRowBuilder().addComponents(versionInput),
-            new ActionRowBuilder().addComponents(robloxVersionInput),
             new ActionRowBuilder().addComponents(statusInput),
-            new ActionRowBuilder().addComponents(changelogInput),
-            new ActionRowBuilder().addComponents(downloadInput)
+            new ActionRowBuilder().addComponents(changelogInput)
         );
 
         await interaction.showModal(modal);
@@ -108,11 +100,8 @@ module.exports = {
 
         if (!submitted) return;
 
-        const version = submitted.fields.getTextInputValue('input_version');
-        const robloxVersion = submitted.fields.getTextInputValue('input_roblox_version');
-        const status = submitted.fields.getTextInputValue('input_status');
+        const newStatus = submitted.fields.getTextInputValue('input_status');
         const changelogRaw = submitted.fields.getTextInputValue('input_changelog');
-        const downloadLink = submitted.fields.getTextInputValue('input_download');
 
         const channel = await submitted.client.channels.fetch(UPDATE_CHANNEL_ID).catch(() => null);
 
@@ -123,6 +112,11 @@ module.exports = {
             });
         }
 
+        const lastStatus = getLastStatus();
+        const statusLine = lastStatus
+            ? `**Status:** ${lastStatus} -> ${newStatus}`
+            : `**Status:** ${newStatus}`;
+
         const changelogItems = buildChangelogAnsi(changelogRaw);
 
         const pingText = new TextDisplayBuilder().setContent(`<@&${UPDATE_ROLE_ID}>`);
@@ -132,39 +126,28 @@ module.exports = {
                 td => td.setContent('# UPDATE')
             )
             .addTextDisplayComponents(
-                td => td.setContent(
-                    `**Status:** ${status}\n` +
-                    `**Time:** <t:${Math.floor(Date.now() / 1000)}:F>\n` +
-                    `**Version:** \`${version}\`\n` +
-                    `**Roblox External Version:** \`${robloxVersion}\``
-                )
+                td => td.setContent(statusLine)
             )
             .addSeparatorComponents(
                 sep => sep.setSpacing(SeparatorSpacingSize.Small)
             )
             .addTextDisplayComponents(
-                td => td.setContent(`**Changelog:**\n${changelogItems}`)
+                td => td.setContent(`**Nhật ký thay đổi:**\n${changelogItems}`)
             )
             .addSeparatorComponents(
                 sep => sep.setSpacing(SeparatorSpacingSize.Small)
             )
             .addTextDisplayComponents(
-                td => td.setContent('Please restart Roblox External to apply the changes or download.')
-            );
-
-        const buttonRow = new ActionRowBuilder()
-            .addComponents(
-                new ButtonBuilder()
-                    .setLabel('Download')
-                    .setStyle(ButtonStyle.Link)
-                    .setURL(downloadLink)
+                td => td.setContent(`**Updated:** <t:${Math.floor(Date.now() / 1000)}:F>`)
             );
 
         await channel.send({
-            components: [pingText, container, buttonRow],
+            components: [pingText, container],
             flags: MessageFlags.IsComponentsV2,
             allowedMentions: { roles: [UPDATE_ROLE_ID] }
         });
+
+        saveLastStatus(newStatus);
 
         return submitted.reply({
             content: `✅ Đã gửi thông báo update tới <#${UPDATE_CHANNEL_ID}>.`,
