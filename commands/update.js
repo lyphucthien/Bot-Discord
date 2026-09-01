@@ -114,7 +114,7 @@ module.exports = {
 
         const lastStatus = getLastStatus();
         const statusLine = lastStatus
-            ? `**Status:** ${lastStatus} -> ${newStatus}`
+            ? `**Status:** ${lastStatus} → ${newStatus}`
             : `**Status:** ${newStatus}`;
 
         const changelogItems = buildChangelogAnsi(changelogRaw);
