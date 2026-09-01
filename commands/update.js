@@ -16,22 +16,6 @@ function hasScriptPermission(interaction) {
     );
 }
 
-function formatVietnameseTime(date) {
-    const weekdays = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
-    const weekday = weekdays[date.getDay()];
-    const day = date.getDate();
-    const month = date.getMonth() + 1;
-    const year = date.getFullYear();
-
-    let hour = date.getHours();
-    const minute = date.getMinutes().toString().padStart(2, '0');
-    const period = hour >= 12 ? 'CH' : 'SA';
-    hour = hour % 12;
-    if (hour === 0) hour = 12;
-
-    return `${weekday}, ${day} Tháng ${month}, ${year} ${hour}:${minute} ${period}`;
-}
-
 function buildChangelogAnsi(changelogRaw) {
     const colorMap = {
         '+': '32',
@@ -140,7 +124,6 @@ module.exports = {
         }
 
         const changelogItems = buildChangelogAnsi(changelogRaw);
-        const timeText = formatVietnameseTime(new Date());
 
         const pingText = new TextDisplayBuilder().setContent(`<@&${UPDATE_ROLE_ID}>`);
 
@@ -151,7 +134,7 @@ module.exports = {
             .addTextDisplayComponents(
                 td => td.setContent(
                     `**Status:** ${status}\n` +
-                    `**Time:** ${timeText}\n` +
+                    `**Time:** <t:${Math.floor(Date.now() / 1000)}:F>\n` +
                     `**Version:** \`${version}\`\n` +
                     `**Roblox External Version:** \`${robloxVersion}\``
                 )
