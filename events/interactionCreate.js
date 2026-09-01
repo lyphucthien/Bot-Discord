@@ -171,6 +171,16 @@ module.exports = (client) => {
             // ======================
             if (interaction.customId === 'close_ticket') {
 
+                const isStaff = interaction.member?.roles?.cache?.some(r => helperRoles.includes(r.id));
+                const isOwner = interaction.channel.name.includes(interaction.user.id);
+
+                if (!isStaff && !isOwner) {
+                    return interaction.reply({
+                        content: '❌ Bạn Không Có Quyền Đóng Ticket Này.',
+                        flags: 64
+                    });
+                }
+
                 const channelId = interaction.channel.id;
                 const data = ticketStatus.get(channelId);
 
@@ -220,15 +230,22 @@ module.exports = (client) => {
             // ======================
             // RESOLVE TICKET (FIXED)
             // ======================
-            if (interaction.customId === 'resolve_ticket') {
+                if (interaction.customId === 'resolve_ticket') {
 
-                const channelId = interaction.channel.id;
-                const data = ticketStatus.get(channelId);
+                    const channelId = interaction.channel.id;
+                    const data = ticketStatus.get(channelId);
 
-                if (data) {
-                    data.status = 'resolved';
-                    ticketStatus.update(channelId, data);
-                }
+                    if (data?.status === 'resolved') {
+                        return interaction.reply({
+                            content: '⚠️ Ticket Này Đã Được Xử Lý Rồi!',
+                            flags: 64
+                        });
+                    }
+
+                    if (data) {
+                        data.status = 'resolved';
+                        ticketStatus.update(channelId, data);
+                    }
 
                 if (!data?.messageId) {
                     return interaction.reply({
@@ -468,6 +485,7 @@ module.exports = (client) => {
             }
 
             doneCooldown.set(staffId, now + 5000);
+            setTimeout(() => doneCooldown.delete(staffId), 5000);
 
             data.status = 'resolved';
             ticketStatus.update(message.channel.id, data);
