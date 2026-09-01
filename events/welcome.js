@@ -24,7 +24,6 @@ module.exports = (client) => {
                 `🎁 Giveaway ➜ <#1503608814606487552>`,
                 `💬 Kênh Chat ➜ <#1503393797680398438>`,
                 `🛠️ Ticket Support ➜ <#1515926856589775100>`,
-                `🛒 Ticket Oder ➜ <#1514124605936369717>`,
                 `🚨 Ticket Report ➜ <#1515926642042601532>`,
             ].join('\n'))
             .setThumbnail(member.user.displayAvatarURL({dynamic: true,size: 1024}))
