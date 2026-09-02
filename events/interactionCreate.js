@@ -20,6 +20,50 @@ module.exports = (client) => {
                 return command.execute(interaction, client);
             }
 
+            // ======================
+            // KEY VERIFY MODAL
+            // ======================
+            if (interaction.isModalSubmit() && interaction.customId === 'keyVerifyModal') {
+
+                const mcUsername = interaction.fields.getTextInputValue('mcUsername').trim();
+                const key = interaction.fields.getTextInputValue('mcKey').trim();
+
+                await interaction.deferReply({ flags: 64 });
+
+                try {
+                    const response = await fetch(`${config.webApiUrl}/api/redeem-key`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'x-redeem-secret': config.redeemSecret
+                        },
+                        body: JSON.stringify({
+                            key,
+                            minecraftUsername: mcUsername,
+                            discordId: interaction.user.id
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        return interaction.editReply({
+                            content: `✅ Xác thực thành công! Tài khoản **${mcUsername}** đã có thể vào server.`
+                        });
+                    }
+
+                    return interaction.editReply({
+                        content: `❌ ${data.error || 'Key không hợp lệ.'}`
+                    });
+
+                } catch (err) {
+                    console.error(err);
+                    return interaction.editReply({
+                        content: '⚠️ Lỗi kết nối tới server xác thực, thử lại sau.'
+                    });
+                }
+            }
+
             if (!interaction.isButton() && !interaction.isStringSelectMenu()) return;
 
             // ======================
