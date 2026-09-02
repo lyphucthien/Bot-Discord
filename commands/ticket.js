@@ -86,7 +86,7 @@ module.exports = {
                 .setDescription(
                     `Nếu bạn gặp lỗi trong quá trình sử dụng, vui lòng gửi hỗ trợ tại <#1515926856589775100>\n` +
                     `## Script\n\`\`\`lua\nloadstring(game:HttpGet("https://raw.githubusercontent.com/lyphucthien/LPT-Hub/refs/heads/main/LPT_Hub.luau"))()\`\`\`\n` +
-                    `Nhấn Nút Bên Dưới Để Xem Danh Sách Script Hỗ Trợ.`
+                    `Nhấn Nút Bên Dưới Để Xem Danh Sách Games Được Hỗ Trợ.`
                 );
 
             const row = new ActionRowBuilder()
@@ -271,6 +271,12 @@ module.exports = {
         }
 
         if (sub === 'support') {
+            if (!hasScriptPermission(interaction)) {
+                return interaction.reply({
+                    content: '🔒 Bạn không có quyền sử dụng lệnh này.',
+                    flags: MessageFlags.Ephemeral
+                });
+            }
             const embed = new EmbedBuilder()
                 .setTitle('🛠️ Tạo Phiếu Hỗ Trợ')
                 .setDescription(
@@ -295,6 +301,12 @@ module.exports = {
         }
 
         if (sub === 'report') {
+            if (!hasScriptPermission(interaction)) {
+                return interaction.reply({
+                    content: '🔒 Bạn không có quyền sử dụng lệnh này.',
+                    flags: MessageFlags.Ephemeral
+                });
+            }
             const embed = new EmbedBuilder()
                 .setTitle('🚨 Tạo Phiếu Tố Cáo')
                 .setDescription(
