@@ -35,7 +35,7 @@ module.exports = (client) => {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            'x-redeem-secret': config.redeemSecret
+                            'x-redeem-secret': process.env.REDEEM_SECRET
                         },
                         body: JSON.stringify({
                             key,
