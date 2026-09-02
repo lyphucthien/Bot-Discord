@@ -8,7 +8,9 @@ module.exports = {
         const link = 'https://link4sub.com/owycAYxKdu';
 
         await interaction.reply({
-            content: `🔑 Đây là link của bạn:\n**GetKey >** [Get Key](${link})`,
+            content: `🔑 **Get Key Xác Thực Server Minecraft**\n
+                    👉 Nhấn **[Get Key](${link})** để lấy Key.\n
+                    ⚠️ Mỗi Key có thời hạn sử dụng 3 tiếng.`,
             ephemeral: true
         });
     },
