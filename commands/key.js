@@ -15,6 +15,7 @@ module.exports = {
             .setCustomId('mcUsername')
             .setLabel('Tên tài khoản Minecraft')
             .setStyle(TextInputStyle.Short)
+            .setPlaceholder('...')
             .setMaxLength(16)
             .setRequired(true);
 
@@ -22,6 +23,7 @@ module.exports = {
             .setCustomId('mcKey')
             .setLabel('Key')
             .setStyle(TextInputStyle.Short)
+            .setPlaceholder('Key Sao Chép Từ Trang Getkey')
             .setRequired(true);
 
         modal.addComponents(
