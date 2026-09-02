@@ -2,7 +2,8 @@ const config = require('../config.json');
 const ticketStatus = require('../utils/ticketDB');
 const doneCooldown = new Map();
 
-const { ChannelType, PermissionsBitField, EmbedBuilder, ActionRowBuilder, ButtonBuilder } = require("discord.js");
+const { ChannelType, PermissionsBitField, EmbedBuilder, ActionRowBuilder, ButtonBuilder, StringSelectMenuBuilder } = require("discord.js");
+const { replyExecutorInfo } = require('../utils/executorData');
 
 const helperRoles = config.Helper ? [config.Helper] : [];
 const ADMIN_MARKET = ["1330395226933559297"];
@@ -20,6 +21,84 @@ module.exports = (client) => {
             }
 
             if (!interaction.isButton() && !interaction.isStringSelectMenu()) return;
+
+            // ======================
+            // SCRIPT GAME SUPPORTED
+            // ======================
+            if (interaction.customId === 'script_game_supported') {
+                return interaction.reply({
+                    content:
+                        '# 🎮 Game Supported\n\n' +
+                        '### TRẠNG THÁI / STATUS\n' +
+                        '> **🟢 Đang Hoạt Động - ON**\n' +
+                        '> **🟡 Đang Cập Nhật - UPDATING**\n' +
+                        '> **🔴 Tạm Ngưng Hoạt Động - OFF**\n\n' +
+                        '## Game Status:\n' +
+                        '> **🔴 Blox Fruits (Đang Phát Triển)**\n' +
+                        '> **🟢 +1 Speed Keyboard Escape**\n' +
+                        '> **🟢 Greedy Growers**\n\n' +
+                        '**Các game không được đề cập sẽ có 1 script hỗ trợ riêng.\n' +
+                        'Games not mentioned will have a separate support script.**',
+                    flags: 64
+                });
+            }
+
+            // ======================
+            // EXECUTOR SUPPORTED
+            // ======================
+            if (interaction.customId === 'executor_pc') {
+                const menu = new StringSelectMenuBuilder()
+                    .setCustomId('select_executor_pc')
+                    .setPlaceholder('Chọn 1 Executor Để Xem Chi Tiết')
+                    .addOptions(
+                        ['Wave', 'Potassium', 'Volt', 'Madium', 'Real', 'Velocity', 'Solara', 'Xeno']
+                            .map(name => ({ label: name, value: name }))
+                    );
+
+                return interaction.reply({
+                    content: '💻 **Trạng Thái Executor PC / Laptop**',
+                    components: [new ActionRowBuilder().addComponents(menu)],
+                    flags: 64
+                });
+            }
+
+            if (interaction.customId === 'executor_mac') {
+                const menu = new StringSelectMenuBuilder()
+                    .setCustomId('select_executor_mac')
+                    .setPlaceholder('Chọn 1 Executor Để Xem Chi Tiết')
+                    .addOptions(
+                        ['MacSploit', 'Opiumware'].map(name => ({ label: name, value: name }))
+                    );
+
+                return interaction.reply({
+                    content: '🍎 **Trạng Thái Executor Macbook**',
+                    components: [new ActionRowBuilder().addComponents(menu)],
+                    flags: 64
+                });
+            }
+
+            if (interaction.customId === 'executor_mobile') {
+                const menu = new StringSelectMenuBuilder()
+                    .setCustomId('select_executor_mobile')
+                    .setPlaceholder('Chọn 1 Executor Để Xem Chi Tiết')
+                    .addOptions(
+                        ['Delta (IOS & Android)', 'Vega X', 'Codex'].map(name => ({ label: name, value: name }))
+                    );
+
+                return interaction.reply({
+                    content: '📱 **Trạng Thái Executor Mobile**',
+                    components: [new ActionRowBuilder().addComponents(menu)],
+                    flags: 64
+                });
+            }
+
+            if (
+                interaction.customId === 'select_executor_pc' ||
+                interaction.customId === 'select_executor_mac' ||
+                interaction.customId === 'select_executor_mobile'
+            ) {
+                return replyExecutorInfo(interaction, interaction.values[0]);
+            }
 
             // ======================
             // VERIFY
@@ -230,22 +309,22 @@ module.exports = (client) => {
             // ======================
             // RESOLVE TICKET (FIXED)
             // ======================
-                if (interaction.customId === 'resolve_ticket') {
+            if (interaction.customId === 'resolve_ticket') {
 
-                    const channelId = interaction.channel.id;
-                    const data = ticketStatus.get(channelId);
+                const channelId = interaction.channel.id;
+                const data = ticketStatus.get(channelId);
 
-                    if (data?.status === 'resolved') {
-                        return interaction.reply({
-                            content: '⚠️ Ticket Này Đã Được Xử Lý Rồi!',
-                            flags: 64
-                        });
-                    }
+                if (data?.status === 'resolved') {
+                    return interaction.reply({
+                        content: '⚠️ Ticket Này Đã Được Xử Lý Rồi!',
+                        flags: 64
+                    });
+                }
 
-                    if (data) {
-                        data.status = 'resolved';
-                        ticketStatus.update(channelId, data);
-                    }
+                if (data) {
+                    data.status = 'resolved';
+                    ticketStatus.update(channelId, data);
+                }
 
                 if (!data?.messageId) {
                     return interaction.reply({
@@ -433,9 +512,6 @@ module.exports = (client) => {
 
         if (!isStaff) return;
 
-        /* ======================
-           🟢 STAFF NHẮN → PROCESSING
-        ====================== */
         if (data.status === 'waiting') {
 
             data.status = 'processing';
@@ -465,9 +541,6 @@ module.exports = (client) => {
             }
         }
 
-        /* ======================
-           🔴 .done → RESOLVED
-        ====================== */
         if (message.content.toLowerCase() === '.done') {
 
             if (data.status === 'resolved') {
