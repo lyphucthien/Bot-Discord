@@ -1,27 +1,5 @@
-const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder, PermissionsBitField, MessageFlags } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, PermissionsBitField, MessageFlags } = require('discord.js');
 const config = require('../config.json');
-
-//Vòng Tròn Trạng Thái: 🟢/🟡/🟠/🔴/⚫
-const EXECUTOR_DATA = {
-    // PC / Laptop
-    'Wave': { status: '🟢', download: 'https://getwave.gg/', discord: 'https://discord.gg/p4asyAEXt' },
-    'Potassium': { status: '🟢', download: 'https://potassium.pro/', discord: 'https://discord.gg/potassium' },
-    'Volt': { status: '🟢', download: 'https://voltbz.net/', discord: 'https://discord.gg/voltbz' },
-    'Madium': { status: '🟢', download: 'https://getmadium.net/', discord: 'https://discord.gg/olemad' },
-    'Real': { status: '🟢', download: 'https://projectreal.gg/', discord: 'https://discord.gg/projectreal' },
-    'Velocity': { status: '🟢', download: 'https://getvelocity.llc/', discord: 'https://discord.gg/velocityide' },
-    'Solara': { status: '🟢', download: 'https://getsolara.dev/', discord: 'https://stoat.chat/invite/yQBTsMHA' },
-    'Xeno': { status: '🟢', download: 'https://xeno.now/', discord: 'https://discord.gg/xe-no' },
-
-    // Macbook
-    'MacSploit': { status: '🟢', download: 'https://raptor.fun/', discord: 'https://discord.gg/macsploit' },
-    'Opiumware': { status: '🟢', download: 'https://use.opiumware.today/', discord: 'https://discord.gg/opiumware' },
-
-    // Mobile
-    'Delta (IOS & Android)': { status: '🟢', download: 'https://deltaexploits.gg/', discord: 'https://discord.gg/deltax' },
-    'Vega X': { status: '🟢', download: 'https://vegax.gg/', discord: 'https://discord.gg/vegasupport' },
-    'Codex': { status: '🟢', download: 'https://codex.lol/', discord: 'https://discord.gg/codexlol' }
-};
 
 function hasScriptPermission(interaction) {
     if (interaction.user.id === '1330395226933559297') return true;
@@ -32,25 +10,6 @@ function hasScriptPermission(interaction) {
         helperRole &&
         interaction.member?.roles?.cache?.has(helperRole)
     );
-}
-
-function replyExecutorInfo(si, chosen) {
-    const info = EXECUTOR_DATA[chosen];
-
-    if (!info) {
-        return si.reply({
-            content: `**${chosen}**\n\n_(thông tin chi tiết sẽ cập nhật sau)_`,
-            flags: MessageFlags.Ephemeral
-        });
-    }
-
-    return si.reply({
-        content:
-            `# ${chosen} ${info.status}\n\n` +
-            `**Download:** [Download](${info.download})\n` +
-            `**Discord:** [Discord](${info.discord})`,
-        flags: MessageFlags.Ephemeral
-    });
 }
 
 module.exports = {
@@ -98,34 +57,7 @@ module.exports = {
                         .setStyle(ButtonStyle.Primary)
                 );
 
-            await interaction.reply({ embeds: [embed], components: [row] });
-
-            const msg = await interaction.fetchReply();
-
-            const collector = msg.createMessageComponentCollector({
-                time: 300000
-            });
-
-            collector.on('collect', async i => {
-                if (i.customId === 'script_game_supported') {
-                    return i.reply({
-                        content:
-                            '# 🎮 Game Supported\n\n' +
-                            '### TRẠNG THÁI / STATUS\n' +
-                            '> **🟢 Đang Hoạt Động - ON**\n' +
-                            '> **🟡 Đang Cập Nhật - UPDATING**\n' +
-                            '> **🔴 Tạm Ngưng Hoạt Động - OFF**\n\n' +
-                            '## Game Status:\n' +
-                            '> **🔴 Blox Fruits (Đang Phát Triển)**\n' +
-                            '> **🟢 +1 Speed Keyboard Escape**\n' +
-                            '> **🟢 Greedy Growers**\n\n' +
-                            '**Các game không được đề cập sẽ có 1 script hỗ trợ riêng.\n' +
-                            'Games not mentioned will have a separate support script.**',
-                        flags: MessageFlags.Ephemeral
-                    });
-                }
-            });
-            return;
+            return interaction.reply({ embeds: [embed], components: [row] });
         }
 
         if (sub === 'executor-supported') {
@@ -171,103 +103,7 @@ module.exports = {
                         .setStyle(ButtonStyle.Success)
                 );
 
-            await interaction.reply({ embeds: [embed], components: [row] });
-
-            const msg = await interaction.fetchReply();
-
-            const collector = msg.createMessageComponentCollector({ time: 300000 });
-
-            collector.on('collect', async i => {
-                if (i.customId === 'executor_pc') {
-                    const menu = new StringSelectMenuBuilder()
-                        .setCustomId('select_executor_pc')
-                        .setPlaceholder('Chọn 1 Executor Để Xem Chi Tiết')
-                        .addOptions([
-                            { label: 'Wave', value: 'Wave' },
-                            { label: 'Potassium', value: 'Potassium' },
-                            { label: 'Volt', value: 'Volt' },
-                            { label: 'Madium', value: 'Madium' },
-                            { label: 'Real', value: 'Real' },
-                            { label: 'Velocity', value: 'Velocity' },
-                            { label: 'Solara', value: 'Solara' },
-                            { label: 'Xeno', value: 'Xeno' }
-                        ]);
-
-                    const selectRow = new ActionRowBuilder().addComponents(menu);
-
-                    await i.reply({
-                        content: '💻 **Trạng Thái Executor PC / Laptop**',
-                        components: [selectRow],
-                        flags: MessageFlags.Ephemeral
-                    });
-
-                    const selectMsg = await i.fetchReply();
-                    const selectCollector = selectMsg.createMessageComponentCollector({ time: 300000 });
-
-                    selectCollector.on('collect', async si => {
-                        return replyExecutorInfo(si, si.values[0]);
-                    });
-
-                    return;
-                }
-
-                if (i.customId === 'executor_mac') {
-                    const menu = new StringSelectMenuBuilder()
-                        .setCustomId('select_executor_mac')
-                        .setPlaceholder('Chọn 1 Executor Để Xem Chi Tiết')
-                        .addOptions([
-                            { label: 'MacSploit', value: 'MacSploit' },
-                            { label: 'Opiumware', value: 'Opiumware' }
-                        ]);
-
-                    const selectRow = new ActionRowBuilder().addComponents(menu);
-
-                    await i.reply({
-                        content: '🍎 **Trạng Thái Executor Macbook**',
-                        components: [selectRow],
-                        flags: MessageFlags.Ephemeral
-                    });
-
-                    const selectMsg = await i.fetchReply();
-                    const selectCollector = selectMsg.createMessageComponentCollector({ time: 300000 });
-
-                    selectCollector.on('collect', async si => {
-                        return replyExecutorInfo(si, si.values[0]);
-                    });
-
-                    return;
-                }
-
-                if (i.customId === 'executor_mobile') {
-                    const menu = new StringSelectMenuBuilder()
-                        .setCustomId('select_executor_mobile')
-                        .setPlaceholder('Chọn 1 Executor Để Xem Chi Tiết')
-                        .addOptions([
-                            { label: 'Delta (IOS & Android)', value: 'Delta (IOS & Android)' },
-                            { label: 'Vega X', value: 'Vega X' },
-                            { label: 'Codex', value: 'Codex' }
-                        ]);
-
-                    const selectRow = new ActionRowBuilder().addComponents(menu);
-
-                    await i.reply({
-                        content: '📱 **Trạng Thái Executor Mobile**',
-                        components: [selectRow],
-                        flags: MessageFlags.Ephemeral
-                    });
-
-                    const selectMsg = await i.fetchReply();
-                    const selectCollector = selectMsg.createMessageComponentCollector({ time: 300000 });
-
-                    selectCollector.on('collect', async si => {
-                        return replyExecutorInfo(si, si.values[0]);
-                    });
-
-                    return;
-                }
-            });
-
-            return;
+            return interaction.reply({ embeds: [embed], components: [row] });
         }
 
         if (sub === 'support') {
