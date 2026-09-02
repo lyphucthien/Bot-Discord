@@ -9,7 +9,7 @@ module.exports = {
 
         await interaction.reply({
             content: `👉 Nhấn **[Get Key](${link})** để lấy Key.\n⚠️ Mỗi Key có thời hạn sử dụng 3 tiếng.`,
-            ephemeral: true
+            flags: 64
         });
     },
 };
