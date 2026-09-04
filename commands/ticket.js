@@ -181,21 +181,13 @@ module.exports = {
                 .setTitle('🖥️ MY SERVER MC — THÔNG TIN MÁY CHỦ')
                 .setColor('#4b4b4b')
                 .setDescription(
-                    '⛏️ **Minecraft Server**\n' +
-                    'Chào mừng bạn đến với server Minecraft của chúng mình!\n\n' +
                     '## 📌 Quy định\n' +
-                    '> Vui lòng đọc **#📜┃luật** trước khi tham gia.\n\n' +
-                    '## 🔗 Địa chỉ Server (Hỗ Trợ Java / Bedrock)\n' +
-                    '```text\n' +
-                    'Java: spiral-epa.tun.ply.gg\n' +
-                    'Bedrock: spiral-worse.tun.ply.gg (Port: 4830)\n' +
-                    '```\n' +
-                    '## 🗺️ Các chế độ\n' +
-                    '🏠 **Survival SMP** — Sinh tồn cùng bạn bè\n' +
-                    '⚔️ **PvP Arena** — Chiến đấu PvP với 2 chế độ (Nâng Cao và Bình Thường, xem chi tiết trong server)\n\n' +
-                    '## Lưu Ý:\n' +
-                    '**💡 Gặp lỗi trong quá trình chơi / khi vào server? Hãy mở ticket để được hỗ trợ tại #╭🛠️・support**\n' +
-                    '**🚨 Trong quá trình chơi / tham gia server, gặp những tình trạng vi phạm luật. Báo ngay cho Staff tại #╰🚨・report**'
+                    '> Vui lòng đọc <#1503245852129493174> trước khi tham gia.\n\n' +
+
+                    '## 🔘 Chức Năng Nút Bấm\n' +
+                    '> 🔑 **Key** — Lấy Key và xác thực tài khoản Minecraft để được phép vào server.\n' +
+                    '> 🌐 **Địa chỉ Server** — Xem địa chỉ kết nối cho **Java** và **Bedrock**.\n' +
+                    '> 🛠️ **Hỗ Trợ** — Tạo Ticket để liên hệ Staff khi gặp lỗi hoặc cần hỗ trợ.\n\n'
                 );
 
             const row = new ActionRowBuilder()
