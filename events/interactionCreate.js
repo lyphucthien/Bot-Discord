@@ -164,11 +164,79 @@ module.exports = (client) => {
                             .setEmoji('🔗')
                             .setStyle(ButtonStyle.Link)
                             .setURL('https://link4sub.com/owycAYxKdu'),
+
                         new ButtonBuilder()
                             .setCustomId('open_key_verify')
                             .setLabel('Xác Thực Key')
                             .setEmoji('✅')
                             .setStyle(ButtonStyle.Success)
+                    );
+
+                return interaction.reply({
+                    embeds: [embed],
+                    components: [row],
+                    flags: 64
+                });
+            }
+
+
+            // ======================
+            // MC SERVER ADDRESS
+            // ======================
+            if (interaction.customId === 'mc_server_address') {
+
+                const embed = new EmbedBuilder()
+                    .setTitle('🌐 ĐỊA CHỈ SERVER MINECRAFT')
+                    .setColor('Blue')
+                    .setDescription(
+                        '## 🖥️ Java Edition\n' +
+                        '```text\n' +
+                        'spiral-epa.tun.ply.gg\n' +
+                        '```\n\n' +
+
+                        '## 📱 Bedrock Edition\n' +
+                        '```text\n' +
+                        'IP: spiral-worse.tun.ply.gg\n' +
+                        'Port: 4830\n' +
+                        '```\n\n' +
+
+                        '✅ **Hỗ trợ Java + Bedrock**\n' +
+                        '🎮 Hãy nhập đúng địa chỉ để kết nối đến server.'
+                    );
+
+                return interaction.reply({
+                    embeds: [embed],
+                    flags: 64
+                });
+            }
+
+
+            // ======================
+            // MC SUPPORT
+            // ======================
+            if (interaction.customId === 'mc_support') {
+
+                const embed = new EmbedBuilder()
+                    .setTitle('🛠️ HỖ TRỢ SERVER MINECRAFT')
+                    .setColor('Orange')
+                    .setDescription(
+                        'Bạn gặp vấn đề khi chơi\n\n' +
+                        '• ❌ Không thể vào server\n' +
+                        '• 🔑 Lỗi xác thực Key\n' +
+                        '• 🌐 Lỗi kết nối Java / Bedrock\n' +
+                        '• ⚠️ Lỗi trong quá trình chơi\n' +
+                        '• 🐛 Báo lỗi / bug\n' +
+                        '• 🚨 Phát hiện người chơi vi phạm luật, sài hack/cheat\n\n' +
+                        '👉 Nhấn **Tạo Ticket Support** bên dưới để liên hệ Staff.'
+                    );
+
+                const row = new ActionRowBuilder()
+                    .addComponents(
+                        new ButtonBuilder()
+                            .setCustomId('create_support')
+                            .setLabel('Tạo Ticket Support')
+                            .setEmoji('🛠️')
+                            .setStyle(ButtonStyle.Primary)
                     );
 
                 return interaction.reply({
