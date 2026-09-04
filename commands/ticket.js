@@ -23,7 +23,9 @@ module.exports = {
         .addSubcommand(sub => sub.setName('script')
             .setDescription('Gửi Script'))
         .addSubcommand(sub => sub.setName('executor-supported')
-            .setDescription('Gửi Executor Script Hỗ Trợ')),
+            .setDescription('Gửi Executor Script Hỗ Trợ'))
+        .addSubcommand(sub => sub.setName('server-minecraft')
+            .setDescription('Gửi Bảng Server Minecraft')),
 
     async execute(interaction) {
         const sub = interaction.options.getSubcommand();
@@ -165,6 +167,62 @@ module.exports = {
                 );
 
             return interaction.reply({ embeds: [embed], components: [row] });
+        }
+
+        if (sub === 'server-minecraft') {
+            if (!hasScriptPermission(interaction)) {
+                return interaction.reply({
+                    content: '🔒 Bạn không có quyền sử dụng lệnh này.',
+                    flags: MessageFlags.Ephemeral
+                });
+            }
+
+            const embed = new EmbedBuilder()
+                .setTitle('🖥️ MY SERVER MC — THÔNG TIN MÁY CHỦ')
+                .setColor('#4b4b4b')
+                .setDescription(
+                    '⛏️ **Minecraft Server**\n' +
+                    'Chào mừng bạn đến với server Minecraft của chúng mình!\n\n' +
+                    '## 📌 Quy định\n' +
+                    '> Vui lòng đọc **#📜┃luật** trước khi tham gia.\n\n' +
+                    '## 🔗 Địa chỉ Server (Hỗ Trợ Java / Bedrock)\n' +
+                    '```text\n' +
+                    'Java: spiral-epa.tun.ply.gg\n' +
+                    'Bedrock: spiral-worse.tun.ply.gg (Port: 4830)\n' +
+                    '```\n' +
+                    '## 🗺️ Các chế độ\n' +
+                    '🏠 **Survival SMP** — Sinh tồn cùng bạn bè\n' +
+                    '⚔️ **PvP Arena** — Chiến đấu PvP với 2 chế độ (Nâng Cao và Bình Thường, xem chi tiết trong server)\n\n' +
+                    '## Lưu Ý:\n' +
+                    '**💡 Gặp lỗi trong quá trình chơi / khi vào server? Hãy mở ticket để được hỗ trợ tại #╭🛠️・support**\n' +
+                    '**🚨 Trong quá trình chơi / tham gia server, gặp những tình trạng vi phạm luật. Báo ngay cho Staff tại #╰🚨・report**'
+                );
+
+            const row = new ActionRowBuilder()
+                .addComponents(
+                    new ButtonBuilder()
+                        .setCustomId('mc_key_panel')
+                        .setLabel('Key')
+                        .setEmoji('🔑')
+                        .setStyle(ButtonStyle.Success),
+
+                    new ButtonBuilder()
+                        .setCustomId('mc_server_address')
+                        .setLabel('Địa chỉ Server')
+                        .setEmoji('🌐')
+                        .setStyle(ButtonStyle.Primary),
+
+                    new ButtonBuilder()
+                        .setCustomId('mc_support')
+                        .setLabel('Hỗ Trợ')
+                        .setEmoji('🛠️')
+                        .setStyle(ButtonStyle.Secondary)
+                );
+
+            return interaction.reply({
+                embeds: [embed],
+                components: [row]
+            });
         }
     }
 };
