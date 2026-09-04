@@ -2,7 +2,7 @@ const config = require('../config.json');
 const ticketStatus = require('../utils/ticketDB');
 const doneCooldown = new Map();
 
-const { ChannelType, PermissionsBitField, EmbedBuilder, ActionRowBuilder, ButtonBuilder, StringSelectMenuBuilder } = require("discord.js");
+const { ChannelType, PermissionsBitField, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } = require("discord.js");
 const { replyExecutorInfo } = require('../utils/executorData');
 
 const helperRoles = config.Helper ? [config.Helper] : [];
@@ -142,6 +142,71 @@ module.exports = (client) => {
                 interaction.customId === 'select_executor_mobile'
             ) {
                 return replyExecutorInfo(interaction, interaction.values[0]);
+            }
+
+            // ======================
+            // MC KEY PANEL
+            // ======================
+            if (interaction.customId === 'mc_key_panel') {
+
+                const embed = new EmbedBuilder()
+                    .setTitle('🔑 Key Xác Thực Server MC')
+                    .setColor('Green')
+                    .setDescription(
+                        '👉 Bấm **Get Key** để lấy Key mới (hạn dùng 3 tiếng).\n' +
+                        '✅ Đã có Key rồi? Bấm **Xác Thực Key** để nhập.'
+                    );
+
+                const row = new ActionRowBuilder()
+                    .addComponents(
+                        new ButtonBuilder()
+                            .setLabel('Get Key')
+                            .setEmoji('🔗')
+                            .setStyle(ButtonStyle.Link)
+                            .setURL('https://link4sub.com/owycAYxKdu'),
+                        new ButtonBuilder()
+                            .setCustomId('open_key_verify')
+                            .setLabel('Xác Thực Key')
+                            .setEmoji('✅')
+                            .setStyle(ButtonStyle.Success)
+                    );
+
+                return interaction.reply({
+                    embeds: [embed],
+                    components: [row],
+                    flags: 64
+                });
+            }
+
+            // ======================
+            // OPEN KEY VERIFY MODAL
+            // ======================
+            if (interaction.customId === 'open_key_verify') {
+
+                const modal = new ModalBuilder()
+                    .setCustomId('keyVerifyModal')
+                    .setTitle('Xác Thực Key Minecraft');
+
+                const mcInput = new TextInputBuilder()
+                    .setCustomId('mcUsername')
+                    .setLabel('Tên tài khoản Minecraft')
+                    .setStyle(TextInputStyle.Short)
+                    .setMaxLength(16)
+                    .setRequired(true);
+
+                const keyInput = new TextInputBuilder()
+                    .setCustomId('mcKey')
+                    .setLabel('Key')
+                    .setStyle(TextInputStyle.Short)
+                    .setPlaceholder('Key Nhận Từ Trang Getkey')
+                    .setRequired(true);
+
+                modal.addComponents(
+                    new ActionRowBuilder().addComponents(mcInput),
+                    new ActionRowBuilder().addComponents(keyInput)
+                );
+
+                return interaction.showModal(modal);
             }
 
             // ======================
