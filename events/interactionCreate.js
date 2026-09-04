@@ -189,18 +189,16 @@ module.exports = (client) => {
                     .setTitle('🌐 ĐỊA CHỈ SERVER MINECRAFT')
                     .setColor('Blue')
                     .setDescription(
+                        '✅ **Hỗ trợ Java + Bedrock**\n' +
                         '## 🖥️ Java Edition\n' +
                         '```text\n' +
                         'spiral-epa.tun.ply.gg\n' +
-                        '```\n\n' +
-
+                        '```\n' +
                         '## 📱 Bedrock Edition\n' +
                         '```text\n' +
                         'IP: spiral-worse.tun.ply.gg\n' +
                         'Port: 4830\n' +
-                        '```\n\n' +
-
-                        '✅ **Hỗ trợ Java + Bedrock**\n' +
+                        '```\n' +
                         '🎮 Hãy nhập đúng địa chỉ để kết nối đến server.'
                     );
 
@@ -220,14 +218,12 @@ module.exports = (client) => {
                     .setTitle('🛠️ HỖ TRỢ SERVER MINECRAFT')
                     .setColor('Orange')
                     .setDescription(
-                        'Bạn gặp vấn đề khi chơi\n\n' +
-                        '• ❌ Không thể vào server\n' +
-                        '• 🔑 Lỗi xác thực Key\n' +
-                        '• 🌐 Lỗi kết nối Java / Bedrock\n' +
-                        '• ⚠️ Lỗi trong quá trình chơi\n' +
-                        '• 🐛 Báo lỗi / bug\n' +
-                        '• 🚨 Phát hiện người chơi vi phạm luật, sài hack/cheat\n\n' +
-                        '👉 Nhấn **Tạo Ticket Support** bên dưới để liên hệ Staff.'
+                        '❌ Không thể vào server\n' +
+                        '🔑 Lỗi xác thực Key\n' +
+                        '🌐 Lỗi kết nối Java / Bedrock\n' +
+                        '⚠️ Lỗi trong quá trình chơi\n' +
+                        '🐛 Báo lỗi / bug\n\n' +
+                        '👉 Vui Lòng, Truy Cập Kệnh <#1515926856589775100> Để Được Hỗ Trợ'
                     );
 
                 const row = new ActionRowBuilder()
