@@ -46,7 +46,7 @@ module.exports = {
                 })
                 .setDescription(
                     `Nếu bạn gặp lỗi trong quá trình sử dụng, vui lòng gửi hỗ trợ tại <#1515926856589775100>\n` +
-                    `## Script\n\`\`\`lua\nloadstring(game:HttpGet("https://raw.githubusercontent.com/lyphucthien/LPT-Hub/refs/heads/main/LPT_Hub.luau"))()\`\`\`\n` +
+                    `## Script\n\`\`\`lua\nrepeat wait() until game:IsLoaded() and game.Players.LocalPlayer\nloadstring(game:HttpGet("https://raw.githubusercontent.com/lyphucthien/LPT-Hub/refs/heads/main/LPT_Hub.luau"))()\`\`\`\n` +
                     `Nhấn Nút Bên Dưới Để Xem Danh Sách Games Được Hỗ Trợ.`
                 );
 
