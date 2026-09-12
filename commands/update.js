@@ -1,10 +1,11 @@
-const {SlashCommandBuilder,ActionRowBuilder,ModalBuilder,
-    TextInputBuilder,TextInputStyle,PermissionsBitField,MessageFlags} = require('discord.js');
+const {SlashCommandBuilder,ContainerBuilder,TextDisplayBuilder,ActionRowBuilder,ModalBuilder,
+    TextInputBuilder,TextInputStyle,SeparatorSpacingSize,PermissionsBitField,MessageFlags} = require('discord.js');
 const config = require('../config.json');
 const fs = require('fs');
 const path = require('path');
 
 const UPDATE_CHANNEL_ID = '1540328462840111225';
+const UPDATE_ROLE_ID = '1544167526454403082';
 const STATUS_FILE = path.join(__dirname, '..', 'lastStatus.json');
 
 function hasScriptPermission(interaction) {
@@ -31,20 +32,27 @@ function saveLastStatus(status) {
     fs.writeFileSync(STATUS_FILE, JSON.stringify({ status }), 'utf8');
 }
 
-function buildChangelogText(changelogRaw) {
-    const symbolMap = { '+': '🟢', '=': '🟡', '-': '🔴' };
+function buildChangelogAnsi(changelogRaw) {
+    const colorMap = {
+        '+': '32',
+        '=': '33',
+        '-': '31'
+    };
 
-    return changelogRaw
+    const lines = changelogRaw
         .split('\n')
         .map(item => item.trim())
         .filter(item => item.length > 0)
         .map(item => {
             const symbol = item[0];
             const text = item.slice(1).trim();
-            const icon = symbolMap[symbol] || '⚪';
-            return `${icon} ${text}`;
+            const color = colorMap[symbol] || '37';
+
+            return `\u001b[1;${color}m[${symbol}] ${text}\u001b[0m`;
         })
         .join('\n');
+
+    return `\`\`\`ansi\n${lines}\n\`\`\``;
 }
 
 module.exports = {
@@ -95,48 +103,49 @@ module.exports = {
         const newStatus = submitted.fields.getTextInputValue('input_status');
         const changelogRaw = submitted.fields.getTextInputValue('input_changelog');
 
-        const lastStatus = getLastStatus();
-        const statusValue = lastStatus
-            ? `${lastStatus} → ${newStatus}`
-            : `${newStatus}`;
+        const channel = await submitted.client.channels.fetch(UPDATE_CHANNEL_ID).catch(() => null);
 
-        const changelogText = buildChangelogText(changelogRaw);
-
-        try {
-            const res = await fetch(`${"https://discord.com/api/webhooks/1548194662282559493/x_DbKI2-uhP4IXaLpxsFdJTYJEasd0QpQM60t6S3qGq6Lyh41Ex569TzcH5asEJc8G6V"}?wait=true`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    content: '@everyone',
-                    embeds: [{
-                        title: 'UPDATE',
-                        color: 0x2ecc71,
-                        fields: [
-                            { name: 'Status', value: statusValue, inline: false },
-                            { name: 'Nhật ký thay đổi', value: changelogText, inline: false }
-                        ],
-                        image: { url: "https://res.cloudinary.com/dkui88bcf/image/upload/v1789189709/Update_clxugu.png" },
-                        timestamp: new Date().toISOString()
-                    }],
-                    allowed_mentions: { parse: ['everyone'] }
-                })
-            });
-
-            if (!res.ok) {
-                const errData = await res.json().catch(() => null);
-                console.error('Webhook error:', errData);
-                return submitted.reply({
-                    content: '❌ Gửi webhook thất bại. Kiểm tra lại Webhook (Update).',
-                    flags: MessageFlags.Ephemeral
-                });
-            }
-        } catch (err) {
-            console.error('Fetch threw:', err);
+        if (!channel) {
             return submitted.reply({
-                content: '❌ Lỗi khi gọi webhook.',
+                content: '❌ Không tìm thấy kênh thông báo. Kiểm tra lại UPDATE_CHANNEL_ID.',
                 flags: MessageFlags.Ephemeral
             });
         }
+
+        const lastStatus = getLastStatus();
+        const statusLine = lastStatus
+            ? `**Status:** ${lastStatus} → ${newStatus}`
+            : `**Status:** ${newStatus}`;
+
+        const changelogItems = buildChangelogAnsi(changelogRaw);
+
+        const pingText = new TextDisplayBuilder().setContent(`<@&${UPDATE_ROLE_ID}>`);
+
+        const container = new ContainerBuilder()
+            .addTextDisplayComponents(
+                td => td.setContent('# UPDATE')
+            )
+            .addTextDisplayComponents(
+                td => td.setContent(statusLine)
+            )
+            .addSeparatorComponents(
+                sep => sep.setSpacing(SeparatorSpacingSize.Small)
+            )
+            .addTextDisplayComponents(
+                td => td.setContent(`**Nhật ký thay đổi:**\n${changelogItems}`)
+            )
+            .addSeparatorComponents(
+                sep => sep.setSpacing(SeparatorSpacingSize.Small)
+            )
+            .addTextDisplayComponents(
+                td => td.setContent(`**Updated:** <t:${Math.floor(Date.now() / 1000)}:F>`)
+            );
+
+        await channel.send({
+            components: [pingText, container],
+            flags: MessageFlags.IsComponentsV2,
+            allowedMentions: { roles: [UPDATE_ROLE_ID] }
+        });
 
         saveLastStatus(newStatus);
 
