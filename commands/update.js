@@ -111,40 +111,25 @@ module.exports = {
 
         const changelogItems = buildChangelogAnsi(changelogRaw);
 
-        const container = new ContainerBuilder()
-            .addTextDisplayComponents(
-                td => td.setContent(statusLine)
-            )
-            .addSeparatorComponents(
-                sep => sep.setSpacing(SeparatorSpacingSize.Small)
-            )
-            .addTextDisplayComponents(
-                td => td.setContent(`**Nhật ký thay đổi:**\n${changelogItems}`)
-            )
-            .addSeparatorComponents(
-                sep => sep.setSpacing(SeparatorSpacingSize.Small)
-            )
-            .addTextDisplayComponents(
-                td => td.setContent(`**Updated:** <t:${Math.floor(Date.now() / 1000)}:F>`)
-            );
-
-        const imageGallery = new MediaGalleryBuilder().addItems(item => item.setURL("https://res.cloudinary.com/dkui88bcf/image/upload/v1789189709/Update_clxugu.png"));
-
-        const pingText = new TextDisplayBuilder().setContent('@everyone');
+        const testDisplay = new TextDisplayBuilder().setContent(
+            `@everyone\n${statusLine}\n\n**Nhật ký thay đổi:**\n${changelogItems}\n\n**Updated:** <t:${Math.floor(Date.now() / 1000)}:F>`
+        );
 
         const webhookClient = new WebhookClient({url:"https://discord.com/api/webhooks/1548194662282559493/x_DbKI2-uhP4IXaLpxsFdJTYJEasd0QpQM60t6S3qGq6Lyh41Ex569TzcH5asEJc8G6V"});
 
-        await webhookClient.send({
-            components: [pingText, container],
-            flags: MessageFlags.IsComponentsV2,
-            allowedMentions: { parse: ['everyone'] }
-        }).catch(async (err) => {
+        try {
+            await webhookClient.send({
+                components: [testDisplay],
+                flags: MessageFlags.IsComponentsV2,
+                allowedMentions: { parse: ['everyone'] }
+            });
+        } catch (err) {
             console.error(err);
             return submitted.reply({
                 content: '❌ Gửi webhook thất bại. Kiểm tra lại Webhook (Update).',
                 flags: MessageFlags.Ephemeral
             });
-        });
+        }
 
         saveLastStatus(newStatus);
 
