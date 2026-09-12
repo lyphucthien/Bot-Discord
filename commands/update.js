@@ -6,7 +6,6 @@ const path = require('path');
 const { WebhookClient } = require('discord.js');
 
 const UPDATE_CHANNEL_ID = '1540328462840111225';
-const UPDATE_ROLE_ID = '1544167526454403082';
 const STATUS_FILE = path.join(__dirname, '..', 'lastStatus.json');
 
 function hasScriptPermission(interaction) {
@@ -131,11 +130,12 @@ module.exports = {
                 td => td.setContent(`**Updated:** <t:${Math.floor(Date.now() / 1000)}:F>`)
             );
 
+        const pingText = new TextDisplayBuilder().setContent('@everyone');
+
         const webhookClient = new WebhookClient({url:"https://discord.com/api/webhooks/1548194662282559493/x_DbKI2-uhP4IXaLpxsFdJTYJEasd0QpQM60t6S3qGq6Lyh41Ex569TzcH5asEJc8G6V"});
 
         await webhookClient.send({
-            content: '@everyone',
-            components: [container],
+            components: [pingText, container],
             flags: MessageFlags.IsComponentsV2,
             allowedMentions: { parse: ['everyone'] }
         }).catch(async (err) => {
