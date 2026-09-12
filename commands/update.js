@@ -135,7 +135,7 @@ module.exports = {
         const webhookClient = new WebhookClient({url:"https://discord.com/api/webhooks/1548194662282559493/x_DbKI2-uhP4IXaLpxsFdJTYJEasd0QpQM60t6S3qGq6Lyh41Ex569TzcH5asEJc8G6V"});
 
         await webhookClient.send({
-            components: [imageGallery, pingText, container],
+            components: [pingText, container],
             flags: MessageFlags.IsComponentsV2,
             allowedMentions: { parse: ['everyone'] }
         }).catch(async (err) => {
