@@ -3,6 +3,7 @@ const {SlashCommandBuilder,ContainerBuilder,TextDisplayBuilder,ActionRowBuilder,
 const config = require('../config.json');
 const fs = require('fs');
 const path = require('path');
+const { WebhookClient } = require('discord.js');
 
 const UPDATE_CHANNEL_ID = '1540328462840111225';
 const UPDATE_ROLE_ID = '1544167526454403082';
@@ -74,16 +75,16 @@ module.exports = {
 
         const statusInput = new TextInputBuilder()
             .setCustomId('input_status')
-            .setLabel('Status (chỉ nhập icon: 🟢 🟡 🟠 🔴 ⚫)')
+            .setLabel('Status')
             .setStyle(TextInputStyle.Short)
-            .setPlaceholder('...')
+            .setPlaceholder('chỉ nhập icon: 🟢 🟡 🟠 🔴 ⚫')
             .setRequired(true);
 
         const changelogInput = new TextInputBuilder()
             .setCustomId('input_changelog')
             .setLabel('Nhật ký thay đổi (mỗi dòng bắt đầu +/=/-)')
             .setStyle(TextInputStyle.Paragraph)
-            .setPlaceholder('=Fixed lỗi X\n+Thêm tính năng Y\n-Gỡ bỏ Z')
+            .setPlaceholder('= Fixed lỗi X\n+ Thêm tính năng Y\n- Gỡ bỏ Z')
             .setRequired(true);
 
         modal.addComponents(
@@ -103,23 +104,12 @@ module.exports = {
         const newStatus = submitted.fields.getTextInputValue('input_status');
         const changelogRaw = submitted.fields.getTextInputValue('input_changelog');
 
-        const channel = await submitted.client.channels.fetch(UPDATE_CHANNEL_ID).catch(() => null);
-
-        if (!channel) {
-            return submitted.reply({
-                content: '❌ Không tìm thấy kênh thông báo. Kiểm tra lại UPDATE_CHANNEL_ID.',
-                flags: MessageFlags.Ephemeral
-            });
-        }
-
         const lastStatus = getLastStatus();
         const statusLine = lastStatus
             ? `**Status:** ${lastStatus} → ${newStatus}`
             : `**Status:** ${newStatus}`;
 
         const changelogItems = buildChangelogAnsi(changelogRaw);
-
-        const pingText = new TextDisplayBuilder().setContent(`<@&${UPDATE_ROLE_ID}>`);
 
         const container = new ContainerBuilder()
             .addTextDisplayComponents(
@@ -141,10 +131,19 @@ module.exports = {
                 td => td.setContent(`**Updated:** <t:${Math.floor(Date.now() / 1000)}:F>`)
             );
 
-        await channel.send({
-            components: [pingText, container],
+        const webhookClient = new WebhookClient({url:"https://discord.com/api/webhooks/1548194662282559493/x_DbKI2-uhP4IXaLpxsFdJTYJEasd0QpQM60t6S3qGq6Lyh41Ex569TzcH5asEJc8G6V"});
+
+        await webhookClient.send({
+            content: '@everyone',
+            components: [container],
             flags: MessageFlags.IsComponentsV2,
-            allowedMentions: { roles: [UPDATE_ROLE_ID] }
+            allowedMentions: { parse: ['everyone'] }
+        }).catch(async (err) => {
+            console.error(err);
+            return submitted.reply({
+                content: '❌ Gửi webhook thất bại. Kiểm tra lại Webhook (Update).',
+                flags: MessageFlags.Ephemeral
+            });
         });
 
         saveLastStatus(newStatus);
