@@ -1,6 +1,5 @@
-const {SlashCommandBuilder,ContainerBuilder,TextDisplayBuilder,ActionRowBuilder,ModalBuilder,
-    TextInputBuilder,TextInputStyle,SeparatorSpacingSize,PermissionsBitField,MessageFlags,
-    MediaGalleryBuilder} = require('discord.js');
+const {SlashCommandBuilder,ActionRowBuilder,ModalBuilder,
+    TextInputBuilder,TextInputStyle,PermissionsBitField,MessageFlags} = require('discord.js');
 const config = require('../config.json');
 const fs = require('fs');
 const path = require('path');
@@ -32,27 +31,20 @@ function saveLastStatus(status) {
     fs.writeFileSync(STATUS_FILE, JSON.stringify({ status }), 'utf8');
 }
 
-function buildChangelogAnsi(changelogRaw) {
-    const colorMap = {
-        '+': '32',
-        '=': '33',
-        '-': '31'
-    };
+function buildChangelogText(changelogRaw) {
+    const symbolMap = { '+': '🟢', '=': '🟡', '-': '🔴' };
 
-    const lines = changelogRaw
+    return changelogRaw
         .split('\n')
         .map(item => item.trim())
         .filter(item => item.length > 0)
         .map(item => {
             const symbol = item[0];
             const text = item.slice(1).trim();
-            const color = colorMap[symbol] || '37';
-
-            return `\u001b[1;${color}m[${symbol}] ${text}\u001b[0m`;
+            const icon = symbolMap[symbol] || '⚪';
+            return `${icon} ${text}`;
         })
         .join('\n');
-
-    return `\`\`\`ansi\n${lines}\n\`\`\``;
 }
 
 module.exports = {
@@ -104,41 +96,44 @@ module.exports = {
         const changelogRaw = submitted.fields.getTextInputValue('input_changelog');
 
         const lastStatus = getLastStatus();
-        const statusLine = lastStatus
-            ? `**Status:** ${lastStatus} → ${newStatus}`
-            : `**Status:** ${newStatus}`;
+        const statusValue = lastStatus
+            ? `${lastStatus} → ${newStatus}`
+            : `${newStatus}`;
 
-        const changelogItems = buildChangelogAnsi(changelogRaw);
-
-        const webhookURL = "https://discord.com/api/webhooks/1548194662282559493/x_DbKI2-uhP4IXaLpxsFdJTYJEasd0QpQM60t6S3qGq6Lyh41Ex569TzcH5asEJc8G6V";
+        const changelogText = buildChangelogText(changelogRaw);
 
         try {
-            const res = await fetch(`${webhookURL}?wait=true`, {
+            const res = await fetch(`${"https://discord.com/api/webhooks/1548194662282559493/x_DbKI2-uhP4IXaLpxsFdJTYJEasd0QpQM60t6S3qGq6Lyh41Ex569TzcH5asEJc8G6V"}?wait=true`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    flags: 32768,
-                    components: [
-                        { type: 10, content: `@everyone\n${statusLine}\n\n**Nhật ký thay đổi:**\n${changelogItems}\n\n**Updated:** <t:${Math.floor(Date.now() / 1000)}:F>` }
-                    ],
+                    content: '@everyone',
+                    embeds: [{
+                        title: 'UPDATE',
+                        color: 0x2ecc71,
+                        fields: [
+                            { name: 'Status', value: statusValue, inline: false },
+                            { name: 'Nhật ký thay đổi', value: changelogText, inline: false }
+                        ],
+                        image: { url: "https://res.cloudinary.com/dkui88bcf/image/upload/v1789189709/Update_clxugu.png" },
+                        timestamp: new Date().toISOString()
+                    }],
                     allowed_mentions: { parse: ['everyone'] }
                 })
             });
 
-            const data = await res.json().catch(() => null);
-            console.log('Raw fetch status:', res.status);
-            console.log('Raw fetch response:', data);
-
             if (!res.ok) {
+                const errData = await res.json().catch(() => null);
+                console.error('Webhook error:', errData);
                 return submitted.reply({
-                    content: '❌ Gửi webhook thất bại (raw fetch). Kiểm tra log.',
+                    content: '❌ Gửi webhook thất bại. Kiểm tra lại Webhook (Update).',
                     flags: MessageFlags.Ephemeral
                 });
             }
         } catch (err) {
             console.error('Fetch threw:', err);
             return submitted.reply({
-                content: '❌ Lỗi khi gọi fetch webhook.',
+                content: '❌ Lỗi khi gọi webhook.',
                 flags: MessageFlags.Ephemeral
             });
         }
