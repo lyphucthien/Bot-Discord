@@ -4,7 +4,6 @@ const {SlashCommandBuilder,ContainerBuilder,TextDisplayBuilder,ActionRowBuilder,
 const config = require('../config.json');
 const fs = require('fs');
 const path = require('path');
-const { WebhookClient } = require('discord.js');
 
 const UPDATE_CHANNEL_ID = '1540328462840111225';
 const STATUS_FILE = path.join(__dirname, '..', 'lastStatus.json');
@@ -111,22 +110,35 @@ module.exports = {
 
         const changelogItems = buildChangelogAnsi(changelogRaw);
 
-        const testDisplay = new TextDisplayBuilder().setContent(
-            `@everyone\n${statusLine}\n\n**Nhật ký thay đổi:**\n${changelogItems}\n\n**Updated:** <t:${Math.floor(Date.now() / 1000)}:F>`
-        );
-
-        const webhookClient = new WebhookClient({url:"https://discord.com/api/webhooks/1548194662282559493/x_DbKI2-uhP4IXaLpxsFdJTYJEasd0QpQM60t6S3qGq6Lyh41Ex569TzcH5asEJc8G6V"});
+        const webhookURL = "https://discord.com/api/webhooks/1548194662282559493/x_DbKI2-uhP4IXaLpxsFdJTYJEasd0QpQM60t6S3qGq6Lyh41Ex569TzcH5asEJc8G6V";
 
         try {
-            await webhookClient.send({
-                components: [testDisplay],
-                flags: MessageFlags.IsComponentsV2,
-                allowedMentions: { parse: ['everyone'] }
+            const res = await fetch(`${webhookURL}?wait=true`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    flags: 32768,
+                    components: [
+                        { type: 10, content: `@everyone\n${statusLine}\n\n**Nhật ký thay đổi:**\n${changelogItems}\n\n**Updated:** <t:${Math.floor(Date.now() / 1000)}:F>` }
+                    ],
+                    allowed_mentions: { parse: ['everyone'] }
+                })
             });
+
+            const data = await res.json().catch(() => null);
+            console.log('Raw fetch status:', res.status);
+            console.log('Raw fetch response:', data);
+
+            if (!res.ok) {
+                return submitted.reply({
+                    content: '❌ Gửi webhook thất bại (raw fetch). Kiểm tra log.',
+                    flags: MessageFlags.Ephemeral
+                });
+            }
         } catch (err) {
-            console.error(err);
+            console.error('Fetch threw:', err);
             return submitted.reply({
-                content: '❌ Gửi webhook thất bại. Kiểm tra lại Webhook (Update).',
+                content: '❌ Lỗi khi gọi fetch webhook.',
                 flags: MessageFlags.Ephemeral
             });
         }
