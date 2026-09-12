@@ -1,5 +1,6 @@
 const {SlashCommandBuilder,ContainerBuilder,TextDisplayBuilder,ActionRowBuilder,ModalBuilder,
-    TextInputBuilder,TextInputStyle,SeparatorSpacingSize,PermissionsBitField,MessageFlags} = require('discord.js');
+    TextInputBuilder,TextInputStyle,SeparatorSpacingSize,PermissionsBitField,MessageFlags,
+    MediaGalleryBuilder} = require('discord.js');
 const config = require('../config.json');
 const fs = require('fs');
 const path = require('path');
@@ -112,9 +113,6 @@ module.exports = {
 
         const container = new ContainerBuilder()
             .addTextDisplayComponents(
-                td => td.setContent('# UPDATE')
-            )
-            .addTextDisplayComponents(
                 td => td.setContent(statusLine)
             )
             .addSeparatorComponents(
@@ -130,12 +128,14 @@ module.exports = {
                 td => td.setContent(`**Updated:** <t:${Math.floor(Date.now() / 1000)}:F>`)
             );
 
+        const imageGallery = new MediaGalleryBuilder().addItems(item => item.setURL("https://res.cloudinary.com/dkui88bcf/image/upload/v1789189709/Update_clxugu.png"));
+
         const pingText = new TextDisplayBuilder().setContent('@everyone');
 
         const webhookClient = new WebhookClient({url:"https://discord.com/api/webhooks/1548194662282559493/x_DbKI2-uhP4IXaLpxsFdJTYJEasd0QpQM60t6S3qGq6Lyh41Ex569TzcH5asEJc8G6V"});
 
         await webhookClient.send({
-            components: [pingText, container],
+            components: [imageGallery, pingText, container],
             flags: MessageFlags.IsComponentsV2,
             allowedMentions: { parse: ['everyone'] }
         }).catch(async (err) => {
