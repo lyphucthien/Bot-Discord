@@ -1,10 +1,6 @@
 const {SlashCommandBuilder,ActionRowBuilder,ModalBuilder,
     TextInputBuilder,TextInputStyle,PermissionsBitField,MessageFlags} = require('discord.js');
 const config = require('../config.json');
-const fs = require('fs');
-const path = require('path');
-
-const STATUS_FILE = path.join(__dirname, '..', 'lastStatus.json');
 
 function hasScriptPermission(interaction) {
     if (interaction.user.id === '1330395226933559297') return true;
@@ -69,6 +65,13 @@ module.exports = {
             .setPlaceholder('chỉ nhập icon (🟢 🟡 🟠 🔴 ⚫)')
             .setRequired(true);
 
+        const versionInput = new TextInputBuilder()
+            .setCustomId('input_version')
+            .setLabel('Version')
+            .setStyle(TextInputStyle.Short)
+            .setPlaceholder('v1.0.0')
+            .setRequired(true);
+
         const changelogInput = new TextInputBuilder()
             .setCustomId('input_changelog')
             .setLabel('Nhật ký thay đổi (mỗi dòng +/-/space)')
@@ -78,6 +81,7 @@ module.exports = {
 
         modal.addComponents(
             new ActionRowBuilder().addComponents(statusInput),
+            new ActionRowBuilder().addComponents(versionInput),
             new ActionRowBuilder().addComponents(changelogInput)
         );
 
@@ -91,6 +95,7 @@ module.exports = {
         if (!submitted) return;
 
         const status = submitted.fields.getTextInputValue('input_status');
+        const version = submitted.fields.getTextInputValue('input_version');
         const changelogRaw = submitted.fields.getTextInputValue('input_changelog');
         const changelogDiff = buildChangelogDiff(changelogRaw);
 
@@ -114,7 +119,7 @@ module.exports = {
                         },
                         {
                             type: 10,
-                            content: `## Status: ${status}\n## Version: \`v${newVersion}\`\n\nRestart Script Để Áp Dụng Bản Cập Nhật`
+                            content: `## Status: ${status}\n## Version: \`${version}\`\n\nRestart Script Để Áp Dụng Bản Cập Nhật`
                         },
                         { type: 14, spacing: 1 },
                         {
@@ -166,10 +171,8 @@ module.exports = {
             });
         }
 
-        saveVersion(newVersion);
-
         return submitted.reply({
-            content: `✅ Đã gửi thông báo update v${newVersion} tới <#${"1540328462840111225"}>.`,
+            content: `✅ Đã gửi thông báo tới <#${"1540328462840111225"}>.`,
             flags: MessageFlags.Ephemeral
         });
     }
