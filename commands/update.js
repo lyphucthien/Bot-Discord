@@ -102,10 +102,6 @@ module.exports = {
             flags: 32768,
             components: [
                 {
-                    type: 10,
-                    content: '@everyone'
-                },
-                {
                     type: 17,
                     components: [
                         {
@@ -114,9 +110,10 @@ module.exports = {
                                 { media: {url: "https://res.cloudinary.com/dkui88bcf/image/upload/v1789189709/Update_clxugu.png"} }
                             ]
                         },
+                        { type: 14, spacing: 1 },
                         {
                             type: 10,
-                            content: `## Status: ${status}\n## Version: v${newVersion}\nRestart Script Để Áp Dụng Bản Cập Nhật, Hoặc Copy Script > <#${"1540316772245307433"}>`
+                            content: `@everyone\n## Status: ${status}\n## Version: v${newVersion}\nRestart Script Để Áp Dụng Bản Cập Nhật, Hoặc Copy Script > <#${"1540316772245307433"}>`
                         },
                         { type: 14, spacing: 1 },
                         {
