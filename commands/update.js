@@ -1,13 +1,12 @@
 const {SlashCommandBuilder,ActionRowBuilder,ModalBuilder,
-    TextInputBuilder,TextInputStyle,PermissionsBitField,MessageFlags} = require('discord.js');
+    TextInputBuilder,TextInputStyle,PermissionsBitField,MessageFlags,
+    ContainerBuilder,TextDisplayBuilder,SeparatorSpacingSize} = require('discord.js');
 const config = require('../config.json');
 const fs = require('fs');
 const path = require('path');
 
 const UPDATE_CHANNEL_ID = '1540328462840111225';
 const STATUS_FILE = path.join(__dirname, '..', 'lastStatus.json');
-const WORKING_EMOJI = "<:working:1544604345356787832>"; // đổi ID emoji custom của server bạn
-const WEBHOOK_URL = "https://discord.com/api/webhooks/1548194662282559493/x_DbKI2-uhP4IXaLpxsFdJTYJEasd0QpQM60t6S3qGq6Lyh41Ex569TzcH5asEJc8G6V";
 const UPDATE_IMAGE_URL = "https://res.cloudinary.com/dkui88bcf/image/upload/v1789189709/Update_clxugu.png";
 
 function hasScriptPermission(interaction) {
@@ -59,7 +58,7 @@ module.exports = {
 
         const changelogInput = new TextInputBuilder()
             .setCustomId('input_changelog')
-            .setLabel('Changelog (mỗi dòng bắt đầu +/-/space)')
+            .setLabel('Nhật ký thay đổi (mỗi dòng +/-/space)')
             .setStyle(TextInputStyle.Paragraph)
             .setPlaceholder('+ Thêm tính năng X\n- Gỡ bỏ Y\n  Mô tả thường')
             .setRequired(true);
@@ -82,63 +81,52 @@ module.exports = {
         const changelogRaw = submitted.fields.getTextInputValue('input_changelog');
         const changelogDiff = buildChangelogDiff(changelogRaw);
 
-        const messageContent =
-`@everyone
-## ${WORKING_EMOJI} ${version}
-Restart Script Để Áp Dụng bản cập nhật, hoặc dùng nút download bên dưới.
+        const channel = await submitted.client.channels.fetch(UPDATE_CHANNEL_ID).catch(() => null);
 
-**Changelog:**
-\`\`\`diff
-${changelogDiff}
-\`\`\`
-**Released:** <t:${Math.floor(Date.now() / 1000)}:F>`;
+        if (!channel) {
+            return submitted.reply({
+                content: '❌ Không tìm thấy kênh thông báo. Kiểm tra lại UPDATE_CHANNEL_ID.',
+                flags: MessageFlags.Ephemeral
+            });
+        }
+
+        const pingText = new TextDisplayBuilder().setContent('@everyone');
+
+        const container = new ContainerBuilder()
+            .setAccentColor(0x2ecc71)
+            .addTextDisplayComponents(
+                td => td.setContent('# UPDATE')
+            )
+            .addTextDisplayComponents(
+                td => td.setContent(`### 🟢 ${version}\nRestart Script Để Áp Dụng Bản Cập Nhật, hoặc sao chép script ở kênh <#${1540316772245307433}>.`)
+            )
+            .addSeparatorComponents(
+                sep => sep.setSpacing(SeparatorSpacingSize.Small)
+            )
+            .addTextDisplayComponents(
+                td => td.setContent(`**Nhật Ký Thay Đổi:**\n\`\`\`diff\n${changelogDiff}\n\`\`\``)
+            )
+            .addSeparatorComponents(
+                sep => sep.setSpacing(SeparatorSpacingSize.Small)
+            )
+            .addTextDisplayComponents(
+                td => td.setContent(`**Updated:** <t:${Math.floor(Date.now() / 1000)}:F>`)
+            );
 
         try {
-            const basePayload = {
-                allowed_mentions: { parse: ['everyone'] }
-            };
-
-            // Tin 1
-            const res1 = await fetch(`${WEBHOOK_URL}?wait=true`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    ...basePayload,
-                    embeds: [{ image: { url: UPDATE_IMAGE_URL } }]
-                })
+            await channel.send({
+                files: [UPDATE_IMAGE_URL]
             });
 
-            if (!res1.ok) {
-                const errData = await res1.json().catch(() => null);
-                console.error('Webhook error (ảnh):', errData);
-                return submitted.reply({
-                    content: '❌ Gửi webhook thất bại. Kiểm tra lại Webhook (Update).',
-                    flags: MessageFlags.Ephemeral
-                });
-            }
-
-            // Tin 2
-            const res2 = await fetch(`${WEBHOOK_URL}?wait=true`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    ...basePayload,
-                    content: messageContent
-                })
+            await channel.send({
+                components: [pingText, container],
+                flags: MessageFlags.IsComponentsV2,
+                allowedMentions: { parse: ['everyone'] }
             });
-
-            if (!res2.ok) {
-                const errData = await res2.json().catch(() => null);
-                console.error('Webhook error (text):', errData);
-                return submitted.reply({
-                    content: '❌ Gửi webhook thất bại. Kiểm tra lại Webhook (Update).',
-                    flags: MessageFlags.Ephemeral
-                });
-            }
         } catch (err) {
-            console.error('Fetch threw:', err);
+            console.error('Gửi thất bại:', err);
             return submitted.reply({
-                content: '❌ Lỗi khi gọi webhook.',
+                content: '❌ Gửi thông báo thất bại. Kiểm tra lại quyền bot hoặc log.',
                 flags: MessageFlags.Ephemeral
             });
         }
