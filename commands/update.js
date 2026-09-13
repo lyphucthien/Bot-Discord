@@ -109,7 +109,7 @@ module.exports = {
                             content: `@everyone`
                         },
                         {
-                            type: 10,
+                            type: 12,
                             items: [
                                 { media: {url: "https://res.cloudinary.com/dkui88bcf/image/upload/v1789189709/Update_clxugu.png"} }
                             ]
