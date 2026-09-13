@@ -28,9 +28,7 @@ function getNextVersion() {
             parts[2] += 1;
             return parts.join('.');
         }
-    } catch {
-        // chưa có file, dùng version khởi đầu
-    }
+    } catch {}
 
     return lastVersion;
 }
@@ -111,12 +109,12 @@ module.exports = {
                         {
                             type: 12,
                             items: [
-                                { media: {url: "https://res.cloudinary.com/dkui88bcf/image/upload/v1789189709/Update_clxugu.png"} }
+                                { media: {url: "https://res.cloudinary.com/dkui88bcf/image/upload/v1789288743/Update_cmplig.png"} }
                             ]
                         },
                         {
                             type: 10,
-                            content: `**Status:** ${status}\n**Version:** \`v${newVersion}\`\nRestart Script Để Áp Dụng Bản Cập Nhật, Hoặc Copy Script Tại <#${"1540316772245307433"}>`
+                            content: `## Status:** ${status}\n## Version: \`v${newVersion}\`\n\nRestart Script Để Áp Dụng Bản Cập Nhật>`
                         },
                         { type: 14, spacing: 1 },
                         {
