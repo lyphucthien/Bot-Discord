@@ -19,8 +19,26 @@ function hasScriptPermission(interaction) {
     );
 }
 
-function saveLastStatus(status) {
-    fs.writeFileSync(STATUS_FILE, JSON.stringify({ status }), 'utf8');
+function getNextVersion() {
+    let lastVersion = "1.0.0";
+
+    try {
+        const data = fs.readFileSync(STATUS_FILE, 'utf8');
+        const parsed = JSON.parse(data);
+        if (parsed.version) {
+            const parts = parsed.version.split('.').map(Number);
+            parts[2] += 1;
+            return parts.join('.');
+        }
+    } catch {
+        // chưa có file, dùng version khởi đầu
+    }
+
+    return lastVersion;
+}
+
+function saveVersion(version) {
+    fs.writeFileSync(STATUS_FILE, JSON.stringify({ version }), 'utf8');
 }
 
 function buildChangelogDiff(changelogRaw) {
@@ -48,11 +66,11 @@ module.exports = {
             .setCustomId('update_modal')
             .setTitle('Thông Báo Update');
 
-        const versionInput = new TextInputBuilder()
-            .setCustomId('input_version')
-            .setLabel('Version')
+        const statusInput = new TextInputBuilder()
+            .setCustomId('input_status')
+            .setLabel('Status')
             .setStyle(TextInputStyle.Short)
-            .setPlaceholder('v2.5.4')
+            .setPlaceholder('chỉ nhập icon: 🟢 🟡 🟠 🔴 ⚫')
             .setRequired(true);
 
         const changelogInput = new TextInputBuilder()
@@ -63,7 +81,7 @@ module.exports = {
             .setRequired(true);
 
         modal.addComponents(
-            new ActionRowBuilder().addComponents(versionInput),
+            new ActionRowBuilder().addComponents(statusInput),
             new ActionRowBuilder().addComponents(changelogInput)
         );
 
@@ -76,12 +94,14 @@ module.exports = {
 
         if (!submitted) return;
 
-        const version = submitted.fields.getTextInputValue('input_version');
+        const status = submitted.fields.getTextInputValue('input_status');
         const changelogRaw = submitted.fields.getTextInputValue('input_changelog');
         const changelogDiff = buildChangelogDiff(changelogRaw);
 
+        const newVersion = getNextVersion();
+
         const payload = {
-            flags: 32768, // IS_COMPONENTS_V2
+            flags: 32768,
             components: [
                 {
                     type: 10,
@@ -99,17 +119,17 @@ module.exports = {
                     components: [
                         {
                             type: 10,
-                            content: `### 🟢 ${version}\nRestart Script Để Áp Dụng Bản Cập Nhật, hoặc sao chép script ở kênh <#${"1540328462840111225"}>.`
-                        },
-                        { type: 14, spacing: 1 }, // Separator
-                        {
-                            type: 10,
-                            content: `**Nhật Ký Thay Đổi:**\n\`\`\`diff\n${changelogDiff}\n\`\`\``
+                            content: `**Status:** ${status}\n**Version:** v${newVersion}\nRestart Script Để Áp Dụng Bản Cập Nhật, Hoặc Copy Script > <#${"1540316772245307433"}>.`
                         },
                         { type: 14, spacing: 1 },
                         {
                             type: 10,
-                            content: `**Updated:** <t:${Math.floor(Date.now() / 1000)}:F>`
+                            content: `**Nhật Ký Thay Đổi:**\n\`\`\`${changelogDiff}\`\`\``
+                        },
+                        { type: 14, spacing: 1 },
+                        {
+                            type: 10,
+                            content: `**Updated** <t:${Math.floor(Date.now() / 1000)}:F>`
                         }
                     ]
                 }
@@ -140,10 +160,10 @@ module.exports = {
             });
         }
 
-        saveLastStatus(version);
+        saveVersion(newVersion);
 
         return submitted.reply({
-            content: `✅ Đã gửi thông báo update tới <#${"1540328462840111225"}>.`,
+            content: `✅ Đã gửi thông báo update v${newVersion} tới <#${"1540328462840111225"}>.`,
             flags: MessageFlags.Ephemeral
         });
     }
