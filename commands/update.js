@@ -5,8 +5,6 @@ const fs = require('fs');
 const path = require('path');
 
 const STATUS_FILE = path.join(__dirname, '..', 'lastStatus.json');
-const UPDATE_IMAGE_URL = "https://res.cloudinary.com/dkui88bcf/image/upload/v1789189709/Update_clxugu.png";
-const WEBHOOK_URL = "https://discord.com/api/webhooks/1548194662282559493/x_DbKI2-uhP4IXaLpxsFdJTYJEasd0QpQM60t6S3qGq6Lyh41Ex569TzcH5asEJc8G6V";
 
 function hasScriptPermission(interaction) {
     if (interaction.user.id === '1330395226933559297') return true;
@@ -70,7 +68,7 @@ module.exports = {
             .setCustomId('input_status')
             .setLabel('Status')
             .setStyle(TextInputStyle.Short)
-            .setPlaceholder('chỉ nhập icon: 🟢 🟡 🟠 🔴 ⚫')
+            .setPlaceholder('chỉ nhập icon (🟢 🟡 🟠 🔴 ⚫)')
             .setRequired(true);
 
         const changelogInput = new TextInputBuilder()
@@ -108,18 +106,17 @@ module.exports = {
                     content: '@everyone'
                 },
                 {
-                    type: 12,
-                    items: [
-                        { media: { url: UPDATE_IMAGE_URL } }
-                    ]
-                },
-                {
                     type: 17,
-                    accent_color: 0x2ecc71,
                     components: [
                         {
+                            type: 12,
+                            items: [
+                                { media: {url: "https://res.cloudinary.com/dkui88bcf/image/upload/v1789189709/Update_clxugu.png"} }
+                            ]
+                        },
+                        {
                             type: 10,
-                            content: `**Status:** ${status}\n**Version:** v${newVersion}\nRestart Script Để Áp Dụng Bản Cập Nhật, Hoặc Copy Script > <#${"1540316772245307433"}>.`
+                            content: `## Status: ${status}\n## Version: v${newVersion}\nRestart Script Để Áp Dụng Bản Cập Nhật, Hoặc Copy Script > <#${"1540316772245307433"}>`
                         },
                         { type: 14, spacing: 1 },
                         {
@@ -138,7 +135,7 @@ module.exports = {
         };
 
         try {
-            const res = await fetch(`${WEBHOOK_URL}?wait=true&with_components=true`, {
+            const res = await fetch(`${"https://discord.com/api/webhooks/1548194662282559493/x_DbKI2-uhP4IXaLpxsFdJTYJEasd0QpQM60t6S3qGq6Lyh41Ex569TzcH5asEJc8G6V"}?wait=true&with_components=true`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
