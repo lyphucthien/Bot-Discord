@@ -1,12 +1,14 @@
-const {SlashCommandBuilder,ContainerBuilder,TextDisplayBuilder,ActionRowBuilder,ModalBuilder,
-    TextInputBuilder,TextInputStyle,SeparatorSpacingSize,PermissionsBitField,MessageFlags} = require('discord.js');
+const {SlashCommandBuilder,ActionRowBuilder,ModalBuilder,
+    TextInputBuilder,TextInputStyle,PermissionsBitField,MessageFlags} = require('discord.js');
 const config = require('../config.json');
 const fs = require('fs');
 const path = require('path');
 
 const UPDATE_CHANNEL_ID = '1540328462840111225';
-const UPDATE_ROLE_ID = '1544167526454403082';
 const STATUS_FILE = path.join(__dirname, '..', 'lastStatus.json');
+const WORKING_EMOJI = "<:working:1544604345356787832>"; // đổi ID emoji custom của server bạn
+const WEBHOOK_URL = "https://discord.com/api/webhooks/1548194662282559493/x_DbKI2-uhP4IXaLpxsFdJTYJEasd0QpQM60t6S3qGq6Lyh41Ex569TzcH5asEJc8G6V";
+const UPDATE_IMAGE_URL = "https://res.cloudinary.com/dkui88bcf/image/upload/v1789189709/Update_clxugu.png";
 
 function hasScriptPermission(interaction) {
     if (interaction.user.id === '1330395226933559297') return true;
@@ -19,40 +21,16 @@ function hasScriptPermission(interaction) {
     );
 }
 
-function getLastStatus() {
-    try {
-        const data = fs.readFileSync(STATUS_FILE, 'utf8');
-        return JSON.parse(data).status || null;
-    } catch {
-        return null;
-    }
-}
-
 function saveLastStatus(status) {
     fs.writeFileSync(STATUS_FILE, JSON.stringify({ status }), 'utf8');
 }
 
-function buildChangelogAnsi(changelogRaw) {
-    const colorMap = {
-        '+': '32',
-        '=': '33',
-        '-': '31'
-    };
-
-    const lines = changelogRaw
+function buildChangelogDiff(changelogRaw) {
+    return changelogRaw
         .split('\n')
         .map(item => item.trim())
         .filter(item => item.length > 0)
-        .map(item => {
-            const symbol = item[0];
-            const text = item.slice(1).trim();
-            const color = colorMap[symbol] || '37';
-
-            return `\u001b[1;${color}m[${symbol}] ${text}\u001b[0m`;
-        })
         .join('\n');
-
-    return `\`\`\`ansi\n${lines}\n\`\`\``;
 }
 
 module.exports = {
@@ -72,22 +50,22 @@ module.exports = {
             .setCustomId('update_modal')
             .setTitle('Thông Báo Update');
 
-        const statusInput = new TextInputBuilder()
-            .setCustomId('input_status')
-            .setLabel('Status')
+        const versionInput = new TextInputBuilder()
+            .setCustomId('input_version')
+            .setLabel('Version')
             .setStyle(TextInputStyle.Short)
-            .setPlaceholder('chỉ nhập icon: 🟢 🟡 🟠 🔴 ⚫')
+            .setPlaceholder('v2.5.4')
             .setRequired(true);
 
         const changelogInput = new TextInputBuilder()
             .setCustomId('input_changelog')
-            .setLabel('Nhật ký thay đổi (mỗi dòng bắt đầu +/=/-)')
+            .setLabel('Changelog (mỗi dòng bắt đầu +/-/space)')
             .setStyle(TextInputStyle.Paragraph)
-            .setPlaceholder('= Fixed lỗi X\n+ Thêm tính năng Y\n- Gỡ bỏ Z')
+            .setPlaceholder('+ Thêm tính năng X\n- Gỡ bỏ Y\n  Mô tả thường')
             .setRequired(true);
 
         modal.addComponents(
-            new ActionRowBuilder().addComponents(statusInput),
+            new ActionRowBuilder().addComponents(versionInput),
             new ActionRowBuilder().addComponents(changelogInput)
         );
 
@@ -100,54 +78,72 @@ module.exports = {
 
         if (!submitted) return;
 
-        const newStatus = submitted.fields.getTextInputValue('input_status');
+        const version = submitted.fields.getTextInputValue('input_version');
         const changelogRaw = submitted.fields.getTextInputValue('input_changelog');
+        const changelogDiff = buildChangelogDiff(changelogRaw);
 
-        const channel = await submitted.client.channels.fetch(UPDATE_CHANNEL_ID).catch(() => null);
+        const messageContent =
+`@everyone
+## ${WORKING_EMOJI} ${version}
+Restart Script Để Áp Dụng bản cập nhật, hoặc dùng nút download bên dưới.
 
-        if (!channel) {
+**Changelog:**
+\`\`\`diff
+${changelogDiff}
+\`\`\`
+**Released:** <t:${Math.floor(Date.now() / 1000)}:F>`;
+
+        try {
+            const basePayload = {
+                allowed_mentions: { parse: ['everyone'] }
+            };
+
+            // Tin 1
+            const res1 = await fetch(`${WEBHOOK_URL}?wait=true`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    ...basePayload,
+                    embeds: [{ image: { url: UPDATE_IMAGE_URL } }]
+                })
+            });
+
+            if (!res1.ok) {
+                const errData = await res1.json().catch(() => null);
+                console.error('Webhook error (ảnh):', errData);
+                return submitted.reply({
+                    content: '❌ Gửi webhook thất bại. Kiểm tra lại Webhook (Update).',
+                    flags: MessageFlags.Ephemeral
+                });
+            }
+
+            // Tin 2
+            const res2 = await fetch(`${WEBHOOK_URL}?wait=true`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    ...basePayload,
+                    content: messageContent
+                })
+            });
+
+            if (!res2.ok) {
+                const errData = await res2.json().catch(() => null);
+                console.error('Webhook error (text):', errData);
+                return submitted.reply({
+                    content: '❌ Gửi webhook thất bại. Kiểm tra lại Webhook (Update).',
+                    flags: MessageFlags.Ephemeral
+                });
+            }
+        } catch (err) {
+            console.error('Fetch threw:', err);
             return submitted.reply({
-                content: '❌ Không tìm thấy kênh thông báo. Kiểm tra lại UPDATE_CHANNEL_ID.',
+                content: '❌ Lỗi khi gọi webhook.',
                 flags: MessageFlags.Ephemeral
             });
         }
 
-        const lastStatus = getLastStatus();
-        const statusLine = lastStatus
-            ? `**Status:** ${lastStatus} → ${newStatus}`
-            : `**Status:** ${newStatus}`;
-
-        const changelogItems = buildChangelogAnsi(changelogRaw);
-
-        const pingText = new TextDisplayBuilder().setContent(`<@&${UPDATE_ROLE_ID}>`);
-
-        const container = new ContainerBuilder()
-            .addTextDisplayComponents(
-                td => td.setContent('# UPDATE')
-            )
-            .addTextDisplayComponents(
-                td => td.setContent(statusLine)
-            )
-            .addSeparatorComponents(
-                sep => sep.setSpacing(SeparatorSpacingSize.Small)
-            )
-            .addTextDisplayComponents(
-                td => td.setContent(`**Nhật ký thay đổi:**\n${changelogItems}`)
-            )
-            .addSeparatorComponents(
-                sep => sep.setSpacing(SeparatorSpacingSize.Small)
-            )
-            .addTextDisplayComponents(
-                td => td.setContent(`**Updated:** <t:${Math.floor(Date.now() / 1000)}:F>`)
-            );
-
-        await channel.send({
-            components: [pingText, container],
-            flags: MessageFlags.IsComponentsV2,
-            allowedMentions: { roles: [UPDATE_ROLE_ID] }
-        });
-
-        saveLastStatus(newStatus);
+        saveLastStatus(version);
 
         return submitted.reply({
             content: `✅ Đã gửi thông báo update tới <#${UPDATE_CHANNEL_ID}>.`,
