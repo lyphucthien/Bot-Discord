@@ -114,7 +114,7 @@ module.exports = {
                         },
                         {
                             type: 10,
-                            content: `## Status:** ${status}\n## Version: \`v${newVersion}\`\n\nRestart Script Để Áp Dụng Bản Cập Nhật>`
+                            content: `## Status: ${status}\n## Version: \`v${newVersion}\`\n\nRestart Script Để Áp Dụng Bản Cập Nhật`
                         },
                         { type: 14, spacing: 1 },
                         {
@@ -125,6 +125,17 @@ module.exports = {
                         {
                             type: 10,
                             content: `**Updated** <t:${Math.floor(Date.now() / 1000)}:F>`
+                        },
+                        {
+                            type: 1,
+                            components: [
+                                {
+                                    type: 2,
+                                    style: 5,
+                                    label: "Copy Script",
+                                    url: `https://discord.com/channels/1496474678515073046/1540316772245307433`
+                                }
+                            ]
                         }
                     ]
                 }
