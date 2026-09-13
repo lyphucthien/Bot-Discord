@@ -1,13 +1,12 @@
 const {SlashCommandBuilder,ActionRowBuilder,ModalBuilder,
-    TextInputBuilder,TextInputStyle,PermissionsBitField,MessageFlags,
-    ContainerBuilder,TextDisplayBuilder,SeparatorSpacingSize} = require('discord.js');
+    TextInputBuilder,TextInputStyle,PermissionsBitField,MessageFlags} = require('discord.js');
 const config = require('../config.json');
 const fs = require('fs');
 const path = require('path');
 
-const UPDATE_CHANNEL_ID = '1540328462840111225';
 const STATUS_FILE = path.join(__dirname, '..', 'lastStatus.json');
 const UPDATE_IMAGE_URL = "https://res.cloudinary.com/dkui88bcf/image/upload/v1789189709/Update_clxugu.png";
+const WEBHOOK_URL = "https://discord.com/api/webhooks/1548194662282559493/x_DbKI2-uhP4IXaLpxsFdJTYJEasd0QpQM60t6S3qGq6Lyh41Ex569TzcH5asEJc8G6V";
 
 function hasScriptPermission(interaction) {
     if (interaction.user.id === '1330395226933559297') return true;
@@ -81,52 +80,62 @@ module.exports = {
         const changelogRaw = submitted.fields.getTextInputValue('input_changelog');
         const changelogDiff = buildChangelogDiff(changelogRaw);
 
-        const channel = await submitted.client.channels.fetch(UPDATE_CHANNEL_ID).catch(() => null);
-
-        if (!channel) {
-            return submitted.reply({
-                content: '❌ Không tìm thấy kênh thông báo. Kiểm tra lại UPDATE_CHANNEL_ID.',
-                flags: MessageFlags.Ephemeral
-            });
-        }
-
-        const pingText = new TextDisplayBuilder().setContent('@everyone');
-
-        const container = new ContainerBuilder()
-            .setAccentColor(0x2ecc71)
-            .addTextDisplayComponents(
-                td => td.setContent('# UPDATE')
-            )
-            .addTextDisplayComponents(
-                td => td.setContent(`### 🟢 ${version}\nRestart Script Để Áp Dụng Bản Cập Nhật, hoặc sao chép script ở kênh <#${1540316772245307433}>.`)
-            )
-            .addSeparatorComponents(
-                sep => sep.setSpacing(SeparatorSpacingSize.Small)
-            )
-            .addTextDisplayComponents(
-                td => td.setContent(`**Nhật Ký Thay Đổi:**\n\`\`\`diff\n${changelogDiff}\n\`\`\``)
-            )
-            .addSeparatorComponents(
-                sep => sep.setSpacing(SeparatorSpacingSize.Small)
-            )
-            .addTextDisplayComponents(
-                td => td.setContent(`**Updated:** <t:${Math.floor(Date.now() / 1000)}:F>`)
-            );
+        const payload = {
+            flags: 32768, // IS_COMPONENTS_V2
+            components: [
+                {
+                    type: 10,
+                    content: '@everyone'
+                },
+                {
+                    type: 12,
+                    items: [
+                        { media: { url: UPDATE_IMAGE_URL } }
+                    ]
+                },
+                {
+                    type: 17,
+                    accent_color: 0x2ecc71,
+                    components: [
+                        {
+                            type: 10,
+                            content: `### 🟢 ${version}\nRestart Script Để Áp Dụng Bản Cập Nhật, hoặc sao chép script ở kênh <#${"1540328462840111225"}>.`
+                        },
+                        { type: 14, spacing: 1 }, // Separator
+                        {
+                            type: 10,
+                            content: `**Nhật Ký Thay Đổi:**\n\`\`\`diff\n${changelogDiff}\n\`\`\``
+                        },
+                        { type: 14, spacing: 1 },
+                        {
+                            type: 10,
+                            content: `**Updated:** <t:${Math.floor(Date.now() / 1000)}:F>`
+                        }
+                    ]
+                }
+            ],
+            allowed_mentions: { parse: ['everyone'] }
+        };
 
         try {
-            await channel.send({
-                files: [UPDATE_IMAGE_URL]
+            const res = await fetch(`${WEBHOOK_URL}?wait=true&with_components=true`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
             });
 
-            await channel.send({
-                components: [pingText, container],
-                flags: MessageFlags.IsComponentsV2,
-                allowedMentions: { parse: ['everyone'] }
-            });
+            if (!res.ok) {
+                const errData = await res.json().catch(() => null);
+                console.error('Webhook error:', errData);
+                return submitted.reply({
+                    content: '❌ Gửi webhook thất bại. Kiểm tra lại Webhook (Update).',
+                    flags: MessageFlags.Ephemeral
+                });
+            }
         } catch (err) {
-            console.error('Gửi thất bại:', err);
+            console.error('Fetch threw:', err);
             return submitted.reply({
-                content: '❌ Gửi thông báo thất bại. Kiểm tra lại quyền bot hoặc log.',
+                content: '❌ Lỗi khi gọi webhook.',
                 flags: MessageFlags.Ephemeral
             });
         }
@@ -134,7 +143,7 @@ module.exports = {
         saveLastStatus(version);
 
         return submitted.reply({
-            content: `✅ Đã gửi thông báo update tới <#${UPDATE_CHANNEL_ID}>.`,
+            content: `✅ Đã gửi thông báo update tới <#${"1540328462840111225"}>.`,
             flags: MessageFlags.Ephemeral
         });
     }
