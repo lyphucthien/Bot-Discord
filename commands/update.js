@@ -105,20 +105,23 @@ module.exports = {
                     type: 17,
                     components: [
                         {
-                            type: 12,
+                            type: 10,
+                            content: `@everyone`
+                        },
+                        {
+                            type: 10,
                             items: [
                                 { media: {url: "https://res.cloudinary.com/dkui88bcf/image/upload/v1789189709/Update_clxugu.png"} }
                             ]
                         },
-                        { type: 14, spacing: 1 },
                         {
                             type: 10,
-                            content: `@everyone\n## Status: ${status}\n## Version: v${newVersion}\nRestart Script Để Áp Dụng Bản Cập Nhật, Hoặc Copy Script > <#${"1540316772245307433"}>`
+                            content: `**Status:** ${status}\n**Version:** \`v${newVersion}\`\nRestart Script Để Áp Dụng Bản Cập Nhật, Hoặc Copy Script Tại <#${"1540316772245307433"}>`
                         },
                         { type: 14, spacing: 1 },
                         {
                             type: 10,
-                            content: `**Nhật Ký Thay Đổi:**\n\`\`\`${changelogDiff}\`\`\``
+                            content: `**Changelog:**\n\`\`\`${changelogDiff}\`\`\``
                         },
                         { type: 14, spacing: 1 },
                         {
